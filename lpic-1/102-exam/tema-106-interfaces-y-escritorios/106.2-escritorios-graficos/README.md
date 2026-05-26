@@ -3,17 +3,24 @@
 ## Peso: 1
 
 ## Objetivo del examen
-(Pendiente de completar)
+Conocer los principales entornos de escritorio en Linux. Identificar y diferenciar los entornos de escritorio, gestores de ventanas, toolkit libraries y protocolos de acceso remoto al escritorio.
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Principales entornos de escritorio y sus toolkit libraries
+- Gestores de ventanas independientes
+- Protocolos de acceso remoto al escritorio (VNC, RDP, XDMCP)
+- Diferencia entre entorno de escritorio y gestor de ventanas
 
 ## Archivos, terminos y utilidades
-(Pendiente de completar)
+- GNOME, KDE/Plasma, Xfce, MATE, LXDE, LXQt, Cinnamon
+- GTK+, Qt
+- Openbox, i3, Fluxbox
+- VNC, RDP (xrdp), XDMCP
 
 ## Contenido
+
 | Recurso | Estado |
 |---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+| [Teoria](notas/teoria.md) | Completado |
+| [Comandos clave](notas/comandos-clave.md) | Completado |
+| [Ejercicios](ejercicios/ejercicios.md) | Completado |

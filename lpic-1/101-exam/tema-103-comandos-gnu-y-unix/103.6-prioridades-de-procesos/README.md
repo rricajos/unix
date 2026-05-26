@@ -3,17 +3,22 @@
 ## Peso: 2
 
 ## Objetivo del examen
-(Pendiente de completar)
+Gestionar las prioridades de ejecucion de los procesos. Incluye ejecutar un programa con mayor o menor prioridad que la predeterminada y cambiar la prioridad de un proceso en ejecucion.
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Conocer la prioridad predeterminada de un proceso que se crea
+- Ejecutar un programa con mayor o menor prioridad que la predeterminada
+- Cambiar la prioridad de un proceso en ejecucion
 
 ## Archivos, terminos y utilidades
-(Pendiente de completar)
+- `nice`
+- `ps`
+- `renice`
+- `top`
 
 ## Contenido
 | Recurso | Estado |
 |---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+| [Teoria](notas/teoria.md) | Completado |
+| [Comandos clave](notas/comandos-clave.md) | Completado |
+| [Ejercicios](ejercicios/ejercicios.md) | Completado |

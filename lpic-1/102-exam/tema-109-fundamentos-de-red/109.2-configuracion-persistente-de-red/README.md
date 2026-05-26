@@ -1,19 +1,35 @@
-# 109.2 - Configuracion persistente de red
+# 109.2 Configuracion persistente de red
 
-## Peso: 4
+## Objetivo
+Gestionar la configuracion persistente de red en un host Linux.
 
-## Objetivo del examen
-(Pendiente de completar)
+## Peso
+4
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Comprender la configuracion basica de host TCP/IP
+- Configurar ethernet e interfaces Wi-Fi usando NetworkManager
+- Conocimiento de systemd-networkd
+- Conocimiento de la configuracion de red legada en Debian y Red Hat
 
 ## Archivos, terminos y utilidades
-(Pendiente de completar)
+- `/etc/hostname`
+- `/etc/hosts`
+- `/etc/nsswitch.conf`
+- `/etc/resolv.conf`
+- `nmcli`
+- `nmtui`
+- `hostnamectl`
+- `ifconfig` (legacy)
+- `ip`
+- `route` (legacy)
+- NetworkManager
+- systemd-networkd
 
 ## Contenido
+
 | Recurso | Estado |
 |---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+| [Teoria](notas/teoria.md) | Completado |
+| [Comandos clave](notas/comandos-clave.md) | Completado |
+| [Ejercicios](ejercicios/ejercicios.md) | Completado |

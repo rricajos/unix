@@ -1,19 +1,33 @@
-# 104.3 - Controlar el montaje y desmontaje
+# 104.3 Controlar el montaje y desmontaje de sistemas de archivos
 
-## Peso: 3
+## Objetivo
+El candidato debe ser capaz de configurar el montaje de un sistema de archivos. Incluye la capacidad de montar y desmontar manualmente, configurar el montaje automatico al arrancar, y configurar sistemas de archivos extraibles montables por el usuario.
 
-## Objetivo del examen
-(Pendiente de completar)
+## Peso
+**3**
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Montar y desmontar manualmente sistemas de archivos
+- Configurar el montaje de sistemas de archivos al arrancar
+- Configurar sistemas de archivos extraibles montables por el usuario
+- Uso de etiquetas y UUIDs para identificar y montar sistemas de archivos
+- Conocimiento de unidades de montaje de systemd
 
-## Archivos, terminos y utilidades
-(Pendiente de completar)
+## Archivos y utilidades clave
+| Recurso | Descripcion |
+|---------|-------------|
+| `mount` | Montar sistemas de archivos |
+| `umount` | Desmontar sistemas de archivos |
+| `/etc/fstab` | Tabla de montaje automatico |
+| `blkid` | Mostrar UUID y tipo de FS de dispositivos |
+| `lsblk` | Listar dispositivos de bloque |
+| `findmnt` | Encontrar sistemas de archivos montados |
+| `systemd mount units` | Unidades .mount y .automount de systemd |
 
 ## Contenido
-| Recurso | Estado |
-|---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+
+| Seccion | Recurso | Estado |
+|---------|---------|--------|
+| Teoria completa | [notas/teoria.md](notas/teoria.md) | Completado |
+| Comandos clave | [notas/comandos-clave.md](notas/comandos-clave.md) | Completado |
+| Ejercicios | [ejercicios/ejercicios.md](ejercicios/ejercicios.md) | Completado |

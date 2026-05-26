@@ -1,19 +1,37 @@
-# 110.3 - Proteger datos con cifrado
+# 110.3 Proteger datos con cifrado
 
-## Peso: 4
+## Objetivo
+Ser capaz de usar tecnicas de clave publica para proteger datos y comunicacion.
 
-## Objetivo del examen
-(Pendiente de completar)
+## Peso
+4
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Realizar configuracion y uso basico del cliente OpenSSH 2
+- Comprender el papel de las claves de host en OpenSSH 2
+- Realizar configuracion y uso basico de GnuPG, incluyendo cifrado y firma
+- Comprender tuneles SSH (port forwarding incluyendo X11)
 
 ## Archivos, terminos y utilidades
-(Pendiente de completar)
+- `ssh`
+- `ssh-keygen`
+- `ssh-agent`
+- `ssh-add`
+- `ssh-copy-id`
+- `~/.ssh/id_rsa`, `~/.ssh/id_rsa.pub`
+- `~/.ssh/authorized_keys`
+- `~/.ssh/known_hosts`
+- `~/.ssh/config`
+- `/etc/ssh/sshd_config`
+- `scp`
+- `sftp`
+- `gpg`
+- `~/.gnupg/`
 
 ## Contenido
+
 | Recurso | Estado |
 |---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+| [Teoria](notas/teoria.md) | Completado |
+| [Comandos clave](notas/comandos-clave.md) | Completado |
+| [Ejercicios](ejercicios/ejercicios.md) | Completado |

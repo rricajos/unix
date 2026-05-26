@@ -1,19 +1,35 @@
-# 110.2 - Configurar la seguridad del host
+# 110.2 Configurar la seguridad del host
 
-## Peso: 3
+## Objetivo
+Configurar un nivel basico de seguridad del host.
 
-## Objetivo del examen
-(Pendiente de completar)
+## Peso
+3
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Conocimiento de shadow passwords y como funcionan
+- Desactivar servicios de red que no se esten usando
+- Comprender el papel de TCP wrappers
+- Conocimiento de inetd y xinetd
 
 ## Archivos, terminos y utilidades
-(Pendiente de completar)
+- `/etc/nologin`
+- `/etc/passwd`
+- `/etc/shadow`
+- `/etc/xinetd.d/`
+- `/etc/xinetd.conf`
+- `/etc/inetd.d/`
+- `/etc/inetd.conf`
+- `/etc/inittab`
+- `/etc/init.d/`
+- `/etc/hosts.allow`
+- `/etc/hosts.deny`
+- `systemctl`
 
 ## Contenido
+
 | Recurso | Estado |
 |---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+| [Teoria](notas/teoria.md) | Completado |
+| [Comandos clave](notas/comandos-clave.md) | Completado |
+| [Ejercicios](ejercicios/ejercicios.md) | Completado |

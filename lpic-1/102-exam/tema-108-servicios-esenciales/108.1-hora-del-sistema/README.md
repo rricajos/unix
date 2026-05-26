@@ -1,19 +1,40 @@
-# 108.1 - Mantener la hora del sistema
+# 108.1 Mantener la hora del sistema
 
-## Peso: 3
+## Objetivo
+Mantener correctamente la hora del sistema y sincronizar el reloj mediante NTP.
 
-## Objetivo del examen
-(Pendiente de completar)
+## Peso
+3
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Configurar la fecha y hora del sistema
+- Configurar el reloj hardware en la hora correcta en UTC
+- Configurar la zona horaria correcta
+- Configuracion basica de NTP usando ntpd
+- Conocimiento del uso del servicio chrony
+- Conocimiento del uso de systemd-timesyncd
 
 ## Archivos, terminos y utilidades
-(Pendiente de completar)
+- `/usr/share/zoneinfo/`
+- `/etc/timezone`
+- `/etc/localtime`
+- `/etc/ntp.conf`
+- `/etc/chrony.conf`
+- `/etc/adjtime`
+- `date`
+- `hwclock`
+- `timedatectl`
+- `ntpd`
+- `ntpdate`
+- `ntpq`
+- `chronyd`
+- `chronyc`
+- `pool.ntp.org`
 
 ## Contenido
+
 | Recurso | Estado |
 |---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+| [Teoria](notas/teoria.md) | Completado |
+| [Comandos clave](notas/comandos-clave.md) | Completado |
+| [Ejercicios](ejercicios/ejercicios.md) | Completado |

@@ -1,19 +1,31 @@
-# 104.6 - Crear y cambiar enlaces duros y simbolicos
+# 104.6 Crear y cambiar enlaces duros y simbolicos
 
-## Peso: 2
+## Objetivo
+El candidato debe ser capaz de crear y gestionar enlaces duros y simbolicos a un archivo.
 
-## Objetivo del examen
-(Pendiente de completar)
+## Peso
+**2**
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Crear enlaces duros y simbolicos
+- Identificar enlaces duros y/o simbolicos
+- Copiar versus enlazar archivos
+- Usar enlaces para realizar tareas de administracion del sistema
 
-## Archivos, terminos y utilidades
-(Pendiente de completar)
+## Archivos y utilidades clave
+| Recurso | Descripcion |
+|---------|-------------|
+| `ln` | Crear enlaces duros |
+| `ln -s` | Crear enlaces simbolicos |
+| `ls -l` | Ver tipo de enlace y destino |
+| `ls -i` | Ver numeros de inodo |
+| `stat` | Informacion detallada de archivo/enlace |
+| `readlink` | Leer destino de un enlace simbolico |
 
 ## Contenido
-| Recurso | Estado |
-|---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+
+| Seccion | Recurso | Estado |
+|---------|---------|--------|
+| Teoria completa | [notas/teoria.md](notas/teoria.md) | Completado |
+| Comandos clave | [notas/comandos-clave.md](notas/comandos-clave.md) | Completado |
+| Ejercicios | [ejercicios/ejercicios.md](ejercicios/ejercicios.md) | Completado |

@@ -1,19 +1,34 @@
-# 109.3 - Resolucion de problemas basicos de red
+# 109.3 Resolucion de problemas basicos de red
 
-## Peso: 4
+## Objetivo
+Resolver problemas de red en hosts cliente.
 
-## Objetivo del examen
-(Pendiente de completar)
+## Peso
+4
 
 ## Conocimientos clave
-(Pendiente de completar)
+- Configurar manualmente interfaces de red y tablas de enrutamiento, incluyendo agregar, borrar y modificar rutas por defecto
+- Configurar manualmente tablas de enrutamiento, incluyendo agregar, borrar y modificar rutas estaticas
+- Depurar problemas asociados con la configuracion de red
+- Conocimiento de comandos legacy como ifconfig y route
 
 ## Archivos, terminos y utilidades
-(Pendiente de completar)
+- `ip`
+- `ifconfig`
+- `route`
+- `ss`
+- `netstat`
+- `ping` / `ping6`
+- `traceroute` / `tracepath`
+- `mtr`
+- `hostname`
+- `netcat` / `nc`
+- `tcpdump`
 
 ## Contenido
+
 | Recurso | Estado |
 |---------|--------|
-| [Teoria](notas/teoria.md) | Pendiente |
-| [Comandos clave](notas/comandos-clave.md) | Pendiente |
-| [Ejercicios](ejercicios/ejercicios.md) | Pendiente |
+| [Teoria](notas/teoria.md) | Completado |
+| [Comandos clave](notas/comandos-clave.md) | Completado |
+| [Ejercicios](ejercicios/ejercicios.md) | Completado |
