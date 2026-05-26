@@ -1,0 +1,40 @@
+# Archivos del sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editores e IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.settings/
+
+# Variables de entorno y secretos
+.env
+.env.*
+*.key
+*.pem
+id_rsa*
+
+# Temporales
+*.tmp
+*.bak
+*.log
+/tmp/
+
+# Python (para scripts de hacking)
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node (si se usa alguna herramienta)
+node_modules/
+
+# Archivos compilados
+*.o
+*.exe
+*.out
