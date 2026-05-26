@@ -64,7 +64,7 @@ En Linux, las expresiones regulares se usan con herramientas como `grep`, `sed`,
 | Una o mas repeticiones | `\+` | `+` |
 | Cero o una repeticion | `\?` | `?` |
 | Agrupacion | `\( \)` | `( )` |
-| Alternancia (OR) | `\|` | `\|` |
+| Alternancia (OR) | `\|` | `|` |
 | Repeticion exacta | `\{n\}` | `{n}` |
 | Repeticion rango | `\{n,m\}` | `{n,m}` |
 | Inicio de linea | `^` | `^` |
@@ -323,4 +323,4 @@ sed 's#http://#https://#g' archivo.txt
 | `a?` (ERE) | Cero o una "a" |
 | `a{3}` (ERE) | Exactamente tres "a" |
 | `a{2,5}` (ERE) | De dos a cinco "a" |
-| `(abc\|def)` (ERE) | "abc" o "def" |
+| `(abc|def)` (ERE) | "abc" o "def" |

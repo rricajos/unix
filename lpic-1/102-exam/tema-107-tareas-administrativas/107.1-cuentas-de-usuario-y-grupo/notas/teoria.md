@@ -129,6 +129,9 @@ PASS_MIN_DAYS   0        # Dias minimos entre cambios
 PASS_WARN_AGE   7        # Dias de aviso antes de expirar
 PASS_MIN_LEN    5        # Longitud minima (no siempre respetado)
 
+# Mascara de permisos por defecto para nuevos archivos
+UMASK           077
+
 # Crear directorio home automaticamente
 CREATE_HOME     yes
 
@@ -300,7 +303,68 @@ Dias de aviso antes de caducidad                : 14
 
 ---
 
-## 6. Comandos de consulta
+## 6. Comandos para modificar informacion del usuario
+
+### chfn - Cambiar informacion GECOS (finger)
+
+`chfn` (change finger) permite modificar el campo GECOS (campo 5) de `/etc/passwd`, que contiene informacion personal del usuario.
+
+```bash
+# Modo interactivo (pide cada campo)
+chfn sandra
+
+# Cambiar el nombre completo
+chfn -f "Sandra Garcia Lopez" sandra
+
+# Cambiar la oficina
+chfn -o "Oficina 301" sandra
+
+# Cambiar telefono de oficina
+chfn -p "555-1234" sandra
+
+# Cambiar telefono de casa
+chfn -h "555-5678" sandra
+
+# Un usuario normal puede cambiar su propia informacion
+chfn
+```
+
+**Formato del campo GECOS** (subcampos separados por coma):
+```
+Nombre completo,Oficina,Telefono oficina,Telefono casa
+Sandra Garcia Lopez,Oficina 301,555-1234,555-5678
+```
+
+### chsh - Cambiar shell de login
+
+`chsh` (change shell) permite cambiar el shell de login del usuario (campo 7 de `/etc/passwd`).
+
+```bash
+# Cambiar el shell de un usuario (como root)
+chsh -s /bin/zsh sandra
+
+# Cambiar el shell propio (usuario normal)
+chsh -s /bin/bash
+
+# Ver los shells validos disponibles
+chsh -l
+cat /etc/shells
+```
+
+**`/etc/shells`** - Lista de shells validos que se pueden asignar a un usuario. `chsh` solo permite asignar shells listados en este archivo.
+
+```
+# Contenido tipico de /etc/shells
+/bin/sh
+/bin/bash
+/bin/zsh
+/usr/bin/zsh
+/usr/bin/fish
+```
+
+---
+
+## 7. Comandos de consulta
 
 ### id - Informacion de usuario y grupos
 ```bash
@@ -329,7 +393,7 @@ getent group               # Listar todos los grupos
 getent shadow sandra       # Buscar en shadow (requiere permisos)
 ```
 
-**Ventaja sobre `cat /etc/passwd`:** `getent` tambien muestra usuarios de fuentes remotas (LDAP, NIS).
+**Ventaja sobre `cat /etc/passwd`:** `getent` consulta todas las fuentes configuradas en `/etc/nsswitch.conf`, incluyendo **LDAP**, **NIS/NIS+** y otras bases de datos remotas. Por ello es la forma recomendada de consultar usuarios y grupos en entornos empresariales.
 
 ### newgrp - Cambiar grupo primario temporalmente
 ```bash
@@ -351,7 +415,7 @@ gpasswd -M user1,user2 grupo     # Establecer la lista de miembros
 
 ---
 
-## 7. Flujo completo: crear un usuario
+## 8. Flujo completo: crear un usuario
 
 ```bash
 # 1. Crear usuario con home directory
@@ -380,6 +444,8 @@ chage -l sandra
 5. **`userdel -r`** elimina usuario Y su home; sin `-r` conserva el home
 6. **`passwd -l`** bloquea cuenta; **`passwd -e`** fuerza cambio de contrasena
 7. **`chage -l`** lista info de envejecimiento; **`chage -d 0`** fuerza cambio al proximo login
-8. **`getent`** consulta bases de datos NSS (incluye LDAP, NIS)
-9. **`newgrp`** cambia grupo primario temporalmente
-10. UID 0 = root; 1-999 = sistema; 1000+ = usuarios regulares
+8. **`getent`** consulta bases de datos NSS (incluye LDAP, NIS via `/etc/nsswitch.conf`)
+9. **`/etc/login.defs`** define UID_MIN/MAX, PASS_MAX_DAYS, PASS_MIN_DAYS, PASS_WARN_AGE, UMASK, CREATE_HOME, USERGROUPS_ENAB
+10. **`chfn`** cambia la informacion GECOS (finger); **`chsh`** cambia el shell de login
+11. **`newgrp`** cambia grupo primario temporalmente
+12. UID 0 = root; 1-999 = sistema; 1000+ = usuarios regulares

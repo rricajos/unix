@@ -485,7 +485,103 @@ Columnas de `free`:
 
 ---
 
-## 11. Resumen de flujo de trabajo tipico
+## 11. Comandos adicionales de procesos
+
+### `pstree` - Arbol de procesos
+
+`pstree` muestra los procesos del sistema en formato de arbol, visualizando la relacion padre-hijo entre procesos.
+
+```bash
+pstree                    # Muestra el arbol completo desde init/systemd
+pstree -p                 # Muestra PIDs junto a los nombres
+pstree -u                 # Muestra cambios de usuario entre procesos
+pstree -a                 # Muestra argumentos de linea de comandos
+pstree -h                 # Resalta el proceso actual y sus ancestros
+pstree -H PID             # Resalta un PID especifico y sus ancestros
+pstree sandra             # Muestra solo procesos del usuario sandra
+pstree -p 1234            # Muestra el arbol a partir del PID 1234
+pstree -s 1234            # Muestra los ancestros del PID 1234
+```
+
+Ejemplo de salida:
+```
+systemd─┬─NetworkManager───2*[{NetworkManager}]
+        ├─sshd───sshd───bash───pstree
+        ├─cron
+        └─rsyslogd───3*[{rsyslogd}]
+```
+
+> **Para el examen**: `pstree` es util para visualizar la jerarquia de procesos. La opcion `-p` para ver PIDs es la mas preguntada.
+
+### `pidof` - Obtener PID por nombre de programa
+
+`pidof` devuelve el PID de un programa en ejecucion buscando por su nombre exacto.
+
+```bash
+pidof sshd                # Devuelve el/los PID(s) del proceso sshd
+pidof -s sshd             # Devuelve solo UN PID (single shot)
+pidof -x script.sh        # Busca tambien en scripts
+```
+
+Diferencia con `pgrep`:
+| Comando | Coincidencia | Tipo |
+|---------|-------------|------|
+| `pidof` | Nombre exacto del programa | Comando externo |
+| `pgrep` | Patron parcial (regex) | Comando externo |
+
+```bash
+# pidof busca por nombre exacto del ejecutable
+pidof bash                # Devuelve PIDs de todos los procesos bash
+
+# pgrep permite patrones parciales
+pgrep -l bas              # Encuentra bash, basename, etc.
+```
+
+### Directorio `/proc/PID/`
+
+El sistema de archivos virtual `/proc` contiene un subdirectorio por cada proceso en ejecucion, nombrado con su PID. Estos directorios contienen informacion detallada del proceso en forma de archivos virtuales.
+
+```bash
+# Ver informacion del proceso con PID 1 (init/systemd)
+ls /proc/1/
+```
+
+**Archivos mas importantes dentro de `/proc/PID/`:**
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `/proc/PID/cmdline` | Linea de comandos con la que se inicio el proceso |
+| `/proc/PID/status` | Estado del proceso (nombre, estado, PID, PPID, UIDs, memoria, etc.) |
+| `/proc/PID/fd/` | Directorio con enlaces simbolicos a los descriptores de archivo abiertos |
+| `/proc/PID/environ` | Variables de entorno del proceso |
+| `/proc/PID/cwd` | Enlace simbolico al directorio de trabajo actual del proceso |
+| `/proc/PID/exe` | Enlace simbolico al ejecutable del proceso |
+| `/proc/PID/maps` | Regiones de memoria mapeadas |
+| `/proc/PID/stat` | Informacion de estado en formato numerico (usado por `ps`) |
+| `/proc/PID/io` | Estadisticas de entrada/salida del proceso |
+
+```bash
+# Ver la linea de comandos de un proceso
+cat /proc/1234/cmdline | tr '\0' ' '
+
+# Ver el estado de un proceso
+cat /proc/1234/status
+
+# Ver los descriptores de archivo abiertos
+ls -la /proc/1234/fd/
+
+# Ver el directorio de trabajo de un proceso
+readlink /proc/1234/cwd
+
+# Ver el ejecutable de un proceso
+readlink /proc/1234/exe
+```
+
+> **Para el examen**: `/proc/PID/` es una fuente fundamental de informacion sobre procesos. Los archivos `cmdline`, `status` y `fd/` son los mas relevantes. Toda la informacion que muestra `ps` proviene de `/proc`.
+
+---
+
+## 12. Resumen de flujo de trabajo tipico
 
 ```
 1. Ejecutar proceso:        comando &     (background)

@@ -159,6 +159,22 @@ date    # Muestra la hora en esa zona
 - Precision tipica de milisegundos en redes LAN
 - Usa un sistema de **estratos (stratum)**
 
+### Terminologia NTP (IMPORTANTE para el examen)
+
+| Termino | Descripcion |
+|---------|-------------|
+| **Offset** | Diferencia de tiempo entre el reloj local y el servidor NTP (en milisegundos) |
+| **Drift** | Tendencia del reloj local a desviarse con el tiempo. Se registra en el `driftfile` para compensacion continua |
+| **Jitter** | Variacion (inestabilidad) del offset entre consultas sucesivas. Menor jitter = mas estable |
+| **Stratum** | Nivel jerarquico del servidor NTP (0-15). Menor estrato = mas cercano a la fuente de tiempo |
+| **Step** | Ajuste abrupto (salto) del reloj. Se usa cuando la diferencia es grande |
+| **Slew** | Ajuste gradual del reloj acelerando o frenando ligeramente. Preferido para diferencias pequenas |
+| **Insane time** | Diferencia de tiempo demasiado grande (tipicamente > 1000 segundos). NTP puede negarse a corregirla |
+
+**Step vs Slew:**
+- **Step (salto):** Cambia el reloj de golpe. Rapido pero puede causar problemas en aplicaciones sensibles al tiempo (logs desordenados, transacciones duplicadas).
+- **Slew (deslizamiento gradual):** Ajusta el reloj lentamente acelerandolo o frenandolo. Mas seguro para aplicaciones en produccion, pero tarda mas en sincronizar.
+
 ### Sistema de estratos NTP
 | Estrato | Descripcion |
 |---------|------------|
@@ -202,9 +218,24 @@ restrict ::1
 
 ### Comandos asociados
 ```bash
-ntpdate pool.ntp.org        # Sincronizar una vez (no usar con ntpd activo)
 ntpq -p                     # Mostrar peers/estado de sincronizacion
 ```
+
+### `ntpdate` (DEPRECADO)
+
+`ntpdate` era una herramienta para sincronizacion puntual (one-shot) del reloj.
+
+```bash
+ntpdate pool.ntp.org        # Sincronizar una vez (ajuste tipo step)
+ntpdate -q pool.ntp.org     # Solo consultar sin ajustar
+```
+
+**IMPORTANTE:** `ntpdate` esta **deprecado** y ha sido reemplazado por:
+- `ntpd -gq` (sincronizar una vez y salir)
+- `chronyd -q` (con chrony)
+- `timedatectl set-ntp true` (con systemd-timesyncd)
+
+**No debe usarse `ntpdate` mientras `ntpd` o `chronyd` estan en ejecucion**, ya que causa conflictos con el ajuste gradual (slew) que realizan estos demonios.
 
 ### Interpretar `ntpq -p`
 ```
@@ -288,10 +319,26 @@ MS Name/IP address         Stratum Poll Reach LastRx Last sample
 
 ---
 
+## SNTP vs NTP
+
+| Caracteristica | NTP (completo) | SNTP (Simple NTP) |
+|---------------|----------------|---------------------|
+| Complejidad | Completo, con algoritmos avanzados | Simplificado, subconjunto de NTP |
+| Precision | Alta (microsegundos) | Menor (milisegundos) |
+| Ajuste del reloj | Step y **slew** (gradual) | Solo **step** (saltos) |
+| Actua como servidor | Si (ntpd, chronyd) | No (solo cliente) |
+| Calculo de drift | Si (mantiene driftfile) | No |
+| Multiples fuentes | Si (algoritmo de seleccion) | Tipicamente una fuente |
+| Implementacion tipica | ntpd, chronyd | **systemd-timesyncd** |
+
+**Para el examen:** `systemd-timesyncd` usa SNTP (no NTP completo). Es mas simple y menos preciso, pero suficiente para la mayoria de estaciones de trabajo. Para servidores que requieren alta precision o que deben actuar como servidores NTP para otros, se debe usar `ntpd` o `chronyd`.
+
+---
+
 ## systemd-timesyncd
 
 ### Caracteristicas
-- Cliente NTP ligero integrado en systemd
+- Cliente **SNTP** ligero integrado en systemd (no NTP completo)
 - Solo puede actuar como **cliente** (no como servidor)
 - Es la opcion mas simple para sincronizacion NTP basica
 - Se activa con `timedatectl set-ntp true`
@@ -333,9 +380,12 @@ timedatectl show-timesync             # Propiedades del servicio
 2. **hwclock --systohc** copia sistema -> hardware, **--hctosys** hardware -> sistema
 3. **timedatectl** es la herramienta moderna de systemd para gestionar hora y zona
 4. **NTP usa UDP puerto 123** y un sistema de estratos (0-15, 16=invalido)
-5. **/etc/adjtime** indica si el RTC esta en UTC o LOCAL
-6. **ntpq -p** muestra los peers; `*` indica el servidor seleccionado
-7. **chronyc sources** es el equivalente de `ntpq -p` para chrony
-8. **systemd-timesyncd** es solo cliente NTP, ntpd y chrony pueden ser servidor
-9. **/etc/localtime** define la zona horaria del sistema (enlace a `/usr/share/zoneinfo/`)
-10. **pool.ntp.org** es el pool publico de servidores NTP
+5. **Terminologia NTP**: offset (diferencia), drift (desviacion), jitter (variacion), step (salto), slew (ajuste gradual)
+6. **SNTP** (usado por systemd-timesyncd) es mas simple que NTP: solo cliente, solo step, sin calculo de drift
+7. **`ntpdate`** esta deprecado; reemplazado por `ntpd -gq`, `chronyd -q` o `timedatectl set-ntp true`
+8. **/etc/adjtime** indica si el RTC esta en UTC o LOCAL
+9. **ntpq -p** muestra los peers; `*` indica el servidor seleccionado
+10. **chronyc sources** es el equivalente de `ntpq -p` para chrony
+11. **systemd-timesyncd** es solo cliente SNTP, ntpd y chrony pueden ser servidor NTP completo
+12. **/etc/localtime** define la zona horaria del sistema (enlace a `/usr/share/zoneinfo/`)
+13. **pool.ntp.org** es el pool publico de servidores NTP

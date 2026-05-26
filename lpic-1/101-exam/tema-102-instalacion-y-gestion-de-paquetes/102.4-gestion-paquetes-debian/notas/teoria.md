@@ -67,10 +67,15 @@ dpkg -i paquete1.deb paquete2.deb
 **Importante**: Si faltan dependencias, dpkg mostrara un error pero dejara el paquete en estado "parcialmente instalado". Se puede resolver con:
 
 ```bash
-apt-get install -f    # Instala las dependencias faltantes
-# o
+# Reparar dependencias rotas (instala las dependencias faltantes automaticamente)
+apt-get install -f
+# o equivalentemente:
+apt-get -f install
+# o con apt moderno:
 apt --fix-broken install
 ```
+
+La opcion `-f` (o `--fix-broken`) indica a apt que intente corregir un sistema con dependencias rotas. Es especialmente util despues de instalar un paquete `.deb` con `dpkg -i` que tenia dependencias no satisfechas.
 
 ### Desinstalar paquetes con dpkg
 
@@ -188,9 +193,14 @@ apt full-upgrade
 apt-get dist-upgrade
 ```
 
-**Diferencia clave**:
-- `upgrade`: Actualiza paquetes existentes sin eliminar ninguno. Si una actualizacion requiere eliminar otro paquete, la omite.
-- `full-upgrade` / `dist-upgrade`: Actualizacion mas agresiva. Puede eliminar paquetes si es necesario para resolver dependencias.
+**Diferencia clave entre `upgrade` y `dist-upgrade`/`full-upgrade`:**
+
+| Comando | Comportamiento | Uso tipico |
+|---------|---------------|------------|
+| `apt upgrade` / `apt-get upgrade` | Actualiza paquetes existentes. **Nunca** elimina paquetes ni instala nuevos. Si una actualizacion requiere eliminar otro paquete, la omite | Actualizaciones de seguridad rutinarias |
+| `apt full-upgrade` / `apt-get dist-upgrade` | Actualizacion **mas agresiva**. Puede **eliminar** paquetes obsoletos e **instalar** nuevos paquetes si es necesario para resolver dependencias | Actualizar a una nueva version de la distribucion o cuando hay cambios mayores de dependencias |
+
+> **Para el examen:** `apt-get dist-upgrade` no significa necesariamente actualizar la distribucion completa. Solo significa que permite gestiones de dependencias mas agresivas (eliminar e instalar paquetes) durante la actualizacion. `apt full-upgrade` es el equivalente moderno.
 
 ### Instalar paquetes
 
@@ -223,11 +233,25 @@ apt-get remove nginx
 # Purgar (elimina todo incluyendo configuracion)
 apt purge nginx
 apt-get purge nginx
+apt-get remove --purge nginx    # Forma alternativa equivalente a apt-get purge
 
 # Eliminar dependencias huerfanas (ya no necesarias)
 apt autoremove
 apt-get autoremove
+
+# Combinar: purgar y eliminar dependencias huerfanas
+apt autoremove --purge nginx
 ```
+
+**Diferencia entre remove y purge:**
+
+| Comando | Archivos del programa | Archivos de configuracion |
+|---------|----------------------|--------------------------|
+| `apt remove` / `apt-get remove` | Eliminados | **Conservados** |
+| `apt purge` / `apt-get purge` | Eliminados | **Eliminados** |
+| `apt-get remove --purge` | Eliminados | **Eliminados** (equivale a purge) |
+
+> **Para el examen:** `apt-get purge` y `apt-get remove --purge` son equivalentes. Ambos eliminan los archivos de configuracion del paquete. Con `remove` (sin purge), los archivos de configuracion se conservan y el paquete aparece con estado `rc` en `dpkg -l`.
 
 ### Buscar paquetes
 
@@ -255,17 +279,27 @@ apt-cache rdepends nginx
 
 ### Limpiar cache
 
+Los paquetes `.deb` descargados por apt se almacenan en **`/var/cache/apt/archives/`**. Con el tiempo, esta cache puede ocupar mucho espacio en disco.
+
 ```bash
-# Eliminar paquetes .deb descargados en cache
+# Eliminar TODOS los paquetes .deb descargados en cache
 apt clean
 apt-get clean
+# Vacia completamente /var/cache/apt/archives/
 
-# Eliminar solo paquetes obsoletos de la cache
+# Eliminar solo paquetes obsoletos de la cache (versiones antiguas que ya no estan en repositorios)
 apt autoclean
 apt-get autoclean
+# Conserva los .deb de las versiones actuales de los paquetes
+
+# Ver cuanto espacio ocupa la cache
+du -sh /var/cache/apt/archives/
 ```
 
-La cache de paquetes descargados se almacena en `/var/cache/apt/archives/`.
+| Comando | Que elimina | Espacio liberado |
+|---------|-----------|-----------------|
+| `apt-get clean` | **Todos** los .deb descargados | Maximo |
+| `apt-get autoclean` | Solo .deb de versiones **obsoletas** | Parcial |
 
 ---
 

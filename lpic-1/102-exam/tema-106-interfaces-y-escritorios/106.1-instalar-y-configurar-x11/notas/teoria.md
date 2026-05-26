@@ -188,6 +188,25 @@ Section "ServerLayout"
 EndSection
 ```
 
+### Generar xorg.conf automaticamente
+
+En sistemas modernos, Xorg suele funcionar sin `xorg.conf` gracias a la autodeteccion. Si se necesita generar uno manualmente:
+
+```bash
+# Generar un xorg.conf basado en el hardware detectado
+# (requiere que el servidor X NO este en ejecucion)
+Xorg -configure
+# o equivalente:
+X -configure
+
+# El archivo generado se guarda como:
+# /root/xorg.conf.new
+# Se puede copiar a su ubicacion definitiva:
+cp /root/xorg.conf.new /etc/X11/xorg.conf
+```
+
+**IMPORTANTE para el examen:** El servidor X debe estar detenido para ejecutar `Xorg -configure`. El archivo generado es un punto de partida que puede requerir ajustes manuales.
+
 ### Directorio /etc/X11/xorg.conf.d/
 En sistemas modernos, se prefieren archivos de configuracion parciales en este directorio:
 ```
@@ -197,9 +216,61 @@ En sistemas modernos, se prefieren archivos de configuracion parciales en este d
 ```
 Los archivos se procesan en orden numerico.
 
+### Directorio /usr/share/X11/xorg.conf.d/
+
+Este directorio contiene archivos de configuracion proporcionados por la **distribucion y paquetes del sistema**. No deben editarse directamente ya que se sobrescriben en actualizaciones.
+
+```
+/usr/share/X11/xorg.conf.d/10-evdev.conf
+/usr/share/X11/xorg.conf.d/40-libinput.conf
+/usr/share/X11/xorg.conf.d/70-wacom.conf
+```
+
+**Jerarquia de configuracion (orden de prioridad):**
+1. `/etc/X11/xorg.conf` - Configuracion manual del administrador (maxima prioridad)
+2. `/etc/X11/xorg.conf.d/*.conf` - Configuraciones parciales del administrador
+3. `/usr/share/X11/xorg.conf.d/*.conf` - Configuraciones de la distribucion (menor prioridad)
+
 ---
 
-## 5. Utilidades de informacion
+## 5. Log de Xorg: `/var/log/Xorg.0.log`
+
+El servidor X registra su actividad en archivos de log, fundamentales para la **resolucion de problemas graficos**.
+
+```bash
+# Archivo de log principal (display :0)
+/var/log/Xorg.0.log
+
+# Si hay un segundo display (:1)
+/var/log/Xorg.1.log
+
+# En sistemas con systemd, tambien se puede consultar con journalctl
+journalctl -u gdm    # o el display manager correspondiente
+```
+
+### Marcadores en el log
+
+| Marcador | Significado |
+|----------|-------------|
+| `(II)` | Informacion (Informational) |
+| `(WW)` | Advertencia (Warning) |
+| `(EE)` | Error |
+| `(**)` | Valor de configuracion encontrado |
+| `(==)` | Valor por defecto usado |
+
+```bash
+# Buscar errores en el log de Xorg
+grep "(EE)" /var/log/Xorg.0.log
+
+# Buscar advertencias
+grep "(WW)" /var/log/Xorg.0.log
+```
+
+**Para el examen:** Cuando X11 no arranca o presenta problemas, `/var/log/Xorg.0.log` es el primer lugar donde buscar informacion de diagnostico.
+
+---
+
+## 6. Utilidades de informacion
 
 ### xdpyinfo - Informacion del display
 ```bash
@@ -231,7 +302,7 @@ xwininfo -root
 
 ---
 
-## 6. Display Managers (gestores de inicio de sesion)
+## 7. Display Managers (gestores de inicio de sesion)
 
 Un **Display Manager** (DM) proporciona la pantalla de inicio de sesion grafico (login screen). Inicia el servidor X y autentica al usuario.
 
@@ -261,7 +332,7 @@ Protocolo que permite a un display manager gestionar sesiones X remotas. Un thin
 
 ---
 
-## 7. Wayland
+## 8. Wayland
 
 **Wayland** es un protocolo de display mas moderno que busca reemplazar a X11.
 
@@ -288,7 +359,7 @@ echo $WAYLAND_DISPLAY      # Si existe, se usa Wayland
 
 ---
 
-## 8. X Forwarding con SSH
+## 9. X Forwarding con SSH
 
 Permite ejecutar aplicaciones graficas en un servidor remoto y verlas en la pantalla local.
 
@@ -329,8 +400,11 @@ Cuando se usa SSH X forwarding, la variable `DISPLAY` se configura automaticamen
 1. **X11** usa arquitectura cliente-servidor: el servidor esta donde esta la pantalla
 2. **DISPLAY=:0** es el display local por defecto; formato completo: `host:display.screen`
 3. **xhost** controla acceso por host (inseguro); **xauth** usa cookies (seguro)
-4. **xorg.conf** tiene secciones: InputDevice, Monitor, Device, Screen, ServerLayout
-5. **Display Managers:** GDM (GNOME), SDDM (KDE), LightDM (ligero), XDM (basico)
-6. **Wayland** es el reemplazo moderno de X11, con compositor integrado
-7. **SSH -X** permite reenvio de X11; requiere `X11Forwarding yes` en el servidor
-8. **~/.Xauthority** almacena las cookies MIT-MAGIC-COOKIE para autenticacion
+4. **`Xorg -configure`** genera un `xorg.conf` basado en el hardware detectado (X debe estar detenido)
+5. **xorg.conf** tiene secciones: InputDevice, Monitor, Device, Screen, ServerLayout
+6. **`/var/log/Xorg.0.log`** es el archivo de log principal para diagnosticar problemas de X11
+7. **`/usr/share/X11/xorg.conf.d/`** contiene configs de la distribucion; `/etc/X11/xorg.conf.d/` las del administrador
+8. **Display Managers:** GDM (GNOME), SDDM (KDE), LightDM (ligero), XDM (basico)
+9. **Wayland** es el reemplazo moderno de X11, con compositor integrado
+10. **SSH -X** permite reenvio de X11; requiere `X11Forwarding yes` en el servidor
+11. **~/.Xauthority** almacena las cookies MIT-MAGIC-COOKIE para autenticacion

@@ -287,9 +287,20 @@ locate -n 10 "*.conf"
 # Contar resultados
 locate -c "*.log"
 
+# Buscar solo por el nombre base del archivo (sin la ruta)
+locate -b "passwd"
+# Solo encuentra archivos cuyo nombre base es "passwd"
+# Sin -b, tambien encontraria /ruta/que/contiene/passwd/en/la/ruta
+
+# Buscar exactamente el nombre base (con \)
+locate -b '\passwd'
+# Equivale a buscar archivos cuyo nombre es exactamente "passwd"
+
 # Usar expresiones regulares
 locate -r '/etc/.*\.conf$'
 ```
+
+> **Para el examen**: `locate -b` (basename) restringe la busqueda al nombre del archivo solamente, ignorando la ruta. Sin `-b`, `locate passwd` encontraria tanto `/etc/passwd` como `/documentos/passwd_info/datos.txt` (porque la ruta contiene "passwd").
 
 #### updatedb
 
@@ -299,6 +310,26 @@ sudo updatedb
 ```
 
 La base de datos se almacena normalmente en `/var/lib/mlocate/mlocate.db` o `/var/lib/plocate/plocate.db`.
+
+#### Actualizacion automatica con cron
+
+En la mayoria de distribuciones, `updatedb` se ejecuta automaticamente mediante una **tarea cron diaria** (normalmente a las 4:00 AM o similar). Esta tarea se encuentra tipicamente en:
+
+- `/etc/cron.daily/mlocate` (o `plocate`)
+- O como un **timer de systemd**: `plocate-updatedb.timer`
+
+```bash
+# Verificar si existe la tarea cron
+ls /etc/cron.daily/*locate*
+
+# Verificar el timer de systemd (distribuciones modernas)
+systemctl list-timers | grep locate
+
+# Ejecutar manualmente si se necesita una actualizacion inmediata
+sudo updatedb
+```
+
+> **Para el examen**: Es importante saber que `updatedb` se ejecuta automaticamente a traves de cron (generalmente a diario). Los archivos creados despues de la ultima ejecucion de `updatedb` no apareceran en los resultados de `locate` hasta la proxima actualizacion.
 
 #### /etc/updatedb.conf
 

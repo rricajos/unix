@@ -167,7 +167,49 @@ mkfs -t tipo /dev/sdXN
 mkfs.tipo /dev/sdXN
 ```
 
-### 4.2 Sistemas de archivos Linux
+### 4.2 mke2fs - Crear sistemas de archivos ext
+
+`mke2fs` es el comando subyacente que se ejecuta cuando se usa `mkfs.ext2`, `mkfs.ext3` o `mkfs.ext4`. Permite mayor control sobre los parametros de creacion del sistema de archivos.
+
+```bash
+# Equivalentes:
+mke2fs /dev/sda1                            # Crea ext2 por defecto
+mke2fs -t ext4 /dev/sda1                    # Crea ext4 (equivale a mkfs.ext4)
+mke2fs -t ext3 /dev/sda1                    # Crea ext3 (equivale a mkfs.ext3)
+```
+
+**Opciones principales de mke2fs:**
+
+| Opcion | Descripcion |
+|--------|-------------|
+| `-t tipo` | Tipo de sistema de archivos (ext2, ext3, ext4) |
+| `-n` | **Dry-run**: muestra lo que haria sin crear el FS (util para planificar) |
+| `-b tamano` | Tamano de bloque en bytes (1024, 2048 o 4096) |
+| `-L etiqueta` | Asignar una etiqueta (label) al sistema de archivos |
+| `-N num` | Establecer el numero de inodos |
+| `-m porcentaje` | Porcentaje de bloques reservados para root (default 5%) |
+| `-j` | Crear con journal (convierte a ext3) |
+| `-i bytes` | Ratio bytes/inodo (controla cuantos inodos se crean) |
+| `-c` | Verificar bloques defectuosos antes de crear el FS |
+| `-cc` | Verificacion exhaustiva de bloques defectuosos (lectura/escritura) |
+
+```bash
+# Crear ext4 con etiqueta y bloques de 4096 bytes
+mke2fs -t ext4 -b 4096 -L "datos" /dev/sda1
+
+# Simular la creacion sin aplicar cambios (dry-run)
+mke2fs -n -t ext4 /dev/sda1
+
+# Crear ext4 con solo 1% reservado para root (util en discos de datos)
+mke2fs -t ext4 -m 1 /dev/sda1
+
+# Crear ext4 verificando bloques defectuosos
+mke2fs -t ext4 -c /dev/sda1
+```
+
+> **Para el examen**: `mke2fs` es equivalente a `mkfs.ext2/ext3/ext4`. La opcion `-n` (dry-run) es importante para verificar parametros antes de crear el FS. La opcion `-b` para el tamano de bloque y `-L` para la etiqueta son las mas preguntadas.
+
+### 4.3 Sistemas de archivos Linux
 
 #### ext2
 - Sin journaling
@@ -244,7 +286,7 @@ mkfs.vfat -F 32 /dev/sda6
 mkfs.exfat /dev/sda7
 ```
 
-### 4.3 Tabla resumen de sistemas de archivos
+### 4.4 Tabla resumen de sistemas de archivos
 
 | FS | Journaling | Tamano max volumen | Tamano max archivo | Notas |
 |----|-----------|--------------------|--------------------|-------|

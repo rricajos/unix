@@ -13,6 +13,23 @@ La primera linea de un script indica que interprete debe usarse para ejecutarlo:
 
 **IMPORTANTE:** El shebang DEBE ser la primera linea del archivo, sin espacios antes de `#!`.
 
+### **`#!/usr/bin/env bash` - Shebang portable (IMPORTANTE para el examen)**
+
+La forma **`#!/usr/bin/env bash`** es la alternativa portable recomendada frente a `#!/bin/bash`:
+
+- **`#!/bin/bash`**: Ruta absoluta. Asume que bash esta en `/bin/bash`. Puede fallar en sistemas donde bash esta en otra ubicacion (ej: `/usr/local/bin/bash` en FreeBSD).
+- **`#!/usr/bin/env bash`**: Usa el comando `env` para buscar `bash` en el `PATH` del sistema. Funciona independientemente de donde este instalado bash.
+
+```bash
+#!/usr/bin/env bash
+# Este script funcionara en cualquier sistema donde bash este en el PATH,
+# sin importar su ubicacion exacta en el sistema de archivos.
+echo "Script portable ejecutandose con bash"
+```
+
+**Ventaja:** Maxima portabilidad entre diferentes distribuciones Linux, BSD y macOS.
+**Desventaja:** No se pueden pasar opciones adicionales al interprete de forma portable (ej: `#!/usr/bin/env bash -x` puede no funcionar en todos los sistemas).
+
 ### Permisos de ejecucion
 ```bash
 # Dar permiso de ejecucion
@@ -484,7 +501,7 @@ fi
 
 ## Resumen para el examen
 
-1. **Shebang** `#!/bin/bash` debe ser la primera linea
+1. **Shebang** `#!/bin/bash` debe ser la primera linea; **`#!/usr/bin/env bash`** es la alternativa portable
 2. `$@` preserva argumentos individuales; `$*` los une en uno solo
 3. `$?` contiene el codigo de salida del ultimo comando (0 = exito)
 4. `[ ]` es POSIX compatible; `[[ ]]` es extension de bash con mas funciones

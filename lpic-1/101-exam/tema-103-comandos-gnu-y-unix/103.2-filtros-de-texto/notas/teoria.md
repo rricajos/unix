@@ -58,6 +58,66 @@ tail -f -n 20 archivo.log         # Seguir mostrando las ultimas 20 lineas y nue
 
 ---
 
+## 2b. Paginadores: less y more
+
+Los **paginadores** permiten visualizar archivos largos pagina por pagina, sin cargar todo el contenido a la vez.
+
+### more
+
+`more` es el paginador mas antiguo. Permite avanzar pero tiene navegacion limitada.
+
+```bash
+more archivo.txt                  # Visualizar archivo pagina a pagina
+more -10 archivo.txt              # Mostrar 10 lineas a la vez
+more +20 archivo.txt              # Empezar desde la linea 20
+more +/patron archivo.txt         # Empezar desde la primera coincidencia del patron
+ls -la /etc | more                # Paginar la salida de otro comando
+```
+
+**Teclas de navegacion en more:**
+| Tecla | Accion |
+|-------|--------|
+| `Space` | Avanzar una pagina |
+| `Enter` | Avanzar una linea |
+| `b` | Retroceder una pagina (no en todos los sistemas) |
+| `/patron` | Buscar hacia adelante |
+| `q` | Salir |
+| `h` | Ayuda |
+
+### less
+
+`less` es una version mejorada de `more` con navegacion completa en ambas direcciones. Su nombre viene del dicho "less is more" (menos es mas).
+
+```bash
+less archivo.txt                  # Visualizar archivo
+less -N archivo.txt               # Mostrar numeros de linea
+less -S archivo.txt               # No ajustar lineas largas (desplazar horizontalmente)
+less +F archivo.txt               # Modo follow (como tail -f), salir con Ctrl+C
+cat /var/log/syslog | less        # Paginar la salida de otro comando
+```
+
+**Teclas de navegacion en less:**
+| Tecla | Accion |
+|-------|--------|
+| `Space` o `f` | Avanzar una pagina |
+| `b` | Retroceder una pagina |
+| `j` o `Enter` | Avanzar una linea |
+| `k` | Retroceder una linea |
+| `g` | Ir al inicio del archivo |
+| `G` | Ir al final del archivo |
+| `/patron` | Buscar hacia adelante |
+| `?patron` | Buscar hacia atras |
+| `n` | Siguiente coincidencia de busqueda |
+| `N` | Coincidencia anterior |
+| `q` | Salir |
+| `h` | Ayuda |
+| `v` | Abrir el archivo en el editor ($EDITOR) |
+| `-N` | Alternar numeros de linea (estando dentro de less) |
+
+> **Para el examen**: `less` es mas potente que `more` (permite retroceder, buscar hacia atras). Las paginas de manual (`man`) usan `less` como paginador por defecto. Las teclas de navegacion de less son iguales a las de `man` y vi.
+
+---
+
 ## 3. sort
 
 `sort` ordena las lineas de un archivo o flujo de texto.

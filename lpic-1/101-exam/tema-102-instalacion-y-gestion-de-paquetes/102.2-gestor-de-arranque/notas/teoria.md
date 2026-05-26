@@ -106,13 +106,15 @@ GRUB_TERMINAL=console
 
 | Variable | Descripcion |
 |----------|-------------|
-| `GRUB_DEFAULT` | Entrada por defecto (numero o "saved") |
-| `GRUB_TIMEOUT` | Segundos de espera del menu |
+| `GRUB_DEFAULT` | Entrada por defecto (numero, "saved", o nombre de entrada). Con "saved" recuerda la ultima entrada seleccionada |
+| `GRUB_SAVEDEFAULT` | Si es "true", guarda la ultima entrada seleccionada (requiere `GRUB_DEFAULT=saved`) |
+| `GRUB_TIMEOUT` | Segundos de espera del menu. Valor `-1` espera indefinidamente |
 | `GRUB_TIMEOUT_STYLE` | `menu` (visible), `hidden` (oculto), `countdown` |
-| `GRUB_CMDLINE_LINUX` | Parametros del kernel para TODAS las entradas |
-| `GRUB_CMDLINE_LINUX_DEFAULT` | Parametros solo para la entrada por defecto |
+| `GRUB_CMDLINE_LINUX` | Parametros del kernel para **TODAS** las entradas (incluida recovery) |
+| `GRUB_CMDLINE_LINUX_DEFAULT` | Parametros solo para la entrada por defecto (no recovery) |
 | `GRUB_DISABLE_RECOVERY` | Si es "true", no muestra opciones de recuperacion |
 | `GRUB_DISABLE_OS_PROBER` | Si es "true", no detecta otros SO |
+| `GRUB_ENABLE_CRYPTODISK` | Si es "y", habilita soporte para arrancar desde discos cifrados con LUKS |
 
 ### /etc/grub.d/
 
@@ -181,13 +183,25 @@ Es un wrapper que facilita la regeneracion de la configuracion.
 
 ## 5. Interaccion con el menu de GRUB al arranque
 
-### Teclas de acceso
+### Mostrar el menu de GRUB (si esta oculto)
 
-- **Shift** (BIOS) o **Esc** (UEFI): Mostrar el menu de GRUB si esta oculto
-- **`e`**: Editar la entrada seleccionada del menu (cambios temporales)
-- **`c`**: Acceder a la linea de comandos de GRUB
+Si `GRUB_TIMEOUT_STYLE=hidden` esta configurado, el menu de GRUB no se muestra por defecto. Para forzar su aparicion:
 
-### Editar entradas al arranque
+- **Mantener pulsada la tecla `Shift`** durante el arranque (en sistemas con BIOS)
+- **Pulsar `Esc`** durante el arranque (en sistemas con UEFI)
+
+> **Para el examen:** La tecla `Shift` (mantenida) es la forma de mostrar un menu de GRUB oculto en sistemas BIOS. En UEFI se usa `Esc`.
+
+### Teclas de acceso en el menu
+
+| Tecla | Funcion |
+|-------|---------|
+| **`e`** | Editar la entrada seleccionada del menu (cambios temporales) |
+| **`c`** | Acceder a la consola de comandos de GRUB (shell `grub>`) |
+| **`Ctrl+X`** o **`F10`** | Arrancar con los cambios editados |
+| **`Esc`** | Cancelar la edicion y volver al menu |
+
+### Editar entradas al arranque (tecla `e`)
 
 Al pulsar `e` sobre una entrada del menu, se puede modificar temporalmente la linea del kernel. Usos comunes:
 
@@ -199,17 +213,26 @@ Despues de editar, se pulsa **Ctrl+X** o **F10** para arrancar con los cambios.
 
 **Los cambios realizados con `e` son temporales** y se pierden en el siguiente reinicio.
 
-### Linea de comandos de GRUB
+### Consola de GRUB2 (shell `grub>`)
 
-Al pulsar `c`, se accede a un shell de GRUB con comandos como:
+Al pulsar `c` en el menu, se accede a la consola completa de GRUB2. Esta consola permite arrancar manualmente el sistema:
 
 ```
-grub> ls                    # Listar discos y particiones
-grub> ls (hd0,1)/          # Listar contenido de una particion
-grub> set root=(hd0,1)     # Establecer particion raiz
-grub> linux /vmlinuz root=/dev/sda1   # Cargar kernel
-grub> initrd /initrd.img   # Cargar initramfs
-grub> boot                  # Arrancar
+grub> ls                                # Listar discos y particiones disponibles
+grub> ls (hd0,1)/                       # Listar contenido de una particion
+grub> set root=(hd0,1)                  # Establecer la particion que contiene /boot
+grub> linux /vmlinuz root=/dev/sda1     # Cargar el kernel especificando la particion raiz
+grub> initrd /initrd.img                # Cargar la imagen initramfs
+grub> boot                               # Arrancar el sistema con lo configurado
+```
+
+**Otros comandos utiles en la consola `grub>`:**
+```
+grub> set                               # Ver todas las variables configuradas
+grub> set root=(hd0,msdos1)            # Establecer particion (formato MBR)
+grub> set root=(hd0,gpt2)             # Establecer particion (formato GPT)
+grub> cat (hd0,1)/etc/hostname          # Leer un archivo desde una particion
+grub> configfile (hd0,1)/boot/grub/grub.cfg   # Cargar un archivo de configuracion
 ```
 
 ---
@@ -218,16 +241,28 @@ grub> boot                  # Arrancar
 
 ### Escenario: GRUB muestra "grub rescue>"
 
-Esto indica que GRUB no puede encontrar sus archivos de configuracion o modulos. Pasos de recuperacion:
+El prompt `grub rescue>` aparece cuando GRUB no puede encontrar sus archivos de configuracion o modulos (por ejemplo, tras redimensionar particiones o eliminar archivos de `/boot/grub/`). En este modo, solo hay disponibles unos pocos comandos basicos.
+
+**Pasos de recuperacion desde `grub rescue>`:**
 
 ```
-grub rescue> ls                         # Ver particiones disponibles
-grub rescue> ls (hd0,1)/boot/grub       # Buscar archivos de GRUB
-grub rescue> set prefix=(hd0,1)/boot/grub
-grub rescue> set root=(hd0,1)
-grub rescue> insmod normal
-grub rescue> normal                     # Volver al menu normal
+grub rescue> ls                             # Ver particiones disponibles
+grub rescue> ls (hd0,1)/boot/grub           # Buscar archivos de GRUB en cada particion
+grub rescue> set prefix=(hd0,1)/boot/grub   # Establecer la ubicacion de los modulos de GRUB
+grub rescue> set root=(hd0,1)               # Establecer la particion raiz
+grub rescue> insmod normal                  # Cargar el modulo 'normal' de GRUB
+grub rescue> insmod linux                   # Cargar el modulo 'linux' (si es necesario)
+grub rescue> normal                         # Iniciar el modo normal de GRUB (muestra el menu)
 ```
+
+**Diferencia entre `grub>` y `grub rescue>`:**
+
+| Prompt | Situacion | Comandos disponibles |
+|--------|-----------|---------------------|
+| `grub>` | GRUB cargo sus modulos pero no encontro `grub.cfg` o se presiono `c` | Todos los comandos: `ls`, `set`, `linux`, `initrd`, `boot`, `insmod`, etc. |
+| `grub rescue>` | GRUB no puede encontrar sus propios modulos | Solo comandos basicos: `ls`, `set`, `insmod`, `unset` |
+
+> **Para el examen:** En `grub rescue>`, la clave es usar `set prefix=` para indicar donde estan los modulos de GRUB, luego `insmod normal` para cargar el modulo normal y finalmente ejecutar `normal` para volver al menu estandar.
 
 ### Escenario: Reinstalar GRUB desde un Live CD
 
@@ -255,23 +290,54 @@ reboot
 
 ---
 
-## 7. GRUB Legacy (mencion breve)
+## 7. GRUB Legacy (version 0.97)
 
-Aunque GRUB Legacy esta obsoleto, el examen puede incluir preguntas basicas:
+Aunque GRUB Legacy esta obsoleto, el examen puede incluir preguntas sobre sus diferencias con GRUB2.
 
-- Archivo de configuracion: `/boot/grub/menu.lst` o `/boot/grub/grub.conf`
-- Numeracion de particiones desde 0: `(hd0,0)` = primera particion del primer disco
-- Estructura basica:
+### Archivo de configuracion
+
+- **Ubicacion**: `/boot/grub/menu.lst` (Debian/Ubuntu) o `/boot/grub/grub.conf` (Red Hat/CentOS)
+- A diferencia de GRUB2, el archivo de configuracion de GRUB Legacy **se edita directamente**
+- No existe un equivalente a `grub-mkconfig` o `update-grub`
+
+### Numeracion
+
+- **Discos** se numeran desde **0**: `hd0` = primer disco, `hd1` = segundo disco
+- **Particiones** se numeran desde **0**: `(hd0,0)` = primera particion del primer disco
+- Esto contrasta con GRUB2, donde las particiones se numeran desde **1**: `(hd0,1)`
+
+### Sintaxis del archivo de configuracion
 
 ```
-default 0
-timeout 10
+# Opciones globales
+default 0                              # Entrada por defecto (primera = 0)
+timeout 10                             # Tiempo de espera en segundos
+splashimage=(hd0,0)/grub/splash.xpm.gz # Imagen de fondo
 
-title Linux
-  root (hd0,0)
-  kernel /vmlinuz root=/dev/sda1
-  initrd /initrd.img
+# Primera entrada del menu
+title Linux CentOS                     # Titulo mostrado en el menu
+  root (hd0,0)                         # Particion que contiene /boot
+  kernel /vmlinuz root=/dev/sda1 ro quiet   # Kernel y sus parametros
+  initrd /initrd.img                   # Imagen initramfs
+
+# Segunda entrada (otro SO)
+title Windows XP
+  rootnoverify (hd0,1)                # Particion de Windows (sin verificar FS)
+  chainloader +1                       # Cargar el bootloader de esa particion
 ```
+
+**Directivas principales de GRUB Legacy:**
+
+| Directiva | Descripcion |
+|-----------|-------------|
+| `default` | Numero de la entrada por defecto (base 0) |
+| `timeout` | Tiempo de espera del menu en segundos |
+| `title` | Titulo de la entrada del menu |
+| `root` | Particion que contiene los archivos de arranque |
+| `kernel` | Ruta al kernel y sus parametros |
+| `initrd` | Ruta a la imagen initramfs/initrd |
+| `rootnoverify` | Establecer particion raiz sin intentar montarla |
+| `chainloader +1` | Cargar el primer sector de la particion (para Windows) |
 
 ---
 

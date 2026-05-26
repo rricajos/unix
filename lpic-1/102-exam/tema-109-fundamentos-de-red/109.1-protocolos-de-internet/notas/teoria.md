@@ -132,6 +132,70 @@ Abreviada:  2001:db8::1
 | **Multicast** | `ff00::/8` | Multidifusion |
 | **No especificada** | `::` | Equivalente a 0.0.0.0 |
 
+### Tipos de direcciones IPv6
+
+| Tipo | Descripcion |
+|------|-------------|
+| **Unicast** | Identifica una unica interfaz. El paquete se entrega a esa interfaz |
+| **Multicast** | Identifica un grupo de interfaces. El paquete se entrega a todas las del grupo |
+| **Anycast** | Identifica un grupo de interfaces. El paquete se entrega a la **mas cercana** del grupo |
+
+> **Nota:** IPv6 **no tiene broadcast**. La funcionalidad de broadcast se implementa mediante multicast.
+
+### Notacion de puertos con IPv6
+
+En URLs y configuraciones, las direcciones IPv6 se encierran entre **corchetes** `[]` para distinguir los dos puntos de la direccion del separador de puerto:
+
+```
+# IPv4 - notacion normal
+http://192.168.1.1:443
+
+# IPv6 - la direccion va entre corchetes
+http://[2001:db8::1]:443
+http://[::1]:8080
+ssh://[fe80::1%eth0]:22
+```
+
+**Para el examen:** La notacion `[direccion_IPv6]:puerto` es fundamental para evitar ambiguedades con los `:` de IPv6.
+
+### SLAAC (Stateless Address Autoconfiguration)
+
+**SLAAC** es el mecanismo de autoconfiguracion de direcciones IPv6 **sin estado** (sin necesidad de un servidor DHCP).
+
+- El host genera su propia direccion IPv6 combinando:
+  1. El **prefijo de red** anunciado por el router (via Router Advertisement)
+  2. Un **identificador de interfaz** generado a partir de la MAC (EUI-64) o de forma aleatoria (privacy extensions)
+- No necesita servidor DHCP (pero puede usarse DHCPv6 como complemento)
+- Los routers envian **Router Advertisements (RA)** periodicamente o al ser solicitados (Router Solicitation)
+- Las direcciones **link-local** (`fe80::/10`) se generan siempre automaticamente con SLAAC
+
+```
+Ejemplo de generacion SLAAC:
+Prefijo del router: 2001:db8:1::/64
+MAC del host:       00:1A:2B:3C:4D:5E
+Direccion generada: 2001:db8:1::21a:2bff:fe3c:4d5e/64
+```
+
+### NDP (Neighbor Discovery Protocol)
+
+**NDP** es el protocolo de descubrimiento de vecinos de IPv6, que **reemplaza a ARP** de IPv4.
+
+Funciones principales de NDP:
+- **Resolucion de direcciones**: Equivalente a ARP. Resuelve direcciones IPv6 a direcciones MAC (usa Neighbor Solicitation / Neighbor Advertisement)
+- **Descubrimiento de routers**: Los hosts descubren routers en el enlace local (Router Solicitation / Router Advertisement)
+- **Deteccion de direcciones duplicadas (DAD)**: Verifica que una direccion no este ya en uso antes de asignarla
+- **Redireccion**: Los routers informan a los hosts de rutas mas optimas
+
+NDP usa mensajes **ICMPv6** (no un protocolo separado como ARP).
+
+| Tipo de mensaje NDP | Funcion |
+|---------------------|---------|
+| Router Solicitation (RS) | El host solicita informacion de routers |
+| Router Advertisement (RA) | El router anuncia prefijos y parametros |
+| Neighbor Solicitation (NS) | Consulta direccion MAC (como ARP request) |
+| Neighbor Advertisement (NA) | Responde con direccion MAC (como ARP reply) |
+| Redirect | El router indica una ruta mejor |
+
 ### Diferencias clave IPv4 vs IPv6
 | Caracteristica | IPv4 | IPv6 |
 |---------------|------|------|
@@ -175,21 +239,24 @@ Abreviada:  2001:db8::1
 | 20 | TCP | FTP (datos) |
 | 21 | TCP | FTP (control) |
 | 22 | TCP | SSH |
+| 23 | TCP | Telnet (inseguro, usar SSH) |
 | 25 | TCP | SMTP |
 | 53 | TCP/UDP | DNS |
 | 67/68 | UDP | DHCP (servidor/cliente) |
 | 80 | TCP | HTTP |
 | 110 | TCP | POP3 |
 | 123 | UDP | NTP |
+| 139 | TCP | NetBIOS (sesion) |
 | 143 | TCP | IMAP |
-| 161/162 | UDP | SNMP |
+| 161/162 | UDP | SNMP (consulta/traps) |
 | 389 | TCP | LDAP |
 | 443 | TCP | HTTPS |
-| 465 | TCP | SMTPS |
+| 465 | TCP | SMTPS (SMTP sobre SSL) |
 | 514 | UDP | Syslog |
 | 587 | TCP | SMTP submission |
-| 993 | TCP | IMAPS |
-| 995 | TCP | POP3S |
+| 636 | TCP | LDAPS (LDAP sobre SSL) |
+| 993 | TCP | IMAPS (IMAP sobre SSL) |
+| 995 | TCP | POP3S (POP3 sobre SSL) |
 
 ### Rangos de puertos
 | Rango | Nombre | Descripcion |
@@ -228,10 +295,12 @@ udp     17   UDP
 1. **TCP/IP tiene 4 capas**: Acceso a red, Internet, Transporte, Aplicacion
 2. **Direcciones privadas**: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16
 3. **Formula de hosts**: 2^(32-prefijo) - 2
-4. **IPv6**: 128 bits, `fe80::` es link-local, `::1` es loopback
-5. **TCP** es fiable y orientado a conexion; **UDP** es rapido y sin conexion
-6. **ICMP** es para diagnostico (ping, traceroute)
-7. **Puertos clave**: SSH=22, SMTP=25, DNS=53, HTTP=80, HTTPS=443
-8. **/etc/services** mapea servicios a puertos
-9. IPv6 **no tiene broadcast**, usa multicast
-10. **CIDR /24** = 254 hosts, **/30** = 2 hosts (punto a punto)
+4. **IPv6**: 128 bits, `fe80::` es link-local, `::1` es loopback, notacion de puertos: `[::1]:443`
+5. **SLAAC**: Autoconfiguracion de IPv6 sin servidor DHCP (usa Router Advertisements)
+6. **NDP**: Reemplaza ARP en IPv6 (usa ICMPv6 para resolucion de direcciones y descubrimiento de routers)
+7. **TCP** es fiable y orientado a conexion; **UDP** es rapido y sin conexion
+8. **ICMP** es para diagnostico (ping, traceroute)
+9. **Puertos clave**: SSH=22, Telnet=23, SMTP=25, DNS=53, HTTP=80, HTTPS=443, LDAP=389, LDAPS=636
+10. **/etc/services** mapea servicios a puertos
+11. IPv6 **no tiene broadcast**, usa multicast. Tipos de direccion: unicast, multicast, anycast
+12. **CIDR /24** = 254 hosts, **/30** = 2 hosts (punto a punto)

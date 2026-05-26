@@ -15,6 +15,19 @@
 
 En la mayoria de distribuciones modernas, al ejecutar `vi` realmente se ejecuta `vim` en modo compatible. Para el examen, se asume el uso de vi/vim indistintamente.
 
+### vimtutor
+
+**`vimtutor`** es un tutorial interactivo integrado en vim que ensena los comandos basicos de forma practica. Es la mejor manera de aprender vi/vim desde cero.
+
+```bash
+vimtutor              # Inicia el tutorial en el idioma del sistema
+vimtutor es           # Inicia el tutorial en espanol (si esta disponible)
+```
+
+El tutorial dura aproximadamente 30 minutos y cubre navegacion, edicion, borrado, busqueda y otros comandos esenciales. Trabaja sobre una copia del archivo del tutorial, por lo que no hay riesgo de danarlo.
+
+> **Para el examen**: `vimtutor` es la herramienta oficial recomendada para aprender vim. Es un comando disponible en cualquier sistema con vim instalado.
+
 ### Abrir archivos con vi
 ```bash
 vi archivo.txt            # Abrir archivo (lo crea si no existe)
@@ -198,6 +211,61 @@ d3w       -> Borrar 3 palabras
 3yy       -> Copiar 3 lineas
 5p        -> Pegar 5 veces
 ```
+
+### Registros con nombre (named registers)
+
+Los **registros** en vi/vim son espacios de almacenamiento identificados por letras (`a`-`z`) donde se puede guardar texto para pegarlo posteriormente. Esto permite tener multiples portapapeles simultaneos.
+
+| Comando | Accion |
+|---------|--------|
+| `"ayy` | Copiar (yank) la linea actual al registro `a` |
+| `"ap` | Pegar el contenido del registro `a` |
+| `"bdd` | Cortar (borrar) la linea actual y guardarla en el registro `b` |
+| `"bp` | Pegar el contenido del registro `b` |
+| `"a3yy` | Copiar 3 lineas al registro `a` |
+| `"Ayy` | Anadir (append) la linea al registro `a` (mayuscula = anadir) |
+| `:reg` | Mostrar el contenido de todos los registros |
+| `:reg a` | Mostrar el contenido del registro `a` |
+
+```
+# Flujo de trabajo con registros:
+"ayy       -> Copiar linea al registro a
+"byy       -> Copiar otra linea al registro b
+"ap        -> Pegar contenido del registro a
+"bp        -> Pegar contenido del registro b
+```
+
+> **Nota**: Las letras mayusculas (`"A`, `"B`...) anaden al registro en vez de sobreescribirlo. El registro `"` (sin nombre) es el registro por defecto que se usa con `yy`, `dd`, `p`, etc.
+
+### Marcas (marks)
+
+Las **marcas** permiten guardar posiciones en el archivo para poder volver a ellas rapidamente.
+
+| Comando | Accion |
+|---------|--------|
+| `ma` | Crear marca `a` en la posicion actual del cursor |
+| `'a` | Saltar a la **linea** de la marca `a` (inicio de la linea) |
+| `` `a `` | Saltar a la **posicion exacta** (linea y columna) de la marca `a` |
+| `:marks` | Listar todas las marcas definidas |
+| `''` | Volver a la posicion anterior al ultimo salto |
+| `` `` `` | Volver a la posicion exacta anterior al ultimo salto |
+| `d'a` | Borrar desde la linea actual hasta la marca `a` |
+| `y'a` | Copiar desde la linea actual hasta la marca `a` |
+
+**Tipos de marcas:**
+- **Letras minusculas** (`a`-`z`): Marcas locales al archivo actual
+- **Letras mayusculas** (`A`-`Z`): Marcas globales que funcionan entre archivos
+- **Marcas especiales**: `'0`-`'9` posiciones donde se cerro vim anteriormente
+
+```
+# Flujo de trabajo con marcas:
+ma         -> Marcar posicion actual como "a"
+(navegar a otra parte del archivo)
+'a         -> Volver a la linea de la marca "a"
+''         -> Volver a donde estabas antes del salto
+```
+
+> **Para el examen**: Las marcas son utiles para navegar rapidamente entre posiciones en archivos grandes. Las mas comunes son las letras minusculas (`ma`, `'a`).
 
 ### Combinaciones utiles
 ```

@@ -368,9 +368,20 @@ ls -l /sbin/init
 
 Los registros (logs) de arranque son fundamentales para diagnosticar problemas. Existen varios metodos para consultarlos.
 
+### El kernel ring buffer (buffer de anillo del kernel)
+
+El **kernel ring buffer** es un buffer de tamano fijo de tipo circular que el kernel de Linux utiliza para almacenar sus mensajes de registro. Es fundamental entender su naturaleza:
+
+- **Tamano fijo**: el buffer tiene un tamano predeterminado que se puede configurar con el parametro del kernel `log_buf_len`
+- **Circular**: cuando el buffer se llena, los mensajes **mas antiguos se sobrescriben** automaticamente con los nuevos (de ahi el nombre "anillo")
+- **Almacena mensajes del kernel**: desde el arranque del sistema, incluyendo deteccion de hardware, carga de modulos, errores del kernel, etc.
+- **Volatil**: el contenido del ring buffer se pierde al reiniciar el sistema, a menos que se copie a un archivo de log
+
+> **Para el examen:** Debido a que el ring buffer es circular y de tamano fijo, los mensajes de arranque se van perdiendo con el tiempo a medida que el sistema genera nuevos mensajes del kernel. Por eso es importante consultar `dmesg` poco despues del arranque si se necesita informacion del boot.
+
 ### dmesg
 
-El comando `dmesg` muestra los mensajes del buffer del anillo (ring buffer) del kernel. Contiene los mensajes generados por el kernel durante el arranque y la deteccion de hardware.
+El comando `dmesg` muestra los mensajes del kernel ring buffer. Contiene los mensajes generados por el kernel durante el arranque y la deteccion de hardware.
 
 ```bash
 # Ver todos los mensajes del kernel
@@ -397,8 +408,6 @@ dmesg -c
 # Seguir nuevos mensajes en tiempo real
 dmesg -w
 ```
-
-> **Importante:** El buffer del anillo del kernel tiene un tamano fijo. Los mensajes antiguos se van sobrescribiendo con mensajes nuevos. Por eso es importante consultar `dmesg` poco despues del arranque si se necesita informacion del boot.
 
 ### journalctl
 
@@ -439,7 +448,7 @@ Ademas de `dmesg` y `journalctl`, existen archivos de log en `/var/log/`:
 
 | Archivo | Descripcion |
 |---------|-------------|
-| `/var/log/boot.log` | Mensajes del arranque del sistema (en distribuciones que lo soportan) |
+| `/var/log/boot.log` | Mensajes del proceso de arranque del sistema: registra la salida de los scripts de inicio de servicios (start/stop). Presente principalmente en distribuciones basadas en Red Hat/CentOS y otras que usan `bootlogd`. Contiene informacion sobre que servicios se iniciaron correctamente o fallaron durante el arranque |
 | `/var/log/messages` | Log general del sistema (Red Hat/CentOS/SUSE) |
 | `/var/log/syslog` | Log general del sistema (Debian/Ubuntu) |
 | `/var/log/dmesg` | Copia del buffer de dmesg capturada durante el arranque |

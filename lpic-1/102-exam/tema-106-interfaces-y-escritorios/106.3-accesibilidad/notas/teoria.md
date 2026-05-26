@@ -39,6 +39,48 @@ orca -s
 - Integracion con pantallas Braille
 - Modos de navegacion plana y estructurada
 
+### eSpeak / eSpeak-NG - Motor de sintesis de voz
+
+**eSpeak** (y su sucesor **eSpeak-NG**, Next Generation) es un motor de sintesis de voz compacto y de codigo abierto para Linux.
+
+- Genera voz a partir de texto (Text-to-Speech / TTS)
+- Soporta multiples idiomas (incluido espanol)
+- Puede ser usado como backend por Orca y Speech Dispatcher
+- **eSpeak-NG** es la version mantenida activamente (fork de eSpeak)
+- Tamano muy reducido comparado con otros motores TTS
+
+```bash
+# Sintetizar voz desde texto
+espeak "Hola, esto es una prueba"
+espeak-ng "Hola, esto es una prueba"
+
+# Especificar idioma
+espeak -v es "Hola mundo"        # Espanol
+espeak -v en "Hello world"       # Ingles
+
+# Ajustar velocidad y tono
+espeak -s 150 -p 50 "Texto de ejemplo"
+
+# Guardar la salida como archivo WAV
+espeak -w salida.wav "Texto para guardar"
+```
+
+### Emacspeak - Escritorio de audio basado en Emacs
+
+**Emacspeak** es un escritorio de audio completo construido sobre el editor **Emacs**. No es simplemente un lector de pantalla, sino un sistema de interaccion por audio.
+
+- Proporciona una interfaz completa de audio para el sistema
+- Usa Emacs como plataforma base (aprovecha su capacidad de extension)
+- Soporta navegacion web, correo electronico, programacion, etc., todo por audio
+- Usa motores TTS como eSpeak, DECTalk u otros como backend
+- Disenado y desarrollado por T.V. Raman
+- Ideal para usuarios ciegos que prefieren un entorno basado en teclado y texto
+
+```bash
+# Iniciar Emacspeak (se lanza dentro de Emacs)
+emacs -q -l /usr/share/emacs/site-lisp/emacspeak/lisp/emacspeak-setup.el
+```
+
 ### Lupa de pantalla (Screen Magnifier)
 Herramienta que amplifica una porcion de la pantalla para usuarios con baja vision.
 
@@ -137,6 +179,16 @@ En sistemas GNOME modernos, el teclado en pantalla esta integrado en GNOME Shell
 1 = Abajo-izquierda    2 = Abajo     3 = Abajo-derecha
 ```
 
+### Toggle Keys (Teclas de alternancia)
+- Proporciona **retroalimentacion audible** (un pitido o sonido) al pulsar teclas de alternancia:
+  - **Caps Lock** (bloqueo de mayusculas)
+  - **Num Lock** (bloqueo numerico)
+  - **Scroll Lock** (bloqueo de desplazamiento)
+- Un sonido al activar y otro diferente al desactivar
+- Util para usuarios con discapacidad visual que no pueden ver el indicador LED del teclado
+- Evita escribir texto con mayusculas accidentalmente sin darse cuenta
+- Se activa desde la configuracion de accesibilidad del entorno de escritorio
+
 ### Resumen de funciones AccessX
 
 | Funcion | Problema que resuelve | Comportamiento |
@@ -145,6 +197,7 @@ En sistemas GNOME modernos, el teclado en pantalla esta integrado en GNOME Shell
 | Slow Keys | Pulsaciones accidentales | Requiere mantener la tecla un tiempo minimo |
 | Bounce Keys | Repeticiones involuntarias | Ignora pulsaciones rapidas repetidas |
 | Mouse Keys | No poder usar el raton | Controlar raton con teclado numerico |
+| Toggle Keys | No ver indicadores LED del teclado | Sonido al activar/desactivar Caps/Num/Scroll Lock |
 
 ---
 
@@ -194,11 +247,14 @@ gsettings set org.gnome.desktop.interface gtk-theme 'HighContrast'
 ## Resumen para el examen
 
 1. **Orca** es el lector de pantalla principal de GNOME (usa AT-SPI y Speech Dispatcher)
-2. **brltty** proporciona soporte Braille en la consola de texto (daemon)
-3. **GOK** era el teclado en pantalla de GNOME (ahora integrado/reemplazado)
-4. **Sticky Keys:** Pulsar combinaciones de teclas una a la vez
-5. **Slow Keys:** Requiere mantener pulsada la tecla un tiempo minimo
-6. **Bounce Keys:** Ignora repeticiones rapidas de la misma tecla
-7. **Mouse Keys:** Controlar el raton con el teclado numerico
-8. **AccessX** es el nombre del conjunto de funciones de accesibilidad del teclado en X11
-9. El alto contraste y las fuentes grandes son configuraciones basicas de accesibilidad visual
+2. **eSpeak / eSpeak-NG** es un motor de sintesis de voz (TTS) compacto y multiidioma
+3. **Emacspeak** es un escritorio de audio completo basado en Emacs para usuarios ciegos
+4. **brltty** proporciona soporte Braille en la consola de texto (daemon)
+5. **GOK** era el teclado en pantalla de GNOME (ahora integrado/reemplazado)
+6. **Sticky Keys:** Pulsar combinaciones de teclas una a la vez
+7. **Slow Keys:** Requiere mantener pulsada la tecla un tiempo minimo
+8. **Bounce Keys:** Ignora repeticiones rapidas de la misma tecla
+9. **Mouse Keys:** Controlar el raton con el teclado numerico
+10. **Toggle Keys:** Retroalimentacion audible al pulsar Caps Lock, Num Lock o Scroll Lock
+11. **AccessX** es el nombre del conjunto de funciones de accesibilidad del teclado en X11
+12. El alto contraste y las fuentes grandes son configuraciones basicas de accesibilidad visual

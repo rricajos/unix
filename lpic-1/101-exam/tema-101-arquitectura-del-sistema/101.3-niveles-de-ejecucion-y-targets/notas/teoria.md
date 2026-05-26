@@ -93,6 +93,74 @@ Cada runlevel tiene un directorio que contiene enlaces simbolicos a los scripts 
 
 > **Para el examen:** Los scripts S se ejecutan en orden ascendente (S01, S02, S03...) y los scripts K se ejecutan en orden ascendente antes que los S al cambiar de runlevel.
 
+#### Cabeceras LSB (Linux Standard Base) en scripts de init
+
+Los scripts de inicio en `/etc/init.d/` deben incluir un bloque de **cabeceras LSB** (Linux Standard Base) que define las dependencias y el comportamiento del script. Estas cabeceras son utilizadas por herramientas como `insserv` para determinar el orden correcto de arranque.
+
+```bash
+### BEGIN INIT INFO
+# Provides:          apache2
+# Required-Start:    $local_fs $remote_fs $network $syslog
+# Required-Stop:     $local_fs $remote_fs $network $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Servidor web Apache
+# Description:       Inicia el servidor web Apache 2
+### END INIT INFO
+```
+
+| Cabecera | Descripcion |
+|----------|-------------|
+| `Provides` | Nombre del servicio que proporciona el script |
+| `Required-Start` | Servicios o facilidades que deben estar iniciados **antes** de que este servicio arranque |
+| `Required-Stop` | Servicios o facilidades que deben estar disponibles durante la detencion del servicio |
+| `Default-Start` | Runlevels en los que el servicio debe **iniciarse** por defecto |
+| `Default-Stop` | Runlevels en los que el servicio debe **detenerse** por defecto |
+| `Short-Description` | Descripcion breve del servicio |
+| `Description` | Descripcion completa del servicio |
+
+**Facilidades especiales** (variables con `$`) que se pueden usar en `Required-Start` / `Required-Stop`:
+
+| Facilidad | Significado |
+|-----------|-------------|
+| `$local_fs` | Sistemas de archivos locales montados |
+| `$remote_fs` | Sistemas de archivos remotos montados |
+| `$network` | Red basica disponible |
+| `$syslog` | Sistema de registro de logs disponible |
+| `$all` | Todos los demas scripts de inicio |
+
+> **Para el examen:** Las cabeceras LSB son esenciales para que las herramientas de gestion de SysVinit calculen automaticamente el orden correcto de inicio y parada de los servicios.
+
+### Upstart
+
+**Upstart** fue un sistema de inicio desarrollado por **Canonical** (la empresa detras de Ubuntu) como reemplazo de SysVinit. Se utilizo principalmente en **Ubuntu** desde la version 6.10 (2006) hasta la version 14.10, cuando fue sustituido por systemd en Ubuntu 15.04.
+
+**Caracteristicas principales:**
+- Basado en **eventos** (event-driven): los servicios se inician o detienen en respuesta a eventos del sistema
+- Podia iniciar servicios en **paralelo**, mejorando el tiempo de arranque
+- Compatible con scripts de SysVinit (ejecutaba scripts de `/etc/init.d/`)
+- Archivos de configuracion propios en `/etc/init/` (archivos `.conf`)
+
+```bash
+# Ejemplo de archivo de configuracion de Upstart: /etc/init/ssh.conf
+description "OpenSSH server"
+start on filesystem or runlevel [2345]
+stop on runlevel [!2345]
+respawn
+exec /usr/sbin/sshd -D
+```
+
+**Comandos de Upstart:**
+```bash
+initctl list               # Listar servicios y su estado
+initctl status ssh         # Estado de un servicio
+start ssh                  # Iniciar un servicio
+stop ssh                   # Detener un servicio
+restart ssh                # Reiniciar un servicio
+```
+
+> **Para el examen:** Upstart ya no se utiliza en distribuciones principales, pero es importante saber que existio y fue el sistema de inicio de Ubuntu durante varios anos. Chromium OS tambien lo utilizo. Actualmente, systemd es el estandar en practicamente todas las distribuciones principales.
+
 ### Comandos de SysVinit para cambiar runlevel
 
 ```bash

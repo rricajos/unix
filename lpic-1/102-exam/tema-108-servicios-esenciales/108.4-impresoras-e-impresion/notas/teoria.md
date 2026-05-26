@@ -190,6 +190,82 @@ lprm -                    # Cancelar todos los trabajos del usuario
 
 ---
 
+## Gestion del estado de impresoras y colas
+
+### `cupsenable` / `cupsdisable` - Habilitar/deshabilitar impresoras
+
+Controlan si la impresora **procesa** los trabajos de su cola.
+
+```bash
+# Deshabilitar la impresora (deja de imprimir, pero sigue aceptando trabajos)
+cupsdisable MiImpresora
+
+# Deshabilitar con motivo
+cupsdisable -r "En mantenimiento" MiImpresora
+
+# Habilitar la impresora (reanuda la impresion)
+cupsenable MiImpresora
+```
+
+### `cupsaccept` / `cupsreject` - Aceptar/rechazar trabajos
+
+Controlan si la cola **acepta nuevos trabajos**.
+
+```bash
+# Rechazar nuevos trabajos (la cola no acepta mas trabajos)
+cupsreject MiImpresora
+
+# Rechazar con motivo
+cupsreject -r "Fuera de servicio" MiImpresora
+
+# Aceptar nuevos trabajos
+cupsaccept MiImpresora
+```
+
+**Diferencia clave:**
+- `cupsenable`/`cupsdisable`: Controla si la impresora **procesa** los trabajos existentes
+- `cupsaccept`/`cupsreject`: Controla si la cola **acepta** nuevos trabajos
+
+| Estado | Acepta trabajos | Imprime trabajos |
+|--------|----------------|------------------|
+| enable + accept | Si | Si (funcionamiento normal) |
+| disable + accept | Si | No (acumula en cola) |
+| enable + reject | No | Si (solo procesa los existentes) |
+| disable + reject | No | No (completamente detenida) |
+
+### `lpmove` - Mover trabajos entre colas
+
+Permite mover trabajos de impresion de una cola a otra.
+
+```bash
+# Mover un trabajo especifico a otra impresora
+lpmove MiImpresora-123 OtraImpresora
+
+# Mover TODOS los trabajos de una impresora a otra
+lpmove MiImpresora OtraImpresora
+```
+
+**Uso tipico:** Cuando una impresora se averia, se mueven los trabajos pendientes a otra impresora disponible.
+
+---
+
+## IPP (Internet Printing Protocol)
+
+- Protocolo estandar para comunicacion con impresoras en red
+- Base del sistema **CUPS**
+- **Puerto:** 631/TCP (HTTP sobre el puerto 631)
+- Soporta operaciones: enviar trabajo, consultar estado, cancelar trabajo, obtener atributos
+- Las URI de impresoras IPP usan el formato: `ipp://host:631/printers/nombre`
+- **IPP Everywhere:** Estandar moderno que permite imprimir sin necesidad de drivers especificos (la impresora describe sus capacidades via IPP)
+
+```bash
+# Ejemplo de URI IPP
+ipp://192.168.1.50:631/printers/MiImpresora
+ipps://192.168.1.50:631/printers/MiImpresora    # IPP sobre TLS (cifrado)
+```
+
+---
+
 ## `cupsctl`
 
 Herramienta para configurar opciones del servidor CUPS.
@@ -229,12 +305,14 @@ lpoptions -o media=A4 -o sides=two-sided-long-edge  # Establecer opciones
 ## Puntos clave para el examen
 
 1. **CUPS** es el sistema de impresion estandar, interfaz web en **puerto 631**
-2. **lp** es System V (usa `-d`), **lpr** es BSD (usa `-P`) para seleccionar impresora
-3. **lpadmin** administra impresoras: `-p` crear, `-x` eliminar, `-d` predeterminada
-4. **lpstat -t** muestra el estado completo del sistema de impresion
-5. **cancel** (System V) y **lprm** (BSD) cancelan trabajos
-6. **lpinfo -v** lista dispositivos, **lpinfo -m** lista drivers
-7. `/etc/cups/cupsd.conf` es la configuracion del demonio
-8. `/etc/cups/printers.conf` define las impresoras (no editar manualmente con CUPS activo)
-9. Los archivos **PPD** describen las capacidades de cada impresora
-10. Protocolos de red para impresion: **IPP**, **socket/JetDirect (9100)**, **LPD**
+2. **IPP** (Internet Printing Protocol) usa puerto **631/TCP**; es la base de CUPS
+3. **lp** es System V (usa `-d`), **lpr** es BSD (usa `-P`) para seleccionar impresora
+4. **lpadmin** administra impresoras: `-p` crear, `-x` eliminar, `-d` predeterminada
+5. **`cupsenable`/`cupsdisable`** habilitan/deshabilitan la impresion; **`cupsaccept`/`cupsreject`** controlan la aceptacion de trabajos
+6. **`lpmove`** mueve trabajos de una cola a otra
+7. **lpstat -t** muestra el estado completo del sistema de impresion
+8. **cancel** (System V) y **lprm** (BSD) cancelan trabajos
+9. **lpinfo -v** lista dispositivos, **lpinfo -m** lista drivers
+10. `/etc/cups/cupsd.conf` es la configuracion del demonio
+11. `/etc/cups/printers.conf` define las impresoras (no editar manualmente con CUPS activo)
+12. Los archivos **PPD** describen las capacidades de cada impresora

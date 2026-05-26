@@ -95,17 +95,38 @@ echo "Cuerpo del mensaje" | mail -s "Asunto" usuario@ejemplo.com
 mail -s "Reporte" -a /tmp/reporte.txt usuario@ejemplo.com < /dev/null
 ```
 
-### Leer correo
+### Leer correo (modo interactivo)
 ```bash
 mail                    # Abrir buzon del usuario actual
 ```
 
-Dentro de mail:
-- Numero del mensaje para leerlo
-- `d` para borrar
-- `q` para salir guardando cambios
-- `x` para salir sin cambios
-- `h` para listar mensajes
+Dentro del modo interactivo de `mail`/`mailx`:
+
+| Comando | Descripcion |
+|---------|-------------|
+| `h` | Listar encabezados de mensajes (headers) |
+| `N` (numero) | Leer el mensaje numero N (ej: `1`, `2`, `3`) |
+| `p` | Imprimir (mostrar) el mensaje actual (print) |
+| `n` | Mostrar el siguiente mensaje (next) |
+| `d` | Borrar el mensaje actual (delete) |
+| `d 1 3 5` | Borrar multiples mensajes |
+| `r` | Responder al mensaje actual (reply) |
+| `R` | Responder a todos los destinatarios |
+| `s archivo` | Guardar mensaje en un archivo |
+| `q` | Salir guardando cambios (mensajes leidos se mueven a ~/mbox) |
+| `x` | Salir **sin** guardar cambios (buzon queda intacto) |
+
+### Ubicacion de los buzones de correo
+
+Los buzones en formato **mbox** se almacenan en:
+- **`/var/spool/mail/usuario`** - Ubicacion clasica (Red Hat/CentOS)
+- **`/var/mail/usuario`** - Ubicacion moderna (Debian/Ubuntu). En muchos sistemas es un enlace simbolico a `/var/spool/mail/`
+
+Ambas rutas pueden coexistir. La variable `MAIL` del entorno del usuario apunta al buzon correspondiente:
+```bash
+echo $MAIL
+# /var/spool/mail/sandra  o  /var/mail/sandra
+```
 
 ---
 

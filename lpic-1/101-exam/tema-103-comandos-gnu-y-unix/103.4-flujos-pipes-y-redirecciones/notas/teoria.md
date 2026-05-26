@@ -402,7 +402,57 @@ cat <<< "Mi directorio es $HOME"
 
 ---
 
-## 12. Named pipes (FIFOs): mkfifo
+## 12. Sustitucion de procesos: `<()` y `>()`
+
+La **sustitucion de procesos** (process substitution) es una funcionalidad avanzada de bash que permite usar la salida de un comando como si fuera un archivo, o enviar datos a un comando como si fuera un archivo de salida.
+
+### Sustitucion de entrada: `<(comando)`
+
+`<(comando)` ejecuta el comando y presenta su salida como un archivo temporal que puede ser leido.
+
+```bash
+# Comparar la salida de dos comandos como si fueran archivos
+diff <(ls /dir1) <(ls /dir2)
+
+# Equivalente a crear archivos temporales manualmente:
+# ls /dir1 > /tmp/lista1.txt
+# ls /dir2 > /tmp/lista2.txt
+# diff /tmp/lista1.txt /tmp/lista2.txt
+
+# Comparar archivos ordenados sin crear archivos intermedios
+diff <(sort archivo1.txt) <(sort archivo2.txt)
+
+# Usar con while read para evitar problemas con subshells en pipes
+while read linea; do
+    echo "Procesando: $linea"
+done < <(find /etc -name "*.conf")
+```
+
+### Sustitucion de salida: `>(comando)`
+
+`>(comando)` crea un archivo temporal de escritura que se alimenta como entrada al comando.
+
+```bash
+# Enviar salida simultaneamente a un archivo y a un comando
+ls -la | tee >(grep "\.txt$" > solo_txt.txt) >(wc -l > conteo.txt) > listado_completo.txt
+
+# Comprimir al vuelo mientras se copia
+tar cf >(gzip > backup.tar.gz) /datos/
+```
+
+### Diferencia con pipes
+
+| Mecanismo | Descripcion | Ejemplo |
+|-----------|-------------|---------|
+| Pipe `\|` | Conecta stdout de un comando con stdin de otro | `ls \| wc -l` |
+| `<(cmd)` | Presenta stdout de un comando como un archivo de lectura | `diff <(ls /a) <(ls /b)` |
+| `>(cmd)` | Presenta stdin de un comando como un archivo de escritura | `tee >(wc -l)` |
+
+> **Para el examen**: La sustitucion de procesos es especifica de bash (no funciona en `sh`). Es particularmente util con `diff` para comparar la salida de dos comandos, y con `while read` para evitar problemas de subshell creados por pipes.
+
+---
+
+## 13. Named pipes (FIFOs): mkfifo
 
 Una **named pipe** (tuberia con nombre) o **FIFO** (First In, First Out) es un archivo especial en el sistema de archivos que actua como un canal de comunicacion entre procesos. A diferencia de los pipes normales (`|`), las named pipes **persisten en el sistema de archivos** y pueden ser usadas por procesos no relacionados.
 
@@ -458,7 +508,7 @@ rm /tmp/datos_pipe
 
 ---
 
-## 13. Resumen de redirecciones
+## 14. Resumen de redirecciones
 
 | Operador | Descripcion | Ejemplo |
 |----------|-------------|---------|

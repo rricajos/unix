@@ -104,12 +104,75 @@ Se ejecuta como una aplicacion sobre un sistema operativo anfitrion existente.
 - Usa "hypercalls" en lugar de instrucciones privilegiadas
 - Ejemplo principal: **Xen** (modo paravirtualizado)
 
-### Virtualizacion asistida por hardware
+### Virtualizacion asistida por hardware (Intel VT-x / AMD-V)
 
-- El procesador proporciona instrucciones especiales para virtualizacion
-- Intel VT-x / AMD-V
-- Permite virtualizacion completa con rendimiento cercano al nativo
-- KVM requiere estas extensiones
+Las extensiones de virtualizacion del procesador son instrucciones especiales del hardware que permiten ejecutar maquinas virtuales con rendimiento cercano al nativo:
+
+**Intel VT-x (Virtualization Technology for x86)**:
+- Extension de Intel para procesadores x86
+- Proporciona un modo de ejecucion especial para el hipervisor (VMX root mode)
+- Permite que el guest ejecute instrucciones privilegiadas de forma segura
+
+**AMD-V (AMD Virtualization)**:
+- Extension equivalente de AMD (tambien conocida como AMD SVM - Secure Virtual Machine)
+- Funcionalidad similar a Intel VT-x
+
+**Verificar soporte en el sistema:**
+```bash
+# Verificar si el procesador soporta virtualizacion
+grep -E '(vmx|svm)' /proc/cpuinfo
+# vmx = Intel VT-x, svm = AMD-V
+
+# Verificar si KVM esta disponible
+lsmod | grep kvm
+# kvm_intel (Intel) o kvm_amd (AMD)
+```
+
+> **Para el examen:** KVM **requiere** extensiones de virtualizacion por hardware (Intel VT-x o AMD-V) para funcionar. Estas extensiones deben estar **habilitadas en la configuracion del BIOS/UEFI**. Si no estan habilitadas, KVM no podra crear maquinas virtuales.
+
+### Tipos de almacenamiento de maquinas virtuales
+
+Las maquinas virtuales utilizan archivos de imagen de disco para simular discos duros. Existen dos formatos principales:
+
+**Imagen RAW (formato crudo)**:
+- El archivo tiene exactamente el tamano del disco virtual (ej: un disco de 20GB ocupa 20GB en el host)
+- Mejor rendimiento (acceso directo sin traduccion)
+- No soporta snapshots de forma nativa
+- Mayor consumo de espacio en disco
+- Ejemplo: `/var/lib/libvirt/images/disco.raw`
+
+**Imagen COW - qcow2 (Copy-On-Write)**:
+- El archivo solo ocupa el espacio de los datos **realmente escritos** (thin provisioning)
+- Un disco virtual de 20GB puede ocupar solo 2GB en el host si solo tiene 2GB de datos
+- Soporta **snapshots** (instantaneas del estado del disco)
+- Soporta **compresion** y **cifrado**
+- Formato nativo de QEMU/KVM
+- Ejemplo: `/var/lib/libvirt/images/disco.qcow2`
+
+| Caracteristica | RAW | qcow2 (COW) |
+|---------------|-----|-------------|
+| Tamano del archivo | Fijo (tamano completo del disco) | Dinamico (crece segun se usa) |
+| Rendimiento | Mejor (acceso directo) | Ligeramente menor (traduccion) |
+| Snapshots | No soportados | Soportados |
+| Compresion | No | Si |
+| Cifrado | No | Si |
+| Thin provisioning | No | Si |
+
+```bash
+# Crear una imagen qcow2 de 20GB
+qemu-img create -f qcow2 disco.qcow2 20G
+
+# Crear una imagen RAW de 20GB
+qemu-img create -f raw disco.raw 20G
+
+# Ver informacion de una imagen
+qemu-img info disco.qcow2
+
+# Convertir de un formato a otro
+qemu-img convert -f raw -O qcow2 disco.raw disco.qcow2
+```
+
+> **Para el examen:** qcow2 es el formato preferido en entornos KVM/QEMU por su flexibilidad (snapshots, thin provisioning). RAW ofrece mejor rendimiento pero sin funcionalidades avanzadas.
 
 ### Comparativa
 
@@ -294,16 +357,34 @@ systemctl enable --now qemu-guest-agent
 
 ### Problemas de la clonacion
 
-Al clonar una VM, el clon es una copia exacta del original, lo que genera conflictos:
+Al clonar una VM, el clon es una copia exacta del original, lo que genera conflictos. Es imprescindible modificar los siguientes elementos en la maquina clonada:
 
 | Problema | Descripcion | Solucion |
 |----------|-------------|---------|
-| **Machine ID** | `/etc/machine-id` duplicado | Regenerar: `rm /etc/machine-id && systemd-machine-id-setup` |
+| **Machine ID** | `/etc/machine-id` y `/var/lib/dbus/machine-id` duplicados | Regenerar: `rm /etc/machine-id && systemd-machine-id-setup` |
+| **Claves SSH del host** | Mismas claves SSH en ambas maquinas, lo que genera advertencias de seguridad en los clientes | Regenerar (ver abajo) |
 | **Direccion MAC** | MAC de la interfaz de red duplicada | El hipervisor genera una nueva MAC al clonar |
-| **Claves SSH del host** | Mismas claves SSH en ambas maquinas | Regenerar: `rm /etc/ssh/ssh_host_* && dpkg-reconfigure openssh-server` |
+| **Hostname** | Mismo nombre de host en la red | Cambiar con `hostnamectl set-hostname nuevo-nombre` |
 | **UUID de sistema de archivos** | UUIDs de particiones duplicados | Generar nuevos UUIDs con `tune2fs -U random /dev/sdX` |
-| **Hostname** | Mismo nombre de host | Cambiar con `hostnamectl set-hostname nuevo-nombre` |
 | **Direccion IP** | Si IP es estatica, sera duplicada | Asignar nueva IP o usar DHCP |
+
+**Regenerar claves SSH del host (imprescindible tras la clonacion):**
+
+```bash
+# Eliminar las claves SSH del host existentes
+rm /etc/ssh/ssh_host_*
+
+# Regenerar nuevas claves (metodo Debian/Ubuntu)
+dpkg-reconfigure openssh-server
+
+# Regenerar nuevas claves (metodo Red Hat/CentOS)
+ssh-keygen -A
+
+# Reiniciar el servicio SSH
+systemctl restart sshd
+```
+
+> **Para el examen:** Si no se regeneran las claves SSH del host despues de clonar, los clientes que se conecten a la maquina clonada recibiran advertencias de "host key changed" porque el fingerprint sera identico al de la maquina original.
 
 ### Plantillas (Templates)
 
@@ -337,6 +418,40 @@ D-Bus (Desktop Bus) es un sistema de comunicacion entre procesos (IPC) usado en 
   - Reportar informacion del guest al hipervisor (IP, memoria, disco)
   - Coordinar eventos (resize de disco, cambios de red)
 
+### D-Bus machine ID
+
+El **machine ID** es un identificador hexadecimal unico de 32 caracteres que identifica a cada instalacion de Linux. Es fundamental en entornos virtualizados porque las maquinas clonadas comparten el mismo ID, lo que causa conflictos.
+
+**Archivos del machine ID:**
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `/etc/machine-id` | Machine ID principal del sistema, usado por systemd |
+| `/var/lib/dbus/machine-id` | Machine ID de D-Bus. Normalmente es un enlace simbolico a `/etc/machine-id` o una copia identica |
+
+**Comandos para gestionar el machine ID:**
+
+```bash
+# Ver el machine ID actual
+cat /etc/machine-id
+cat /var/lib/dbus/machine-id
+
+# Generar un nuevo ID D-Bus aleatorio
+dbus-uuidgen
+
+# Asegurar que /var/lib/dbus/machine-id existe (lo crea si no existe)
+dbus-uuidgen --ensure
+
+# Obtener el machine ID de D-Bus actual
+dbus-uuidgen --get
+
+# Regenerar /etc/machine-id (metodo systemd)
+rm /etc/machine-id
+systemd-machine-id-setup
+```
+
+> **Para el examen:** Al clonar una VM, es imprescindible regenerar el machine-id. Dos maquinas con el mismo machine-id pueden causar conflictos en D-Bus, DHCP y otros servicios que dependen de este identificador unico.
+
 ### Herramientas D-Bus
 
 ```bash
@@ -357,33 +472,100 @@ dbus-send --system --dest=org.freedesktop.hostname1 \
 
 ## 10. cloud-init
 
-Herramienta estandar para la configuracion automatica de instancias en la nube durante el primer arranque.
+**cloud-init** es la herramienta estandar de la industria para la configuracion automatica de instancias en la nube durante el **primer arranque**. Es soportada por la mayoria de proveedores cloud (AWS, Azure, Google Cloud, OpenStack, etc.) y distribuciones Linux.
 
 ### Funciones principales
 
 - Configurar hostname
-- Crear usuarios y establecer claves SSH
-- Configurar red
-- Ejecutar scripts personalizados
+- Crear usuarios y establecer claves SSH autorizadas
+- Configurar interfaces de red
+- Ejecutar scripts personalizados (shell, Python)
 - Instalar paquetes
 - Montar sistemas de archivos
+- Escribir archivos de configuracion
+- Configurar resolucion DNS
 
-### Archivo de configuracion
+### Fuentes de datos (datasources)
+
+cloud-init obtiene su configuracion de diferentes fuentes segun el proveedor:
+- **Metadatos del proveedor**: API HTTP (ej: `http://169.254.169.254/` en AWS)
+- **User data**: Configuracion personalizada proporcionada al crear la instancia
+- **Disco de configuracion**: ISO o particion con los datos de configuracion
+
+### Configuracion YAML (user-data)
+
+La configuracion de cloud-init se escribe en formato **YAML** y debe comenzar con la linea `#cloud-config`:
 
 ```yaml
 #cloud-config
+
+# Configurar hostname
 hostname: mi-servidor
+fqdn: mi-servidor.ejemplo.com
+
+# Crear usuarios
 users:
   - name: admin
+    groups: sudo, docker
+    shell: /bin/bash
     sudo: ALL=(ALL) NOPASSWD:ALL
     ssh_authorized_keys:
-      - ssh-rsa AAAA...
+      - ssh-rsa AAAA... usuario@host
+
+# Instalar paquetes
+package_update: true
+package_upgrade: true
 packages:
   - nginx
   - git
+  - curl
+  - htop
+
+# Configuracion de red (ejemplo con Netplan)
+write_files:
+  - path: /etc/netplan/50-cloud-init.yaml
+    content: |
+      network:
+        version: 2
+        ethernets:
+          eth0:
+            dhcp4: true
+
+# Ejecutar comandos al primer arranque
 runcmd:
   - systemctl enable --now nginx
+  - echo "Instancia configurada" > /var/log/cloud-init-done.log
+
+# Configurar zona horaria
+timezone: Europe/Madrid
+
+# Mensaje final
+final_message: "Sistema listo despues de $UPTIME segundos"
 ```
+
+### Archivos de configuracion de cloud-init
+
+| Archivo / Directorio | Descripcion |
+|----------------------|-------------|
+| `/etc/cloud/cloud.cfg` | Configuracion principal de cloud-init |
+| `/etc/cloud/cloud.cfg.d/` | Archivos de configuracion adicionales |
+| `/var/lib/cloud/` | Datos de estado de cloud-init |
+| `/var/log/cloud-init.log` | Log de ejecucion de cloud-init |
+| `/var/log/cloud-init-output.log` | Salida de los comandos ejecutados |
+
+```bash
+# Ver el estado de cloud-init
+cloud-init status
+
+# Re-ejecutar cloud-init (util para depuracion)
+cloud-init clean
+cloud-init init
+
+# Ver la configuracion aplicada
+cloud-init query
+```
+
+> **Para el examen:** cloud-init se ejecuta solo durante el **primer arranque** de la instancia. La configuracion se proporciona en formato YAML con la directiva `#cloud-config` al inicio del archivo.
 
 ---
 
@@ -391,10 +573,13 @@ runcmd:
 
 1. **Hipervisor Tipo 1** (bare metal): KVM, Xen, ESXi. **Tipo 2** (hosted): VirtualBox, VMware Workstation.
 2. **Virtualizacion completa**: guest sin modificar. **Paravirtualizacion**: guest modificado para comunicarse con hipervisor.
-3. **Contenedores** (Docker, LXC) comparten el kernel del host; las **VMs** tienen su propio kernel.
-4. **IaaS** = infraestructura; **PaaS** = plataforma; **SaaS** = software completo.
-5. **Guest additions/tools** mejoran la integracion: rendimiento, carpetas compartidas, reloj.
-6. Al **clonar** una VM, regenerar: machine-id, claves SSH, MAC, hostname.
-7. **D-Bus** permite la comunicacion entre procesos y con el hipervisor.
-8. **cloud-init** configura instancias automaticamente en el primer arranque.
-9. `systemd-detect-virt` detecta si el sistema esta virtualizado y que hipervisor usa.
+3. **Intel VT-x / AMD-V**: extensiones de hardware necesarias para KVM. Verificar con `grep -E '(vmx|svm)' /proc/cpuinfo`. Deben estar habilitadas en BIOS/UEFI.
+4. **Almacenamiento VM**: RAW (tamano fijo, mejor rendimiento) vs qcow2/COW (tamano dinamico, snapshots, thin provisioning).
+5. **Contenedores** (Docker, LXC) comparten el kernel del host; las **VMs** tienen su propio kernel.
+6. **IaaS** = infraestructura; **PaaS** = plataforma; **SaaS** = software completo.
+7. **Guest additions/tools** mejoran la integracion: rendimiento, carpetas compartidas, reloj.
+8. Al **clonar** una VM, regenerar: machine-id (`/etc/machine-id`), claves SSH del host (`/etc/ssh/ssh_host_*`), MAC, hostname.
+9. **D-Bus machine ID**: `/etc/machine-id` y `/var/lib/dbus/machine-id`. Comandos: `dbus-uuidgen --ensure`, `dbus-uuidgen --get`.
+10. **D-Bus** permite la comunicacion entre procesos y con el hipervisor.
+11. **cloud-init** configura instancias automaticamente en el primer arranque, usa formato YAML con `#cloud-config`.
+12. `systemd-detect-virt` detecta si el sistema esta virtualizado y que hipervisor usa.

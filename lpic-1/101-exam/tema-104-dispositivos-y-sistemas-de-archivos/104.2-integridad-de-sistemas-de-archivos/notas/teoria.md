@@ -308,7 +308,99 @@ xfs_info /dev/sda1
 
 ---
 
-## 5. Puntos clave para el examen
+## 5. Herramientas de depuracion de sistemas de archivos
+
+### 5.1 debugfs (para ext2/ext3/ext4)
+
+`debugfs` es un depurador interactivo para sistemas de archivos ext2/ext3/ext4. Permite examinar y modificar estructuras internas del sistema de archivos a bajo nivel.
+
+```bash
+# Abrir en modo solo lectura (seguro)
+debugfs /dev/sda1
+
+# Abrir en modo lectura-escritura (peligroso)
+debugfs -w /dev/sda1
+```
+
+**Comandos internos de debugfs:**
+
+| Comando | Descripcion |
+|---------|-------------|
+| `ls` | Listar archivos del directorio actual |
+| `cd directorio` | Cambiar directorio |
+| `stat archivo` | Mostrar informacion del inodo de un archivo |
+| `cat archivo` | Mostrar contenido de un archivo |
+| `lsdel` | Listar inodos de archivos borrados |
+| `undel inodo nombre` | Intentar recuperar un archivo borrado |
+| `dump archivo destino` | Extraer un archivo del FS |
+| `icheck bloque` | Ver que inodo usa un bloque |
+| `ncheck inodo` | Ver el nombre de archivo de un inodo |
+| `quit` | Salir |
+
+```bash
+# Ejemplo: examinar un archivo borrado
+debugfs /dev/sda1
+debugfs:  lsdel              # Lista archivos borrados con sus inodos
+debugfs:  stat <12345>       # Ver datos del inodo 12345
+debugfs:  quit
+```
+
+> **Para el examen**: `debugfs` es util para examinar la estructura interna de ext2/ext3/ext4 y para recuperar archivos borrados. El FS debe estar preferiblemente desmontado o montado como solo lectura.
+
+### 5.2 xfs_db (depurador para XFS)
+
+`xfs_db` es el depurador de bajo nivel para sistemas de archivos XFS. Permite examinar y modificar las estructuras internas de XFS.
+
+```bash
+# Examinar un sistema XFS (debe estar desmontado)
+xfs_db /dev/sda1
+
+# Modo solo lectura explicito
+xfs_db -r /dev/sda1
+```
+
+**Comandos internos de xfs_db:**
+
+| Comando | Descripcion |
+|---------|-------------|
+| `sb` | Examinar el superbloque |
+| `sb 0` | Ir al superbloque primario |
+| `print` | Imprimir la estructura actual |
+| `inode N` | Examinar el inodo N |
+| `freesp` | Mostrar estadisticas de espacio libre |
+| `quit` | Salir |
+
+```bash
+# Ejemplo: ver informacion del superbloque
+xfs_db /dev/sda1
+xfs_db> sb 0
+xfs_db> print
+xfs_db> quit
+```
+
+### 5.3 xfs_fsr (desfragmentacion de XFS)
+
+`xfs_fsr` (XFS filesystem reorganizer) desfragmenta un sistema de archivos XFS que esta **montado**. A diferencia de ext4 (que rara vez necesita desfragmentacion), XFS puede beneficiarse de la reorganizacion.
+
+```bash
+# Desfragmentar todo el sistema XFS montado (se ejecuta durante un tiempo limitado)
+xfs_fsr /dev/sda1
+
+# Desfragmentar un archivo especifico
+xfs_fsr /ruta/al/archivo
+
+# Ejecutar durante un tiempo especifico (en segundos)
+xfs_fsr -t 600 /dev/sda1
+
+# Modo verbose
+xfs_fsr -v /dev/sda1
+```
+
+> **Para el examen**: `xfs_fsr` funciona en sistemas XFS **montados** (a diferencia de la mayoria de herramientas de reparacion que requieren FS desmontado). `xfs_db` es el equivalente XFS de `debugfs` para ext.
+
+---
+
+## 6. Puntos clave para el examen
 
 1. **`fsck` solo en FS desmontado** o montado como solo lectura. NUNCA en FS montado en lectura-escritura.
 

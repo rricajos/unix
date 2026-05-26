@@ -83,7 +83,70 @@ Esto asegura que las configuraciones de `~/.bashrc` se apliquen tambien en login
 
 ---
 
-## 3. Variables del shell y de entorno
+## 3. Ejecutar comandos con entorno limpio: `env -i`
+
+El comando `env -i` permite ejecutar un comando con un entorno completamente vacio (sin ninguna variable de entorno heredada).
+
+```bash
+# Ejecutar un comando sin ninguna variable de entorno
+env -i /bin/bash --norc --noprofile
+
+# Ejecutar un comando con solo las variables que se especifiquen
+env -i PATH=/usr/bin HOME=/tmp mi_script.sh
+
+# Ver que no hay variables de entorno
+env -i env    # No muestra nada (entorno vacio)
+```
+
+**Uso tipico:** Depuracion y pruebas para verificar que un script o programa funciona sin depender de variables del entorno del usuario.
+
+---
+
+## 4. Opciones del shell: `set -o` / `set +o`
+
+El comando `set` permite activar y desactivar opciones de comportamiento del shell.
+
+- **`set -o opcion`**: Activa la opcion (enable)
+- **`set +o opcion`**: Desactiva la opcion (disable)
+
+**Nota:** Es contraintuitivo: `-o` activa y `+o` desactiva.
+
+### Opciones importantes para el examen
+
+| Opcion | Efecto |
+|--------|--------|
+| `noclobber` | Impide sobrescribir archivos existentes con redireccion `>`. Usar `>\|` para forzar |
+| `nounset` (`set -u`) | Trata las variables no definidas como error |
+| `noglob` | Deshabilita la expansion de globbing (*, ?, [...]) |
+| `noexec` (`set -n`) | Lee los comandos pero no los ejecuta (util para verificar sintaxis) |
+| `xtrace` (`set -x`) | Muestra cada comando antes de ejecutarlo (depuracion) |
+| `errexit` (`set -e`) | Sale del script si un comando falla (codigo de salida distinto de 0) |
+
+```bash
+# Activar noclobber (proteger archivos existentes)
+set -o noclobber
+echo "datos" > archivo.txt     # Error si archivo.txt ya existe
+echo "datos" >| archivo.txt    # Forzar sobrescritura con >|
+
+# Desactivar noclobber
+set +o noclobber
+
+# Activar nounset (error en variables no definidas)
+set -o nounset
+echo $VARIABLE_INEXISTENTE     # Error: unbound variable
+
+# Ver todas las opciones del shell y su estado
+set -o
+
+# Formas abreviadas equivalentes
+set -e    # Equivale a set -o errexit
+set -u    # Equivale a set -o nounset
+set -x    # Equivale a set -o xtrace
+```
+
+---
+
+## 5. Variables del shell y de entorno
 
 ### Variables locales del shell
 Solo existen en el shell actual; no son heredadas por procesos hijos.
@@ -132,7 +195,7 @@ export MI_VARIABLE           # Luego exportar (equivalente)
 
 ---
 
-## 4. Modificacion del PATH
+## 6. Modificacion del PATH
 
 El `PATH` es una lista de directorios separados por `:` donde el shell busca ejecutables.
 
@@ -154,7 +217,7 @@ echo 'export PATH="$PATH:$HOME/bin"' >> ~/.bashrc
 
 ---
 
-## 5. Personalizacion del prompt (PS1)
+## 7. Personalizacion del prompt (PS1)
 
 El prompt se personaliza mediante la variable `PS1`. Secuencias de escape comunes:
 
@@ -182,7 +245,7 @@ PS1="\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ "
 
 ---
 
-## 6. Alias
+## 8. Alias
 
 Los alias son atajos para comandos largos o frecuentes.
 
@@ -213,7 +276,7 @@ Para que los alias sean permanentes, se definen en `~/.bashrc`.
 
 ---
 
-## 7. Funciones del shell
+## 9. Funciones del shell
 
 Las funciones permiten agrupar comandos reutilizables. Son mas poderosas que los alias.
 
@@ -252,7 +315,7 @@ Las funciones se definen en `~/.bashrc` para que esten disponibles en cada sesio
 
 ---
 
-## 8. source vs . (dot command)
+## 10. source vs . (dot command)
 
 Ambos comandos ejecutan un script en el contexto del shell actual (no crean un subshell).
 
@@ -273,7 +336,7 @@ source ~/.bashrc    # Aplica los cambios inmediatamente
 
 ---
 
-## 9. Directorio /etc/skel/ (skeleton)
+## 11. Directorio /etc/skel/ (skeleton)
 
 El directorio `/etc/skel/` contiene los archivos plantilla que se copian al directorio home de cada nuevo usuario creado con `useradd -m`.
 
@@ -294,7 +357,7 @@ Cuando se ejecuta `useradd -m nuevo_usuario`, los archivos de `/etc/skel/` se co
 
 ---
 
-## 10. /etc/environment
+## 12. /etc/environment
 
 Este archivo es diferente a los demas: **NO es un script de shell**. Es un archivo simple de pares `VARIABLE=valor` leido por el modulo PAM (`pam_env`).
 
@@ -317,7 +380,10 @@ LANG="es_ES.UTF-8"
 2. **Non-login shell:** `/etc/bash.bashrc` --> `~/.bashrc`
 3. `set` muestra todo (variables + funciones); `env` solo variables de entorno
 4. `export` hace que una variable sea heredada por procesos hijos
-5. `source` y `.` ejecutan en el shell actual (sin subshell)
-6. `/etc/skel/` es la plantilla para nuevos usuarios
-7. El PATH se modifica con `export PATH="$PATH:/nuevo/dir"`
-8. Los alias y funciones se hacen permanentes escribiendolos en `~/.bashrc`
+5. **`env -i`** ejecuta un comando con entorno completamente vacio
+6. **`set -o opcion`** activa una opcion del shell; **`set +o opcion`** la desactiva
+7. **`noclobber`** impide sobrescribir archivos con `>`; **`nounset`** da error en variables no definidas
+8. `source` y `.` ejecutan en el shell actual (sin subshell)
+9. `/etc/skel/` es la plantilla para nuevos usuarios
+10. El PATH se modifica con `export PATH="$PATH:/nuevo/dir"`
+11. Los alias y funciones se hacen permanentes escribiendolos en `~/.bashrc`

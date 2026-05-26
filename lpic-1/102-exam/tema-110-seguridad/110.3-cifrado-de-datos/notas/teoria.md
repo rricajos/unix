@@ -148,6 +148,50 @@ ssh-keygen -R host
 
 ---
 
+## Archivos de clave de host del servidor: `/etc/ssh/`
+
+El servidor SSH tiene sus propias claves (host keys) que identifican al servidor de forma unica. Se almacenan en `/etc/ssh/`:
+
+| Archivo | Descripcion |
+|---------|-------------|
+| `ssh_host_rsa_key` / `ssh_host_rsa_key.pub` | Clave de host RSA (privada/publica) |
+| `ssh_host_ecdsa_key` / `ssh_host_ecdsa_key.pub` | Clave de host ECDSA |
+| `ssh_host_ed25519_key` / `ssh_host_ed25519_key.pub` | Clave de host Ed25519 |
+| `ssh_host_dsa_key` / `ssh_host_dsa_key.pub` | Clave de host DSA (deprecada) |
+
+```bash
+# Listar los archivos de claves de host
+ls -la /etc/ssh/ssh_host_*
+
+# Ver la huella digital (fingerprint) de una clave de host
+ssh-keygen -l -f /etc/ssh/ssh_host_ed25519_key.pub
+# 256 SHA256:abcdef... root@servidor (ED25519)
+
+# Ver la huella en formato MD5 (antiguo)
+ssh-keygen -l -f /etc/ssh/ssh_host_rsa_key.pub -E md5
+
+# Regenerar claves de host (si se comprometen)
+ssh-keygen -t ed25519 -f /etc/ssh/ssh_host_ed25519_key -N ""
+ssh-keygen -t rsa -b 4096 -f /etc/ssh/ssh_host_rsa_key -N ""
+```
+
+**`ssh-keygen -l -f archivo`**: Muestra la **huella digital** (fingerprint) de una clave. Util para:
+- Verificar la identidad de un servidor comparando la huella con un valor conocido
+- Comprobar que tipo y tamano de clave tiene un servidor o usuario
+- Funciona tanto con claves publicas como privadas (solo muestra la huella, no la clave privada)
+
+```bash
+# Ver fingerprint de una clave de usuario
+ssh-keygen -l -f ~/.ssh/id_ed25519.pub
+
+# Ver fingerprint de una clave de host
+ssh-keygen -l -f /etc/ssh/ssh_host_ecdsa_key.pub
+```
+
+Cuando un cliente se conecta por primera vez a un servidor SSH, la huella digital mostrada corresponde a la clave de host del servidor. Esta huella se almacena en `~/.ssh/known_hosts` del cliente.
+
+---
+
 ## `~/.ssh/config`
 
 Archivo de configuracion del cliente SSH para simplificar conexiones.
@@ -369,6 +413,67 @@ gpg --verify archivo.txt.sig archivo.txt    # Verificar firma separada
 gpg --verify archivo.txt.asc               # Verificar firma incluida
 ```
 
+### Revocacion de claves GPG
+
+Si una clave privada se compromete o ya no se necesita, es necesario **revocarla** para informar a otros usuarios que ya no deben confiar en ella.
+
+```bash
+# Generar un certificado de revocacion (hacer esto JUSTO DESPUES de crear la clave)
+gpg --gen-revoke ID_CLAVE > revocacion.asc
+gpg --output revocacion.asc --gen-revoke ID_CLAVE
+
+# Se recomienda guardar el certificado de revocacion en un lugar seguro (USB, papel impreso)
+```
+
+**Cuando se necesite revocar la clave:**
+```bash
+# Importar el certificado de revocacion al anillo de claves
+gpg --import revocacion.asc
+
+# Verificar que la clave esta marcada como revocada
+gpg --list-keys ID_CLAVE
+# Mostrara: [revoked] junto a la clave
+
+# Enviar la clave revocada a un servidor de claves para notificar a todos
+gpg --keyserver hkps://keys.openpgp.org --send-keys ID_CLAVE
+```
+
+**IMPORTANTE:** GPG genera automaticamente un certificado de revocacion al crear una clave (almacenado en `~/.gnupg/openpgp-revocs.d/`). Es buena practica hacer una copia de seguridad de este certificado inmediatamente.
+
+### Modelo de confianza GPG (Web of Trust)
+
+GPG utiliza un modelo descentralizado de confianza llamado **Web of Trust** (Red de Confianza), diferente al modelo centralizado de PKI/CA.
+
+#### Niveles de confianza de propietario (owner trust)
+
+| Nivel | Significado |
+|-------|-------------|
+| **Unknown** | No se sabe si se puede confiar en el propietario |
+| **None** | No se confia en que el propietario verifique identidades |
+| **Marginal** | Se confia parcialmente (se necesitan varias firmas marginales para validar) |
+| **Full** | Se confia completamente en que el propietario verifica identidades correctamente |
+| **Ultimate** | Confianza absoluta (normalmente solo para tus propias claves) |
+
+#### Como funciona la Web of Trust
+1. **Firmas de claves**: Al verificar la identidad de alguien, firmas su clave publica con tu clave privada
+2. **Cadenas de confianza**: Si confias en Alice y Alice firmo la clave de Bob, puedes confiar en Bob (confianza transitiva)
+3. **Validez**: Una clave se considera valida si:
+   - Esta firmada por una clave con confianza **full**, o
+   - Esta firmada por al menos 3 claves con confianza **marginal**
+
+```bash
+# Editar la confianza de una clave
+gpg --edit-key ID_CLAVE
+gpg> trust
+# Seleccionar nivel: 1=undefined, 2=none, 3=marginal, 4=full, 5=ultimate
+
+# Firmar la clave publica de otra persona (tras verificar su identidad)
+gpg --sign-key ID_CLAVE
+
+# Ver las firmas de una clave
+gpg --list-sigs ID_CLAVE
+```
+
 ### Servidores de claves
 ```bash
 # Buscar clave en un servidor
@@ -394,12 +499,16 @@ gpg --keyserver hkps://keys.openpgp.org --recv-keys ID_CLAVE
 ## Puntos clave para el examen
 
 1. **ssh-keygen**: `-t` tipo (rsa, ecdsa, ed25519), `-b` bits. Ed25519 es el recomendado
-2. **ssh-copy-id** copia la clave publica al `authorized_keys` del servidor
-3. **~/.ssh/known_hosts** almacena claves de host para prevenir MITM
-4. **Permisos**: ~/.ssh = 700, clave privada = 600, authorized_keys = 600
-5. **/etc/ssh/sshd_config**: `PermitRootLogin no`, `PasswordAuthentication no` para mayor seguridad
-6. **Tunel local `-L`**: Puerto local -> destino remoto; **Tunel remoto `-R`**: Puerto remoto -> destino local
-7. **scp** copia archivos; **sftp** es interactivo
-8. **gpg --encrypt --recipient** cifra; **gpg --decrypt** descifra
-9. **gpg --sign** firma; **gpg --verify** verifica
-10. **Cifrado asimetrico**: Clave publica cifra, clave privada descifra. Clave privada firma, clave publica verifica
+2. **`ssh-keygen -l -f archivo`** muestra la huella digital (fingerprint) de una clave
+3. **ssh-copy-id** copia la clave publica al `authorized_keys` del servidor
+4. **~/.ssh/known_hosts** almacena claves de host para prevenir MITM
+5. **Claves de host del servidor** en `/etc/ssh/`: ssh_host_rsa_key, ssh_host_ecdsa_key, ssh_host_ed25519_key
+6. **Permisos**: ~/.ssh = 700, clave privada = 600, authorized_keys = 600
+7. **/etc/ssh/sshd_config**: `PermitRootLogin no`, `PasswordAuthentication no` para mayor seguridad
+8. **Tunel local `-L`**: Puerto local -> destino remoto; **Tunel remoto `-R`**: Puerto remoto -> destino local
+9. **scp** copia archivos; **sftp** es interactivo
+10. **gpg --encrypt --recipient** cifra; **gpg --decrypt** descifra
+11. **gpg --gen-revoke** genera certificado de revocacion; importar con `gpg --import` para revocar
+12. **Web of Trust**: Modelo descentralizado de confianza. Niveles: unknown, none, marginal, full, ultimate
+13. **gpg --sign** firma; **gpg --verify** verifica
+14. **Cifrado asimetrico**: Clave publica cifra, clave privada descifra. Clave privada firma, clave publica verifica

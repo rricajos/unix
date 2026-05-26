@@ -16,9 +16,43 @@
 - Requiere particion ESP (EFI System Partition) en `/boot/efi`
 - Secure Boot: verifica firmas digitales del bootloader
 
+### Coldplug vs Hotplug
+
+Es fundamental distinguir entre dos tipos de deteccion de dispositivos:
+
+**Coldplug (deteccion en frio)**:
+- Dispositivos que estan **presentes al momento del encendido** de la maquina
+- Se detectan durante el proceso de arranque del sistema
+- Ejemplos: CPU, RAM, tarjeta grafica integrada, disco duro interno, controladores de la placa base
+- Udev se encarga de identificar y configurar estos dispositivos durante el boot
+
+**Hotplug (deteccion en caliente)**:
+- Dispositivos que se **conectan o desconectan mientras el sistema esta en funcionamiento**
+- El kernel Linux soporta hotplug desde la version 2.6
+- La mayoria de buses del sistema (PCI, USB, etc.) pueden activar eventos hotplug
+- Ejemplos: memorias USB, discos externos, teclados USB, adaptadores de red WiFi
+- El kernel captura el evento de deteccion y lo pasa al proceso udev, que crea dinamicamente los archivos correspondientes en `/dev`
+
+> **Para el examen:** En distribuciones actuales de Linux, udev es responsable tanto de la deteccion coldplug (durante el encendido) como de la deteccion hotplug (con el sistema en funcionamiento).
+
+### Activacion y desactivacion de hardware en BIOS/UEFI
+
+Desde la utilidad de configuracion del firmware (BIOS o UEFI) es posible:
+
+- **Habilitar y deshabilitar perifericos integrados**: controladores de red, audio, puertos USB, puertos serie, etc.
+- **Activar proteccion basica contra errores** y cambiar configuraciones de hardware como IRQ y DMA
+- **Ajustar velocidades de la RAM**: algunas tecnologias RAM soportan velocidades de transferencia mas rapidas que los valores predeterminados; se recomienda configurar los valores especificados por el fabricante
+- **Habilitar/deshabilitar caracteristicas de la CPU**: funciones no necesarias pueden desactivarse para reducir el consumo de energia o evitar errores conocidos (ej: Intel VT-x, Hyper-Threading)
+- **Definir el orden de arranque**: establecer que dispositivo de almacenamiento tiene el gestor de arranque correcto y debe ser el primero en la secuencia de arranque
+- **Configurar Secure Boot** (solo UEFI): habilitar o deshabilitar la verificacion de firmas digitales del cargador de arranque
+
+La tecla para acceder a la configuracion varia segun el fabricante, pero generalmente es `Del`, `F2` o `F12`. La combinacion suele mostrarse brevemente en pantalla al encender la maquina.
+
+> **Para el examen:** Las funciones deshabilitadas en BIOS/UEFI reducen el consumo de energia y pueden aumentar la proteccion del sistema. Si el dispositivo incorrecto aparece primero en la lista de arranque, el sistema operativo puede no cargarse.
+
 ### El directorio /sys (sysfs)
 
-Sistema de archivos virtual montado en `/sys`. Expone informacion sobre dispositivos y drivers del kernel.
+Sistema de archivos virtual montado en `/sys`. Expone informacion sobre dispositivos y drivers del kernel. Udev se basa en sysfs para obtener la informacion de los dispositivos.
 
 ```bash
 # Estructura principal
@@ -31,6 +65,50 @@ Sistema de archivos virtual montado en `/sys`. Expone informacion sobre disposit
 ├── module/       # Modulos del kernel cargados
 └── power/        # Estados de energia del sistema
 ```
+
+#### Jerarquia detallada de /sys
+
+**`/sys/bus/`**: Contiene un subdirectorio por cada tipo de bus del sistema (pci, usb, scsi, i2c, etc.). Dentro de cada bus hay dos subdirectorios:
+- `devices/`: enlaces simbolicos a los dispositivos conectados a ese bus
+- `drivers/`: controladores registrados para ese tipo de bus
+
+```bash
+/sys/bus/
+├── pci/
+│   ├── devices/     # Enlaces a dispositivos PCI detectados
+│   └── drivers/     # Controladores PCI cargados
+├── usb/
+│   ├── devices/     # Enlaces a dispositivos USB detectados
+│   └── drivers/     # Controladores USB cargados
+└── scsi/
+    ├── devices/
+    └── drivers/
+```
+
+**`/sys/class/`**: Agrupa los dispositivos por su **funcion** (clase), independientemente del bus al que esten conectados. Cada subdirectorio contiene enlaces simbolicos a los dispositivos de esa clase.
+
+```bash
+/sys/class/
+├── net/          # Interfaces de red (eth0, wlan0, lo...)
+├── input/        # Dispositivos de entrada (mouse, teclado...)
+├── sound/        # Dispositivos de sonido
+├── block/        # Dispositivos de bloque
+├── tty/          # Terminales y puertos serie
+└── scsi_host/    # Controladores SCSI
+```
+
+**`/sys/devices/`**: Contiene el **arbol completo** de todos los dispositivos del sistema, organizados jerarquicamente segun su conexion fisica real. Es la ubicacion canonica de los dispositivos; los enlaces en `/sys/bus/` y `/sys/class/` apuntan aqui.
+
+```bash
+# Ejemplo: ver informacion de un dispositivo de red
+ls /sys/class/net/eth0/
+# -> address, carrier, speed, operstate, statistics/, ...
+
+# Leer la direccion MAC de una interfaz
+cat /sys/class/net/eth0/address
+```
+
+> **Para el examen:** `/sys/bus/` organiza por tipo de bus, `/sys/class/` organiza por funcion del dispositivo, y `/sys/devices/` es el arbol fisico real. Los dos primeros contienen enlaces simbolicos que apuntan al tercero.
 
 ### El directorio /proc (procfs)
 

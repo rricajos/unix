@@ -372,23 +372,48 @@ DNF es el sucesor de YUM, usado en Fedora y RHEL/CentOS 8+. La sintaxis es pract
 | Configuracion | `/etc/yum.conf` | `/etc/dnf/dnf.conf` |
 | Repos | `/etc/yum.repos.d/` | `/etc/yum.repos.d/` (mismo) |
 
-### Comandos DNF (equivalentes a YUM)
+### Comandos DNF
 
 ```bash
-dnf install nginx
-dnf remove nginx
-dnf update
-dnf search nginx
-dnf info nginx
-dnf provides /usr/sbin/nginx
-dnf list installed
-dnf repolist
-dnf clean all
-dnf history
-dnf group install "Development Tools"
+# Gestion de paquetes
+dnf install nginx              # Instalar un paquete
+dnf install -y nginx           # Instalar sin pedir confirmacion
+dnf remove nginx               # Desinstalar un paquete
+dnf update                     # Actualizar todos los paquetes
+dnf update nginx               # Actualizar un paquete especifico
+dnf upgrade                    # Equivalente a update (en DNF son sinonimos)
+
+# Busqueda e informacion
+dnf search nginx               # Buscar paquetes por nombre/descripcion
+dnf info nginx                 # Informacion detallada de un paquete
+dnf provides /usr/sbin/nginx   # Buscar que paquete proporciona un archivo
+dnf provides "*/nginx.conf"    # Buscar con comodines
+dnf list installed             # Listar paquetes instalados
+dnf list available             # Listar paquetes disponibles
+
+# Gestion de repositorios
+dnf repolist                   # Listar repositorios habilitados
+dnf repolist all               # Listar todos los repositorios (incluidos deshabilitados)
+dnf config-manager --add-repo URL   # Anadir un nuevo repositorio
+dnf config-manager --set-enabled repo_id    # Habilitar un repositorio
+dnf config-manager --set-disabled repo_id   # Deshabilitar un repositorio
+
+# Mantenimiento
+dnf clean all                  # Limpiar toda la cache
+dnf makecache                  # Regenerar la cache
+dnf history                    # Ver historial de transacciones
+dnf history undo <id>          # Deshacer una transaccion
+dnf autoremove                 # Eliminar dependencias huerfanas
+
+# Grupos de paquetes
+dnf group install "Development Tools"   # Instalar un grupo de paquetes
+dnf group list                          # Listar grupos disponibles
+dnf group info "Development Tools"      # Informacion de un grupo
 ```
 
 La mayor parte de los comandos de YUM funcionan identicamente en DNF. En muchas distribuciones modernas, `yum` es un enlace simbolico a `dnf`.
+
+> **Para el examen:** `dnf config-manager` es una herramienta exclusiva de DNF para gestionar repositorios desde la linea de comandos. En YUM, la gestion de repositorios se hacia editando directamente los archivos `.repo` en `/etc/yum.repos.d/`.
 
 ---
 
@@ -396,10 +421,10 @@ La mayor parte de los comandos de YUM funcionan identicamente en DNF. En muchas 
 
 Zypper es el gestor de paquetes de alto nivel para distribuciones SUSE.
 
-### Comandos basicos de zypper
+### Comandos de zypper
 
 ```bash
-# Actualizar lista de repositorios
+# Actualizar lista de repositorios (descargar metadatos)
 zypper refresh
 zypper ref
 
@@ -411,7 +436,7 @@ zypper in nginx
 zypper remove nginx
 zypper rm nginx
 
-# Actualizar paquetes
+# Actualizar todos los paquetes
 zypper update
 zypper up
 
@@ -422,18 +447,48 @@ zypper se nginx
 # Informacion de un paquete
 zypper info nginx
 
-# Listar repositorios
+# Listar repositorios configurados
 zypper repos
 zypper lr
+zypper lr -d              # Con detalle (URLs)
 
-# Anadir repositorio
+# Anadir un repositorio
 zypper addrepo URL alias
 zypper ar URL alias
+# Ejemplo: zypper ar http://download.opensuse.org/repo/oss/ repo-oss
 
-# Eliminar repositorio
+# Eliminar un repositorio
 zypper removerepo alias
 zypper rr alias
+
+# Habilitar/deshabilitar un repositorio
+zypper modifyrepo -e alias    # Habilitar
+zypper modifyrepo -d alias    # Deshabilitar
+
+# Actualizacion de distribucion (equivalente a dist-upgrade)
+zypper dist-upgrade
+zypper dup
+
+# Buscar que paquete proporciona un archivo
+zypper search --provides /usr/bin/programa
+
+# Limpiar cache
+zypper clean
+zypper clean --all
 ```
+
+**Tabla resumen de abreviaturas de zypper:**
+
+| Comando completo | Abreviatura | Funcion |
+|-----------------|-------------|---------|
+| `zypper install` | `zypper in` | Instalar paquete |
+| `zypper remove` | `zypper rm` | Desinstalar paquete |
+| `zypper search` | `zypper se` | Buscar paquete |
+| `zypper update` | `zypper up` | Actualizar paquetes |
+| `zypper refresh` | `zypper ref` | Refrescar repositorios |
+| `zypper repos` | `zypper lr` | Listar repositorios |
+| `zypper addrepo` | `zypper ar` | Anadir repositorio |
+| `zypper removerepo` | `zypper rr` | Eliminar repositorio |
 
 ---
 

@@ -265,7 +265,65 @@ networkctl status eth0               # Estado de interfaz
 
 ## Configuracion por distribucion
 
-### Debian/Ubuntu: `/etc/network/interfaces`
+### Netplan (Ubuntu moderno)
+
+**Netplan** es el sistema de configuracion de red usado en **Ubuntu 17.10+**. Utiliza archivos YAML que describen la configuracion deseada y genera la configuracion para el backend (NetworkManager o systemd-networkd).
+
+#### Archivos de configuracion
+Los archivos se ubican en `/etc/netplan/` con extension `.yaml`:
+```
+/etc/netplan/01-netcfg.yaml
+/etc/netplan/50-cloud-init.yaml
+/etc/netplan/99-custom.yaml
+```
+
+#### Ejemplo con IP estatica
+```yaml
+# /etc/netplan/01-netcfg.yaml
+network:
+  version: 2
+  renderer: networkd          # o NetworkManager
+  ethernets:
+    eth0:
+      addresses:
+        - 192.168.1.100/24
+      gateway4: 192.168.1.1
+      nameservers:
+        addresses:
+          - 8.8.8.8
+          - 8.8.4.4
+```
+
+#### Ejemplo con DHCP
+```yaml
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      dhcp4: true
+```
+
+#### Comandos de Netplan
+```bash
+# Aplicar la configuracion (genera y aplica)
+netplan apply
+
+# Generar la configuracion del backend sin aplicarla
+netplan generate
+
+# Probar la configuracion (revierte automaticamente si no se confirma)
+netplan try
+
+# Mostrar la configuracion actual
+netplan get
+```
+
+**Para el examen:** Netplan usa archivos YAML en `/etc/netplan/`. `netplan apply` aplica los cambios. `netplan generate` solo genera la configuracion sin aplicarla.
+
+---
+
+### Debian/Ubuntu (clasico): `/etc/network/interfaces`
 ```
 # Loopback
 auto lo
@@ -291,7 +349,25 @@ ifdown eth0              # Desactivar interfaz
 systemctl restart networking
 ```
 
-### RHEL/CentOS: `/etc/sysconfig/network-scripts/`
+### RHEL/CentOS: Configuracion de red
+
+#### `/etc/sysconfig/network` (configuracion global)
+Archivo de configuracion global de red del sistema:
+```
+NETWORKING=yes
+HOSTNAME=mi-servidor.ejemplo.com
+GATEWAY=192.168.1.1
+NOZEROCONF=yes
+```
+
+| Directiva | Descripcion |
+|-----------|-------------|
+| `NETWORKING` | Habilitar/deshabilitar la red (yes/no) |
+| `HOSTNAME` | Nombre de host del sistema |
+| `GATEWAY` | Gateway predeterminado del sistema |
+| `NOZEROCONF` | Deshabilitar la autoasignacion de IP link-local (169.254.x.x) |
+
+#### `/etc/sysconfig/network-scripts/` (configuracion por interfaz)
 Archivo `ifcfg-eth0`:
 ```
 TYPE=Ethernet
@@ -339,6 +415,8 @@ ip route add default via 192.168.1.1
 5. **`ip`** reemplaza a `ifconfig`, `route` y `arp`
 6. **`nmcli`** es la herramienta CLI de NetworkManager; **`nmtui`** es la version TUI
 7. **systemd-networkd** usa archivos `.network` en `/etc/systemd/network/`
-8. Debian usa `/etc/network/interfaces`; RHEL usa `/etc/sysconfig/network-scripts/`
-9. **`ip route add default via IP`** establece la ruta por defecto
-10. Las configuraciones con `ip`/`ifconfig` son **temporales**; para persistir se usan archivos de configuracion
+8. **Netplan** (Ubuntu moderno): Archivos YAML en `/etc/netplan/`. `netplan apply` aplica, `netplan generate` genera
+9. Debian clasico usa `/etc/network/interfaces`; RHEL usa `/etc/sysconfig/network-scripts/`
+10. **`/etc/sysconfig/network`** (RHEL): Configuracion global de red (NETWORKING, HOSTNAME, GATEWAY)
+11. **`ip route add default via IP`** establece la ruta por defecto
+12. Las configuraciones con `ip`/`ifconfig` son **temporales**; para persistir se usan archivos de configuracion

@@ -93,6 +93,17 @@ tracepath -n host               # Sin resolucion DNS
 - **tracepath** es una alternativa mas simple que no requiere root
 - Ambos muestran los routers intermedios (saltos/hops)
 
+### Versiones IPv6
+```bash
+# traceroute para IPv6
+traceroute6 host
+traceroute -6 host              # Equivalente con traceroute moderno
+
+# tracepath para IPv6
+tracepath6 host
+tracepath -6 host               # Equivalente con tracepath moderno
+```
+
 ### Interpretar la salida
 ```
  1  192.168.1.1 (192.168.1.1)  1.234 ms  1.123 ms  1.089 ms
@@ -132,6 +143,49 @@ mtr -P 80 host                  # Puerto TCP especifico
 - **Loss%**: Porcentaje de paquetes perdidos
 - **Avg**: Latencia promedio
 - Muy util para detectar donde hay perdida de paquetes o alta latencia
+
+---
+
+## Tabla de rutas y enrutamiento IPv6
+
+### Ver tabla de rutas IPv6
+```bash
+# Con iproute2 (recomendado)
+ip -6 route show
+ip -6 route
+
+# Con route (legacy)
+route -6
+route -A inet6
+```
+
+### Banderas (flags) de la tabla de rutas
+
+Al ejecutar `route -n` o `netstat -rn`, la columna **Flags** muestra caracteres que describen cada ruta:
+
+| Flag | Significado | Descripcion |
+|------|-------------|-------------|
+| `U` | Up | La ruta esta activa |
+| `G` | Gateway | La ruta usa un gateway (no es directamente conectada) |
+| `H` | Host | El destino es un host especifico (no una red) |
+| `!` | Reject | La ruta rechaza los paquetes (ruta de rechazo) |
+| `D` | Dynamic | Ruta creada dinamicamente (por ICMP redirect) |
+| `M` | Modified | Ruta modificada dinamicamente |
+
+```bash
+# Ejemplo de salida de route -n
+$ route -n
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+0.0.0.0         192.168.1.1     0.0.0.0         UG    100    0        0 eth0
+192.168.1.0     0.0.0.0         255.255.255.0   U     100    0        0 eth0
+10.0.0.5        192.168.1.1     255.255.255.255 UGH   0      0        0 eth0
+```
+
+En este ejemplo:
+- `UG` = Ruta activa que usa gateway (ruta por defecto)
+- `U` = Ruta activa directamente conectada
+- `UGH` = Ruta activa, usa gateway, destino es un host especifico
 
 ---
 
@@ -272,10 +326,12 @@ tcpdump icmp                    # Solo trafico ICMP
 1. Metodologia de troubleshooting: **de abajo a arriba** (enlace -> IP -> gateway -> DNS -> servicio)
 2. **ping** usa ICMP; `ping -c N` limita el numero de paquetes
 3. **traceroute** muestra la ruta; **tracepath** no requiere root
-4. **mtr** combina ping + traceroute en tiempo real
-5. **ss** reemplaza a **netstat**; `-tulnp` es la combinacion mas comun
-6. **nc -zv host puerto** verifica si un puerto esta abierto
-7. **tcpdump** captura trafico; `-i` para interfaz, `-w` para guardar
-8. **`ip addr`** muestra IPs, **`ip route`** muestra rutas, **`ip link`** muestra interfaces
-9. `netstat -r` e `ip route` muestran la tabla de enrutamiento
-10. **ping6** es el equivalente de ping para IPv6
+4. **traceroute6** / **tracepath6** son las versiones para IPv6
+5. **mtr** combina ping + traceroute en tiempo real
+6. **ss** reemplaza a **netstat**; `-tulnp` es la combinacion mas comun
+7. **nc -zv host puerto** verifica si un puerto esta abierto
+8. **tcpdump** captura trafico; `-i` para interfaz, `-w` para guardar
+9. **`ip addr`** muestra IPs, **`ip route`** muestra rutas, **`ip -6 route`** rutas IPv6
+10. **Flags de rutas**: U=up, G=gateway, H=host, !=reject
+11. `netstat -r` e `ip route` muestran la tabla de enrutamiento
+12. **ping6** es el equivalente de ping para IPv6

@@ -177,6 +177,21 @@ sudo systemctl enable xrdp
 mstsc.exe    # Cliente RDP de Windows
 ```
 
+### SPICE (Simple Protocol for Independent Computing Environments)
+- Protocolo de acceso remoto optimizado para **entornos de virtualizacion**
+- Desarrollado originalmente por Qumranet (adquirida por Red Hat)
+- Ofrece mejor rendimiento que VNC para maquinas virtuales
+- Soporta: audio bidireccional, video acelerado, USB compartido, portapapeles compartido
+- **Puerto por defecto:** 5900 (configurable)
+- **Clientes:** virt-viewer, remote-viewer, SPICE HTML5 client
+- Integrado en soluciones como **QEMU/KVM**, oVirt, RHEV
+- Soporta cifrado TLS nativo
+
+```bash
+# Conectar a una VM con SPICE usando remote-viewer
+remote-viewer spice://servidor:5900
+```
+
 ### XDMCP (X Display Manager Control Protocol)
 - Protocolo nativo de X11 para gestionar sesiones remotas
 - Un cliente ligero (thin client) solicita una sesion al Display Manager remoto
@@ -188,12 +203,56 @@ mstsc.exe    # Cliente RDP de Windows
 
 ---
 
-## 7. Comparativa de protocolos de acceso remoto
+## 7. xdg-utils: Herramientas de escritorio estandar
+
+**xdg-utils** es un conjunto de herramientas de linea de comandos que proporcionan funciones de integracion con el escritorio de forma independiente del entorno (GNOME, KDE, Xfce, etc.). Forman parte del estandar **freedesktop.org**.
+
+### Comandos principales
+
+| Comando | Descripcion |
+|---------|-------------|
+| `xdg-open` | Abre un archivo o URL con la aplicacion predeterminada |
+| `xdg-mime` | Consulta y configura las asociaciones de tipos MIME |
+| `xdg-settings` | Configura parametros del escritorio (navegador predeterminado, etc.) |
+| `xdg-desktop-menu` | Instala/desinstala entradas del menu de escritorio |
+| `xdg-desktop-icon` | Instala/desinstala iconos en el escritorio |
+| `xdg-screensaver` | Controla el salvapantallas |
+| `xdg-email` | Abre el cliente de correo predeterminado |
+
+### Ejemplos de uso
+```bash
+# Abrir un archivo con la aplicacion predeterminada
+xdg-open documento.pdf         # Abre con el visor de PDF configurado
+xdg-open foto.jpg              # Abre con el visor de imagenes
+xdg-open https://ejemplo.com   # Abre en el navegador predeterminado
+xdg-open /home/sandra/         # Abre en el gestor de archivos
+
+# Consultar el tipo MIME de un archivo
+xdg-mime query filetype documento.pdf
+# Resultado: application/pdf
+
+# Consultar la aplicacion predeterminada para un tipo MIME
+xdg-mime query default application/pdf
+# Resultado: evince.desktop
+
+# Establecer la aplicacion predeterminada para un tipo MIME
+xdg-mime default firefox.desktop text/html
+
+# Consultar el navegador predeterminado
+xdg-settings get default-web-browser
+```
+
+**Para el examen:** `xdg-open` es la herramienta clave para abrir archivos con la aplicacion predeterminada independientemente del entorno de escritorio. `xdg-mime` permite consultar y modificar las asociaciones de tipos de archivo.
+
+---
+
+## 8. Comparativa de protocolos de acceso remoto
 
 | Protocolo | Puerto | Cifrado | Uso tipico |
 |-----------|--------|---------|------------|
 | VNC | 5900+ | No (usar SSH tunnel) | Acceso remoto multiplataforma |
 | RDP (xrdp) | 3389 | Si (nativo) | Conectar desde Windows a Linux |
+| SPICE | 5900 (configurable) | Si (TLS) | Maquinas virtuales (QEMU/KVM) |
 | XDMCP | 177/UDP | No | Thin clients (obsoleto) |
 | SSH -X | 22 | Si (SSH) | Aplicaciones individuales remotas |
 
@@ -205,7 +264,8 @@ mstsc.exe    # Cliente RDP de Windows
 2. **Qt** es usado por: KDE Plasma, LXQt
 3. **Xfce** es la opcion ligera basada en GTK+; **LXQt** es la opcion ligera basada en Qt
 4. **MATE** es un fork de GNOME 2; **Cinnamon** es un fork de GNOME Shell
-5. **VNC** usa puerto 5900+; **RDP** usa puerto 3389; **XDMCP** usa puerto 177/UDP
-6. **VNC** y **XDMCP** no cifran por defecto; **RDP** si cifra
-7. **Openbox** es un WM stacking; **i3** es un WM tiling
-8. Un entorno de escritorio incluye un gestor de ventanas, pero un gestor de ventanas puede usarse solo
+5. **VNC** usa puerto 5900+; **RDP** usa puerto 3389; **SPICE** optimizado para VMs; **XDMCP** usa puerto 177/UDP
+6. **VNC** y **XDMCP** no cifran por defecto; **RDP** y **SPICE** si cifran
+7. **xdg-open** abre archivos con la aplicacion predeterminada; **xdg-mime** gestiona asociaciones de tipos MIME
+8. **Openbox** es un WM stacking; **i3** es un WM tiling
+9. Un entorno de escritorio incluye un gestor de ventanas, pero un gestor de ventanas puede usarse solo

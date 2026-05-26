@@ -259,22 +259,91 @@ ALL: 10.0.0.0/8
 
 ---
 
-## `/etc/nologin`
+## `/usr/sbin/nologin` vs `/etc/nologin` (DISTINCION CRITICA)
 
-Si el archivo `/etc/nologin` existe, **ningun usuario normal puede iniciar sesion** (solo root puede). Se muestra el contenido del archivo como mensaje al intentar login.
+Es fundamental distinguir entre estos dos elementos con nombre similar pero funcion completamente diferente:
+
+### `/usr/sbin/nologin` - Shell asignado a cuentas del sistema
+
+Es un **programa** (un shell falso) que se asigna como shell de login a cuentas de servicio/sistema para **impedir el acceso interactivo de esa cuenta especifica**.
 
 ```bash
-# Crear para impedir logins
+# En /etc/passwd, las cuentas de sistema usan nologin como shell:
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+mysql:x:27:27:MySQL Server:/var/lib/mysql:/usr/sbin/nologin
+
+# Si alguien intenta hacer login como esa cuenta:
+$ su - www-data
+This account is currently not available.
+
+# Se puede ubicar tambien en /sbin/nologin
+```
+
+- Afecta **solo a las cuentas** que lo tienen asignado como shell en `/etc/passwd`
+- Los servicios que corren bajo esas cuentas siguen funcionando (no necesitan shell interactivo)
+- El mensaje mostrado se puede personalizar en `/etc/nologin.txt`
+
+### `/etc/nologin` - Archivo que bloquea TODOS los logins no-root
+
+Es un **archivo** cuya mera existencia impide que **cualquier usuario normal** (no root) inicie sesion en el sistema. Se muestra el contenido del archivo como mensaje.
+
+```bash
+# Crear para impedir logins de TODOS los usuarios (excepto root)
 echo "Sistema en mantenimiento. Vuelva mas tarde." > /etc/nologin
 
-# Eliminar para permitir logins
+# Eliminar para permitir logins nuevamente
 rm /etc/nologin
 ```
 
-Usos:
-- Mantenimiento del sistema
-- Antes de un reinicio planificado
-- Situaciones de emergencia de seguridad
+- Afecta a **TODOS los usuarios normales** del sistema
+- **Solo root** puede seguir iniciando sesion
+- Se usa durante mantenimiento del sistema, antes de reinicios planificados o emergencias de seguridad
+- Es verificado por el modulo PAM `pam_nologin`
+
+### Resumen de la distincion
+
+| Concepto | `/usr/sbin/nologin` | `/etc/nologin` |
+|----------|--------------------|--------------|
+| Tipo | Programa (shell falso) | Archivo |
+| Ambito | Una cuenta especifica | Todos los usuarios no-root |
+| Ubicacion | Campo shell en `/etc/passwd` | Presencia del archivo en `/etc/` |
+| Proposito | Impedir login interactivo de cuentas de servicio | Bloquear acceso al sistema temporalmente |
+| Permanencia | Permanente mientras este asignado | Temporal (se elimina el archivo para restaurar) |
+
+---
+
+## `/etc/securetty` - Terminales seguras para root
+
+`/etc/securetty` es un archivo que lista las **terminales (TTY) desde las cuales root puede iniciar sesion directamente**. Es verificado por el modulo PAM `pam_securetty`.
+
+```bash
+# Contenido tipico de /etc/securetty
+tty1
+tty2
+tty3
+tty4
+tty5
+tty6
+# console
+```
+
+### Comportamiento
+- Si el archivo **existe**: root solo puede hacer login directo desde las TTY listadas
+- Si el archivo **no existe** o esta **vacio**: el comportamiento depende de la distribucion (puede permitir o denegar todo)
+- Agregar/eliminar lineas controla en que consolas puede hacer login root
+- **NO afecta** al acceso via SSH (eso se controla con `PermitRootLogin` en `sshd_config`)
+- **NO afecta** a `su` o `sudo` (solo afecta al login directo)
+
+```bash
+# Restringir root a solo tty1
+echo "tty1" > /etc/securetty
+
+# Archivo vacio = root no puede hacer login en ninguna TTY
+> /etc/securetty
+```
+
+**Para el examen:** `/etc/securetty` solo controla el login directo de root en terminales. No afecta a SSH, su ni sudo.
 
 ---
 
@@ -292,7 +361,7 @@ passwd -l root
 PermitRootLogin no
 
 # 4. Limitar consolas donde root puede hacer login (/etc/securetty)
-# Solo permitir en tty1 y tty2
+# Solo permitir en tty1 y tty2 (editar el archivo)
 tty1
 tty2
 ```
@@ -318,7 +387,9 @@ tty2
 4. **xinetd**: Un archivo por servicio en `/etc/xinetd.d/`; `disable = yes` para deshabilitar
 5. **inetd**: Comentar linea con `#` en `/etc/inetd.conf` para deshabilitar
 6. **`systemctl disable servicio`** evita que inicie al arrancar; **`mask`** lo bloquea completamente
-7. **`/etc/nologin`**: Si existe, solo root puede hacer login
-8. **`$6$`** = SHA-512, **`$5$`** = SHA-256, **`$1$`** = MD5 en /etc/shadow
-9. **`!`** en el campo hash de shadow = cuenta bloqueada
-10. La seguridad basica incluye: deshabilitar servicios innecesarios, shadow passwords, TCP wrappers, politicas de contrasenas
+7. **`/usr/sbin/nologin`**: Shell asignado a cuentas de sistema para impedir su login interactivo
+8. **`/etc/nologin`**: Si el archivo existe, bloquea el login de TODOS los usuarios excepto root
+9. **`/etc/securetty`**: Lista las TTY donde root puede hacer login directo (no afecta SSH ni su/sudo)
+10. **`$6$`** = SHA-512, **`$5$`** = SHA-256, **`$1$`** = MD5 en /etc/shadow
+11. **`!`** en el campo hash de shadow = cuenta bloqueada
+12. La seguridad basica incluye: deshabilitar servicios innecesarios, shadow passwords, TCP wrappers, politicas de contrasenas

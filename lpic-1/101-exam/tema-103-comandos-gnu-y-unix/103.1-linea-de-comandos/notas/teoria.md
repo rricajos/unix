@@ -256,6 +256,34 @@ echo "Estamos en $(pwd)"      # Forma moderna y preferida
 
 > **IMPORTANTE**: Se prefiere `$()` sobre backticks porque se pueden anidar facilmente: `echo $(echo $(date))`
 
+### Reglas detalladas de quoting
+
+| Tipo de comillas | Variables `$var` | Sustitucion de comandos | Caracteres especiales | Ejemplo |
+|------------------|:-:|:-:|:-:|---------|
+| Sin comillas | Si se expanden | Si | Si se interpretan | `echo $HOME` -> `/home/sandra` |
+| Comillas simples `' '` | No | No | No (todo literal) | `echo '$HOME'` -> `$HOME` |
+| Comillas dobles `" "` | Si se expanden | Si (`$()` y `` ` ` ``) | Solo `$`, `` ` ``, `\`, `!`, `"` | `echo "$HOME"` -> `/home/sandra` |
+| Backticks `` ` ` `` | N/A | Si (forma antigua) | N/A | `` echo `date` `` |
+| `$()` | N/A | Si (forma moderna) | N/A | `echo $(date)` |
+
+```bash
+# Comillas simples: TODO es literal, nada se interpreta
+echo 'El valor es $HOME y $(date)'
+# Salida: El valor es $HOME y $(date)
+
+# Comillas dobles: se expanden variables y sustituciones de comandos
+echo "El valor es $HOME y $(date)"
+# Salida: El valor es /home/sandra y mar may 26 10:00:00 CEST 2026
+
+# Backticks vs $(): ambos sustituyen comandos, pero $() es anidable
+echo "Usuarios: $(wc -l < /etc/passwd)"
+echo "Usuarios: `wc -l < /etc/passwd`"  # Equivalente pero menos legible
+
+# Anidamiento solo funciona bien con $()
+echo "Hoy es $(date -d "$(cat /tmp/fecha.txt)")"   # Correcto
+# Con backticks el anidamiento requiere escapar: dificil y propenso a errores
+```
+
 ### Caracter de escape (`\`)
 La barra invertida elimina el significado especial del caracter que le sigue:
 ```bash
@@ -375,6 +403,19 @@ info bash             # Manual completo de bash
 | `l` | Volver al ultimo nodo visitado |
 | `q` | Salir |
 | `s` / `/` | Buscar |
+
+### El comando `help`
+
+`help` es un comando **builtin de bash** que muestra informacion sobre los comandos internos del shell. Solo funciona con builtins, no con comandos externos.
+
+```bash
+help              # Lista todos los builtins disponibles
+help cd           # Muestra ayuda sobre el builtin cd
+help -s export    # Muestra solo la sintaxis (formato corto)
+help -d set       # Muestra solo una descripcion breve
+```
+
+> **Para el examen**: `man` y `info` son para comandos externos. `help` es exclusivo para builtins de bash. Por ejemplo, `man cd` puede no existir, pero `help cd` siempre funciona en bash.
 
 ### Otra documentacion
 - `/usr/share/doc/`: Directorio con documentacion adicional de paquetes
@@ -503,13 +544,52 @@ uname -p           # Tipo de procesador
 ## 14. Archivos de configuracion del shell
 
 ### Shell de login vs shell interactivo no-login
-- **Shell de login**: Se inicia al iniciar sesion (consola, SSH). Lee:
-  1. `/etc/profile` (global)
-  2. `~/.bash_profile` (o `~/.bash_login` o `~/.profile`, el primero que encuentre)
 
-- **Shell interactivo no-login**: Se abre una nueva terminal dentro de una sesion grafica. Lee:
-  1. `/etc/bash.bashrc` (global, segun distribucion)
-  2. `~/.bashrc`
+#### Shell de login
+Un **shell de login** se inicia cuando el usuario abre sesion en el sistema (consola de texto, SSH, `su -`, `bash --login`). Lee los siguientes archivos **en este orden**:
+
+1. `/etc/profile` (configuracion global para todos los usuarios)
+2. Luego busca **el primero que exista** de estos tres, en orden:
+   - `~/.bash_profile`
+   - `~/.bash_login`
+   - `~/.profile`
+3. Al cerrar sesion: `~/.bash_logout`
+
+#### Shell interactivo no-login
+Un **shell interactivo no-login** se abre cuando se lanza una nueva terminal dentro de una sesion grafica o cuando se ejecuta `bash` sin opciones. Lee:
+
+1. `/etc/bash.bashrc` (global, segun distribucion)
+2. `~/.bashrc`
+
+#### Shell no interactivo
+Un **shell no interactivo** se usa para ejecutar scripts. No lee los archivos anteriores, pero puede leer el archivo indicado en la variable `$BASH_ENV` si esta definida.
+
+#### Como identificar el tipo de shell
+```bash
+# Verificar si es un shell de login
+echo $0           # Si muestra "-bash" (con guion), es shell de login
+shopt login_shell # Muestra "on" si es shell de login
+
+# Verificar si es interactivo
+echo $-           # Si contiene "i", es interactivo
+```
+
+#### Ejemplo de flujo
+```
+Inicio de sesion (SSH, consola):
+  /etc/profile -> ~/.bash_profile (o ~/.bash_login o ~/.profile)
+
+Abrir terminal en escritorio:
+  /etc/bash.bashrc -> ~/.bashrc
+
+Ejecutar un script:
+  Solo $BASH_ENV (si esta definida)
+
+Cerrar sesion de login:
+  ~/.bash_logout
+```
+
+> **Para el examen**: Es muy comun que `~/.bash_profile` contenga un `source ~/.bashrc` para reutilizar la configuracion. Asi, los alias y funciones definidos en `.bashrc` tambien estan disponibles en shells de login.
 
 ### Archivos de configuracion
 | Archivo | Descripcion |
@@ -523,3 +603,28 @@ uname -p           # Tipo de procesador
 | `~/.bash_logout` | Se ejecuta al cerrar un shell de login |
 
 > **Consejo**: Es comun que `~/.bash_profile` incluya un `source ~/.bashrc` para compartir configuraciones.
+
+---
+
+## 15. El comando `hash`
+
+El shell bash mantiene una **tabla hash interna** que almacena las rutas de los comandos externos ya ejecutados. Esto evita que el shell tenga que buscar en todos los directorios de `$PATH` cada vez que se ejecuta un comando conocido.
+
+```bash
+hash              # Muestra la tabla hash (comandos usados y sus rutas)
+hash -r           # Limpia (resetea) la tabla hash completa
+hash -d ls        # Elimina la entrada de "ls" de la tabla hash
+hash -p /usr/local/bin/python3 python3  # Establece manualmente una ruta para un comando
+hash -t ls        # Muestra la ruta almacenada para "ls"
+```
+
+### Cuando es util
+Si se instala una nueva version de un programa en una ubicacion diferente, el shell podria seguir usando la ruta antigua almacenada en el hash. En ese caso, se usa `hash -r` para forzar una nueva busqueda.
+
+```bash
+# Ejemplo: despues de instalar una nueva version de python
+hash -r           # Limpia la cache
+which python3     # Ahora buscara la nueva ubicacion
+```
+
+> **Para el examen**: `hash` es un builtin de bash. La tabla hash se limpia automaticamente al iniciar un nuevo shell. Se usa `hash -r` para resetear la tabla cuando se han movido o instalado nuevos ejecutables.

@@ -246,6 +246,28 @@ at now + 3 days
 at 15:00 -f /ruta/comandos.txt
 ```
 
+### Especificaciones de tiempo en `at`
+
+`at` acepta una variedad de formatos para especificar el momento de ejecucion:
+
+| Formato | Ejemplo | Descripcion |
+|---------|---------|-------------|
+| Hora HH:MM | `at 14:30` | A las 14:30 del dia actual (o siguiente si ya paso) |
+| Hora 12h | `at 2:30 PM` | A las 2:30 PM |
+| `noon` | `at noon` | A las 12:00 del mediodia |
+| `midnight` | `at midnight` | A las 00:00 de la medianoche |
+| `teatime` | `at teatime` | A las 16:00 (4:00 PM) |
+| `now + N min` | `at now + 30 minutes` | Dentro de 30 minutos |
+| `now + N hours` | `at now + 2 hours` | Dentro de 2 horas |
+| `now + N days` | `at now + 3 days` | Dentro de 3 dias |
+| `now + N weeks` | `at now + 1 week` | Dentro de 1 semana |
+| `tomorrow` | `at 10:00 tomorrow` | Manana a las 10:00 |
+| Fecha con mes | `at 2:30 PM January 15` | 15 de enero a las 2:30 PM |
+| Fecha ISO | `at 14:00 2026-12-31` | 31 de diciembre de 2026 a las 14:00 |
+| Hora + mes dia | `at 10:00 AM Jul 4` | 4 de julio a las 10:00 AM |
+
+**Para el examen:** Recordar las palabras clave especiales: `noon` (12:00), `midnight` (00:00), `teatime` (16:00), `tomorrow`, y el formato `now + N unidad`.
+
 ### Comandos relacionados
 
 | Comando | Descripcion |
@@ -364,6 +386,56 @@ systemd-analyze calendar "*-*-* 02:30:00"
 
 ---
 
+## 7. `systemd-run` - Tareas unicas con systemd
+
+`systemd-run` permite ejecutar un comando como una unidad transitoria de systemd, incluyendo la posibilidad de programar su ejecucion para un momento futuro. Es una alternativa moderna a `at` integrada en systemd.
+
+### Ejecucion inmediata
+```bash
+# Ejecutar un comando como unidad transitoria
+systemd-run /usr/local/bin/backup.sh
+
+# Con nombre descriptivo
+systemd-run --unit=mi-backup --description="Backup manual" /usr/local/bin/backup.sh
+```
+
+### Ejecucion programada (alternativa a `at`)
+```bash
+# Ejecutar dentro de 30 segundos
+systemd-run --on-active=30s /bin/comando
+
+# Ejecutar dentro de 5 minutos
+systemd-run --on-active=5m /usr/local/bin/tarea.sh
+
+# Ejecutar dentro de 2 horas
+systemd-run --on-active=2h /usr/local/bin/proceso.sh
+
+# Ejecutar en una fecha y hora especifica (formato OnCalendar)
+systemd-run --on-calendar="2026-12-31 23:59:00" /usr/local/bin/fin-de-anio.sh
+
+# Ejecutar todos los dias a las 3:00 AM (como un cron transitorio)
+systemd-run --on-calendar="*-*-* 03:00:00" --timer-property=Persistent=true /usr/local/bin/diario.sh
+```
+
+### Opciones principales de systemd-run
+
+| Opcion | Descripcion |
+|--------|-------------|
+| `--on-active=TIEMPO` | Ejecutar despues de un tiempo relativo (ej: 30s, 5m, 2h) |
+| `--on-calendar=CALENDARIO` | Ejecutar en un momento especifico o patron de calendario |
+| `--on-boot=TIEMPO` | Ejecutar N tiempo despues del arranque |
+| `--unit=NOMBRE` | Nombre de la unidad transitoria |
+| `--description=DESC` | Descripcion de la unidad |
+| `--timer-property=PROP` | Propiedades adicionales del timer |
+
+### Ventajas sobre `at`
+- Integrado en systemd (no requiere el demonio `atd`)
+- Los logs se registran en el journal (consultables con `journalctl`)
+- Soporta dependencias y propiedades de unidades systemd
+- No necesita archivos allow/deny
+
+---
+
 ## Resumen para el examen
 
 1. **Formato crontab de usuario:** `min hora dia mes dia_sem comando` (5 campos + comando)
@@ -373,6 +445,8 @@ systemd-analyze calendar "*-*-* 02:30:00"
 5. **Anacron:** Para sistemas no siempre encendidos. Precision minima: dias. Solo root
 6. **/etc/anacrontab:** `periodo retardo identificador comando`
 7. **at:** Tareas unicas. `atq` lista, `atrm` elimina, `batch` ejecuta con carga baja
-8. **at.allow/at.deny:** Misma logica que cron.allow/cron.deny
-9. **systemd timers:** Usan archivos `.timer` + `.service`. OnCalendar para programacion
-10. `systemctl list-timers` para ver timers activos
+8. **Tiempos especiales de at:** `noon` (12:00), `midnight` (00:00), `teatime` (16:00), `now + N units`
+9. **at.allow/at.deny:** Misma logica que cron.allow/cron.deny
+10. **systemd timers:** Usan archivos `.timer` + `.service`. OnCalendar para programacion
+11. **`systemd-run`:** Tareas unicas con systemd. `--on-active=30s` para ejecucion relativa, `--on-calendar` para momento especifico
+12. `systemctl list-timers` para ver timers activos

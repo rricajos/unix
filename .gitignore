@@ -38,3 +38,7 @@ node_modules/
 *.o
 *.exe
 *.out
+
+# Manuales oficiales y material con copyright (no subir)
+/manuales/
+*.pdf

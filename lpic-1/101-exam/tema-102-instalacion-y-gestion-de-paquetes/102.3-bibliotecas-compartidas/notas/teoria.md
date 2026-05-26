@@ -57,9 +57,9 @@ libreadline.so.8.1.2
 | `MENOR` | Version menor (nuevas funcionalidades compatibles) | `1` |
 | `REVISION` | Correccion de errores | `2` |
 
-### Enlaces simbolicos
+### Cadena de enlaces simbolicos (soname)
 
-Para facilitar la gestion de versiones, se usan enlaces simbolicos:
+Para facilitar la gestion de versiones, se usan enlaces simbolicos que forman una cadena. El **soname** (shared object name) es el nombre canonico que los programas enlazados dinamicamente buscan al cargarse:
 
 ```
 libreadline.so -> libreadline.so.8        (enlace de desarrollo)
@@ -67,9 +67,22 @@ libreadline.so.8 -> libreadline.so.8.1.2  (enlace soname)
 libreadline.so.8.1.2                       (archivo real)
 ```
 
-- **soname** (`libreadline.so.8`): Enlace que apunta a la version compatible mas reciente. Es el nombre que los programas buscan al cargarse.
-- **Enlace de desarrollo** (`libreadline.so`): Usado por el compilador para encontrar la biblioteca.
-- **Archivo real** (`libreadline.so.8.1.2`): El archivo con el codigo compilado.
+**Otro ejemplo con libfuse:**
+```
+libfuse.so -> libfuse.so.2                (enlace de desarrollo)
+libfuse.so.2 -> libfuse.so.2.9.7         (enlace soname)
+libfuse.so.2.9.7                           (archivo real)
+```
+
+| Tipo de enlace | Ejemplo | Proposito | Quien lo usa |
+|----------------|---------|-----------|-------------|
+| **Enlace de desarrollo** | `libfuse.so` | Apunta al soname. Usado durante la **compilacion** | El compilador (`gcc -lfuse`) |
+| **Enlace soname** | `libfuse.so.2` | Apunta al archivo real. Es el nombre que **buscan los programas** al ejecutarse | El cargador dinamico (`ld-linux.so`) |
+| **Archivo real** | `libfuse.so.2.9.7` | Contiene el codigo compilado de la biblioteca | N/A (referenciado por los enlaces) |
+
+El comando `ldconfig` se encarga de **crear y mantener** los enlaces soname automaticamente.
+
+> **Para el examen:** El soname solo incluye la version mayor (ej: `libfuse.so.2`). Esto permite actualizar la version menor y revision sin romper la compatibilidad con los programas que dependen de la biblioteca.
 
 ---
 
@@ -155,14 +168,23 @@ readelf -d /ruta/ejecutable | grep NEEDED
 # Actualizar la cache (requiere root)
 sudo ldconfig
 
-# Mostrar las bibliotecas en la cache
+# Mostrar las bibliotecas en la cache (print cache)
 ldconfig -p
+# Salida: muestra cada biblioteca con su soname, tipo (libc6, x86-64) y ruta completa
+# Ejemplo:
+#   libz.so.1 (libc6,x86-64) => /lib/x86_64-linux-gnu/libz.so.1
+#   libfuse.so.2 (libc6,x86-64) => /lib/x86_64-linux-gnu/libfuse.so.2
 
-# Mostrar las bibliotecas en la cache filtrando
+# Filtrar una biblioteca especifica en la cache
 ldconfig -p | grep libssl
 
-# Modo verbose (muestra lo que hace)
+# Modo verbose: muestra los directorios procesados y los enlaces creados
 sudo ldconfig -v
+# Salida: lista cada directorio escaneado y las bibliotecas encontradas
+# Ejemplo:
+#   /lib/x86_64-linux-gnu:
+#       libz.so.1 -> libz.so.1.2.11
+#       libfuse.so.2 -> libfuse.so.2.9.7
 
 # Solo mostrar sin actualizar (dry-run)
 ldconfig -N
@@ -170,6 +192,8 @@ ldconfig -N
 # Procesar solo un directorio especifico
 sudo ldconfig /opt/miapp/lib
 ```
+
+> **Para el examen:** `ldconfig -p` muestra el contenido de la cache (util para verificar si una biblioteca esta registrada). `ldconfig -v` muestra el proceso de escaneo con detalle (util para depurar problemas de bibliotecas).
 
 ### Cuando ejecutar ldconfig
 
@@ -227,17 +251,28 @@ ldconfig -p | grep miapp
 
 Variable de entorno que permite especificar directorios adicionales donde buscar bibliotecas **sin necesidad de ser root** ni modificar archivos del sistema.
 
-### Uso
+### Uso detallado
 
 ```bash
-# Establecer temporalmente
+# Establecer temporalmente (solo en la sesion actual)
 export LD_LIBRARY_PATH=/opt/miapp/lib:/opt/otra/lib
 
-# Ejecutar un programa con una ruta de biblioteca especifica
+# Ejecutar un programa con una ruta de biblioteca especifica (solo para ese comando)
 LD_LIBRARY_PATH=/opt/miapp/lib ./mi_programa
 
-# Anadir a la ruta existente
+# Anadir a la ruta existente (sin perder las rutas previas)
 export LD_LIBRARY_PATH=/opt/miapp/lib:$LD_LIBRARY_PATH
+
+# Eliminar la variable (deshacer la configuracion)
+unset LD_LIBRARY_PATH
+
+# Verificar el valor actual de la variable
+echo $LD_LIBRARY_PATH
+
+# Ejemplo completo: compilar y ejecutar con una biblioteca personalizada
+export LD_LIBRARY_PATH=/opt/miapp/lib
+./mi_programa
+unset LD_LIBRARY_PATH    # Limpiar despues de usar
 ```
 
 ### Orden de busqueda de bibliotecas

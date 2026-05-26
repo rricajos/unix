@@ -96,6 +96,43 @@ cron.*                     /var/log/cron.log
 - El prefijo `-` antes del archivo significa escritura asincrona (mejor rendimiento)
 - `@` = UDP, `@@` = TCP para envio remoto
 
+### Registro remoto con rsyslog (IMPORTANTE para el examen)
+
+rsyslog puede enviar y recibir logs por red, permitiendo centralizar el registro de multiples servidores.
+
+**Envio de logs a un servidor remoto (en el cliente):**
+```
+# En /etc/rsyslog.conf del cliente:
+
+# Enviar TODOS los logs via UDP (un solo @)
+*.* @192.168.1.100:514
+
+# Enviar TODOS los logs via TCP (doble @@)
+*.* @@192.168.1.100:514
+
+# Enviar solo logs de autenticacion via TCP
+auth,authpriv.* @@logserver.ejemplo.com:514
+```
+
+**Recepcion de logs (en el servidor central):**
+```
+# En /etc/rsyslog.conf del servidor:
+
+# Habilitar recepcion por UDP
+module(load="imudp")
+input(type="imudp" port="514")
+
+# Habilitar recepcion por TCP
+module(load="imtcp")
+input(type="imtcp" port="514")
+
+# Almacenar logs remotos en archivos separados por host
+$template RemoteLogs,"/var/log/remote/%HOSTNAME%/%PROGRAMNAME%.log"
+*.* ?RemoteLogs
+```
+
+**Regla mnemotecnica:** `@` = UDP (un arroba, un protocolo simple), `@@` = TCP (dos arrobas, protocolo con mas garantias).
+
 ### Directorio de configuracion adicional
 - `/etc/rsyslog.d/` - Archivos de configuracion adicionales (incluidos via `$IncludeConfig`)
 
@@ -147,14 +184,42 @@ Compress=yes
 SystemMaxUse=500M           # Tamano maximo del journal
 SystemMaxFileSize=50M       # Tamano maximo por archivo
 MaxRetentionSec=1month      # Retencion maxima temporal
-ForwardToSyslog=yes         # Reenviar mensajes a syslog
+ForwardToSyslog=yes         # Reenviar mensajes a syslog (rsyslog)
+ForwardToConsole=no         # Reenviar mensajes a la consola (/dev/console)
 ```
 
+### Almacenamiento persistente del journal (IMPORTANTE)
+
 Valores de `Storage`:
-- `auto` - Persistente si existe `/var/log/journal/`, sino volatil
-- `persistent` - Siempre persistente (crea el directorio si no existe)
-- `volatile` - Solo en RAM (`/run/log/journal/`)
-- `none` - No almacenar (solo reenviar)
+- **`auto`** (por defecto) - Persistente si existe `/var/log/journal/`, sino volatil en `/run/log/journal/`
+- **`persistent`** - Siempre persistente (crea el directorio automaticamente si no existe)
+- **`volatile`** - Solo en RAM (`/run/log/journal/`), se pierde al reiniciar
+- **`none`** - No almacenar (solo reenviar a otros destinos)
+
+**Para habilitar almacenamiento persistente manualmente** (cuando `Storage=auto`):
+```bash
+# Crear el directorio de journal persistente
+mkdir -p /var/log/journal
+
+# Establecer los permisos correctos
+systemd-tmpfiles --create --prefix /var/log/journal
+
+# Reiniciar el servicio para que detecte el directorio
+systemctl restart systemd-journald
+```
+
+**Para el examen:** Con `Storage=auto`, basta con crear `/var/log/journal/` para que los logs persistan entre reinicios. Con `Storage=persistent`, systemd crea el directorio automaticamente.
+
+### Opciones de reenvio del journal
+
+| Opcion | Descripcion |
+|--------|-------------|
+| `ForwardToSyslog=yes` | Reenvia mensajes al syslog tradicional (rsyslog/syslog-ng) |
+| `ForwardToConsole=no` | Reenvia mensajes a la consola del sistema (`/dev/console`) |
+| `ForwardToKMsg=no` | Reenvia mensajes al buffer del kernel (`/dev/kmsg`) |
+| `ForwardToWall=yes` | Reenvia mensajes de emergencia a todos los terminales con `wall` |
+
+Estas opciones permiten que journald coexista con syslog tradicional, reenviandole los mensajes para que los almacene en archivos de texto plano.
 
 ---
 

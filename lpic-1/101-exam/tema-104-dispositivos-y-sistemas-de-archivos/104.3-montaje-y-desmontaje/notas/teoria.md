@@ -236,7 +236,41 @@ lsblk -o NAME,SIZE,TYPE,FSTYPE,MOUNTPOINT
 lsblk -S
 ```
 
-### 5.3 findmnt
+### 5.3 /proc/mounts y /etc/mtab
+
+Ademas de `mount` y `findmnt`, existen dos archivos importantes para consultar los sistemas de archivos montados:
+
+#### /proc/mounts
+
+`/proc/mounts` es un archivo virtual del kernel que muestra los sistemas de archivos **actualmente montados** en tiempo real. Es la fuente mas fiable de informacion sobre montajes.
+
+```bash
+cat /proc/mounts                         # Ver todos los montajes actuales
+grep "ext4" /proc/mounts                 # Filtrar por tipo de FS
+grep "/home" /proc/mounts                # Ver como esta montado /home
+```
+
+#### /etc/mtab
+
+`/etc/mtab` es un archivo que tradicionalmente mantiene una lista de los sistemas de archivos montados, similar a `/proc/mounts`. En distribuciones modernas, `/etc/mtab` suele ser un **enlace simbolico a `/proc/mounts`** (o a `/proc/self/mounts`).
+
+```bash
+cat /etc/mtab                            # Ver montajes (puede ser enlace a /proc/mounts)
+ls -la /etc/mtab                         # Verificar si es un enlace simbolico
+# lrwxrwxrwx 1 root root 19 ... /etc/mtab -> ../proc/self/mounts
+```
+
+#### Diferencias entre los archivos de montaje
+
+| Archivo | Descripcion | Fiabilidad |
+|---------|-------------|------------|
+| `/proc/mounts` | Informacion del kernel en tiempo real | La mas fiable |
+| `/etc/mtab` | Tradicionalmente mantenido por `mount` (hoy suele ser enlace a /proc/mounts) | Fiable en sistemas modernos |
+| `/etc/fstab` | Configuracion de montaje **deseada** (no refleja el estado actual) | Solo configuracion |
+
+> **Para el examen**: `/proc/mounts` es la fuente autoritativa de montajes actuales. `/etc/fstab` es la configuracion deseada pero no necesariamente refleja el estado real. En distribuciones modernas, `/etc/mtab` es generalmente un enlace simbolico a `/proc/self/mounts`.
+
+### 5.4 findmnt
 
 Muestra los sistemas de archivos montados de forma mas clara que `mount`.
 
