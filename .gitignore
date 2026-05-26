@@ -31,8 +31,13 @@ __pycache__/
 .venv/
 venv/
 
-# Node (si se usa alguna herramienta)
+# Node
 node_modules/
+
+# Quartz build artifacts
+public/
+.quartz-cache/
+.quartz/plugins/
 
 # Archivos compilados
 *.o
