@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.2"
 titulo: "Resolución de Nombres en Active Directory"
 peso: 2
-tags: [lpic-3, tema-302, teoria]
+tags:
+  - lpic-3
+  - tema-302
+  - teoria
 ---
 
 # 302.2 Resolución de Nombres en Active Directory

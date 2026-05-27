@@ -10,7 +10,7 @@ subtema: "211.3"
 
 # 211.3 - Ejercicios: Acceso a buzones
 
-## Pregunta 1
+### Pregunta 1
 
 ¿Cuáles son los puertos estándar para IMAP sin cifrar y con SSL/TLS?
 
@@ -26,7 +26,7 @@ d) 110 y 993
 IMAP utiliza el puerto 143 para conexiones sin cifrar y el puerto 993 para conexiones SSL/TLS (IMAPS). Los puertos 110 y 995 corresponden a POP3 y POP3S respectivamente.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 ¿Qué directiva de Dovecot define la ubicación de los buzones de correo?
 
@@ -42,7 +42,7 @@ d) inbox_path
 La directiva `mail_location` en `/etc/dovecot/conf.d/10-mail.conf` define dónde busca Dovecot los buzones de correo. Los valores más comunes son `maildir:~/Maildir` para formato Maildir y `mbox:~/mail:INBOX=/var/mail/%u` para formato mbox.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 ¿Qué valor de la directiva `ssl` en Dovecot obliga a que todas las conexiones usen cifrado?
 
@@ -58,7 +58,7 @@ d) ssl = mandatory
 `ssl = required` obliga a que todas las conexiones a Dovecot utilicen cifrado SSL/TLS. `ssl = yes` hace que SSL esté disponible pero sea opcional, y `ssl = no` lo deshabilita completamente.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 ¿Cuál es la principal diferencia funcional entre IMAP y POP3?
 
@@ -74,7 +74,7 @@ d) IMAP solo funciona con cifrado, POP3 no requiere cifrado
 IMAP gestiona el correo en el servidor, permitiendo acceso desde múltiples dispositivos y gestión completa de carpetas. POP3 descarga el correo al cliente local, tras lo cual normalmente se elimina del servidor.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 ¿Qué comando de Dovecot muestra solo los parámetros de configuración que difieren de los valores por defecto?
 
@@ -90,7 +90,7 @@ d) doveadm config
 `doveconf -n` muestra solo los parámetros que han sido modificados respecto a los valores por defecto, lo que facilita revisar la configuración personalizada. `doveconf -a` muestra todos los parámetros, incluyendo los valores por defecto.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 ¿En qué directorio se encuentra la configuración modular de Dovecot?
 
@@ -106,7 +106,7 @@ d) /etc/dovecot.d/
 La configuración modular de Dovecot se distribuye en archivos dentro del directorio `/etc/dovecot/conf.d/`. Cada archivo se encarga de un aspecto diferente: autenticación (10-auth.conf), correo (10-mail.conf), SSL (10-ssl.conf), etc.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 ¿Qué formato de buzón soporta exclusivamente Courier-IMAP?
 
@@ -122,7 +122,7 @@ d) dbox
 Courier-IMAP solo soporta el formato Maildir. A diferencia de Dovecot, que soporta tanto mbox como Maildir, Courier-IMAP está diseñado específicamente para trabajar con buzones Maildir.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 ¿Qué sintaxis especial se utiliza en Dovecot para indicar la ruta del certificado SSL?
 
@@ -138,7 +138,7 @@ d) ssl_cert = path(/etc/ssl/certs/cert.pem)
 Dovecot utiliza la sintaxis `<` antes de la ruta del archivo para indicar que debe leer el contenido del archivo. Se escribe `ssl_cert = </etc/ssl/certs/cert.pem` (sin espacio entre `<` y la ruta).
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 ¿Qué mecanismo de autenticación de Dovecot se utiliza típicamente con conexiones SSL/TLS?
 
@@ -154,7 +154,7 @@ d) ntlm
 El mecanismo `plain` envía las credenciales en texto plano, pero es seguro cuando se usa sobre una conexión SSL/TLS cifrada. Es el mecanismo más simple, compatible y ampliamente soportado. La directiva `disable_plaintext_auth = yes` garantiza que solo se use con conexiones cifradas.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 ¿Qué protocolo utiliza Dovecot para actuar como agente de entrega local integrado con Postfix?
 

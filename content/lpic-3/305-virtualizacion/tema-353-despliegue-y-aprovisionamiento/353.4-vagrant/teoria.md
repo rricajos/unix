@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "353 - Despliegue y Aprovisionamiento"
 subtema: "353.4"
 peso: 3
-tags: [lpic-3, tema-353, vagrant, vagrantfile, virtualbox, provisioners]
+tags:
+  - lpic-3
+  - tema-353
+  - vagrant
+  - vagrantfile
+  - virtualbox
+  - provisioners
 ---
 
 # 353.4 Vagrant

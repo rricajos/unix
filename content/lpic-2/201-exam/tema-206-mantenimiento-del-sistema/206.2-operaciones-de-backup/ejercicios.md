@@ -10,7 +10,7 @@ subtema: "206.2"
 
 # 206.2 - Ejercicios: Operaciones de backup
 
-## Pregunta 1
+### Pregunta 1
 
 ¿Que opcion de `tar` permite realizar backups incrementales utilizando un archivo snapshot?
 
@@ -27,7 +27,7 @@ La opcion `--listed-incremental=ARCHIVO` permite a tar realizar backups incremen
 
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 Al ejecutar `rsync -av /home/usuario/ /backup/usuario/`, ¿que efecto tiene la barra final (`/`) en la ruta de origen?
 
@@ -44,7 +44,7 @@ En rsync, la barra final en la ruta de origen indica que se debe copiar el conte
 
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 ¿Que comando crea una copia exacta del MBR (Master Boot Record) de un disco?
 
@@ -61,7 +61,7 @@ El MBR ocupa exactamente los primeros 512 bytes del disco: 446 bytes para el boo
 
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 ¿Cual es la diferencia principal entre un backup incremental y un backup diferencial?
 
@@ -78,7 +78,7 @@ El backup incremental registra solo los cambios desde la ultima copia (sea full 
 
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 ¿Que opcion de `rsync` elimina en el destino los archivos que ya no existen en el origen?
 
@@ -95,7 +95,7 @@ La opcion `--delete` hace que rsync elimine del destino cualquier archivo que no
 
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 ¿En que modo opera `cpio` cuando se usa con la opcion `-o`?
 
@@ -112,7 +112,7 @@ El modo copy-out (`-o`) de cpio lee nombres de archivo desde la entrada estandar
 
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 ¿Que opcion de rsync se recomienda para realizar una simulacion antes de ejecutar la sincronizacion real?
 
@@ -129,7 +129,7 @@ La opcion `-n` (o `--dry-run`) ejecuta rsync sin realizar ningun cambio real, mo
 
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 ¿Cual de las siguientes herramientas es un sistema de backup empresarial con arquitectura modular que incluye Director, Storage Daemon y File Daemon?
 
@@ -146,7 +146,7 @@ Bacula utiliza una arquitectura modular compuesta por: el Director (coordina las
 
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 Para restaurar una secuencia de backups incrementales realizados con `tar --listed-incremental`, ¿que valor se usa para el archivo snapshot durante la restauracion?
 
@@ -163,7 +163,7 @@ Al restaurar un backup incremental, se usa `--listed-incremental=/dev/null` para
 
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 ¿Que significa la opcion `-a` de rsync?
 

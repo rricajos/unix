@@ -6,7 +6,10 @@ tema: "301"
 subtema: "301.1"
 titulo: "Conceptos y Arquitectura - Comandos Clave"
 peso: 2
-tags: [lpic-3, tema-301, comandos]
+tags:
+  - lpic-3
+  - tema-301
+  - comandos
 ---
 
 # Comandos clave - 301.1 Conceptos y Arquitectura

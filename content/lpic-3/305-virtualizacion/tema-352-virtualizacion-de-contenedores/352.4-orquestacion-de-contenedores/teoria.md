@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "352 - Virtualización de Contenedores"
 subtema: "352.4"
 peso: 3
-tags: [lpic-3, tema-352, kubernetes, docker-swarm, orquestacion, kubectl]
+tags:
+  - lpic-3
+  - tema-352
+  - kubernetes
+  - docker-swarm
+  - orquestacion
+  - kubectl
 ---
 
 # 352.4 Orquestación de Contenedores

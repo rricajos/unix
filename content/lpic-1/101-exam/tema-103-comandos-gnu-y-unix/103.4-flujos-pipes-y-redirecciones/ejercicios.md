@@ -14,7 +14,7 @@ subtema: "103.4"
 
 # 103.4 - Flujos, pipes y redirecciones: Ejercicios
 
-## Pregunta 1
+### Pregunta 1
 Un administrador quiere ejecutar un comando y guardar tanto la salida estandar como los errores en el mismo archivo `log.txt`. Cuales de las siguientes opciones son correctas? (Seleccione DOS)
 
 A) `comando > log.txt 2>&1`
@@ -32,7 +32,7 @@ La opcion A primero redirige stdout al archivo `log.txt`, y luego `2>&1` redirig
 
 ---
 
-## Pregunta 2
+### Pregunta 2
 Que hace el siguiente comando?
 ```bash
 find /var/log -name "*.log" -mtime +30 | xargs rm
@@ -53,7 +53,7 @@ D) Mueve los archivos .log antiguos a la papelera
 
 ---
 
-## Pregunta 3
+### Pregunta 3
 Cual de los siguientes comandos muestra la salida del comando `ls -l` en la pantalla Y al mismo tiempo la guarda en el archivo `listado.txt`?
 
 A) `ls -l > listado.txt`
@@ -71,7 +71,7 @@ D) `ls -l | cat > listado.txt`
 
 ---
 
-## Pregunta 4
+### Pregunta 4
 Que son los descriptores de archivo 0, 1 y 2 en Linux?
 
 A) 0=stdout, 1=stdin, 2=stderr
@@ -89,7 +89,7 @@ Los tres descriptores de archivo estandar en Linux son: **0** para la entrada es
 
 ---
 
-## Pregunta 5
+### Pregunta 5
 Un script genera mucha salida que no interesa y tambien mensajes de error que tampoco se quieren ver. Cual es la forma correcta de descartar TODA la salida?
 
 A) `script.sh > /dev/zero`
@@ -107,7 +107,7 @@ D) `script.sh 2> /dev/null`
 
 ---
 
-## Pregunta 6
+### Pregunta 6
 Que hace el operador `<<` en el siguiente ejemplo?
 ```bash
 cat << FIN
@@ -131,7 +131,7 @@ El operador `<<` seguido de un delimitador (en este caso `FIN`) crea un "here do
 
 ---
 
-## Pregunta 7
+### Pregunta 7
 Un administrador quiere encontrar todos los archivos `.conf` en `/etc` y copiarlos a `/backup/configs/`. Los nombres de algunos archivos contienen espacios. Cual de los siguientes comandos es el mas seguro?
 
 A) `find /etc -name "*.conf" | xargs cp /backup/configs/`
@@ -149,7 +149,7 @@ Cuando los nombres de archivo pueden contener espacios u otros caracteres especi
 
 ---
 
-## Pregunta 8
+### Pregunta 8
 Cual es la funcion del comando `mkfifo` y como se diferencia de un pipe normal?
 
 A) `mkfifo` crea un archivo temporal que se borra al cerrarse

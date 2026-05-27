@@ -6,12 +6,16 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "353 - Despliegue y Aprovisionamiento"
 subtema: "353.2"
 peso: 2
-tags: [lpic-3, tema-353, ejercicios, packer]
+tags:
+  - lpic-3
+  - tema-353
+  - ejercicios
+  - packer
 ---
 
 # Ejercicios - 353.2 Packer
 
-## Pregunta 1
+### Pregunta 1
 ¿Cuáles son los tres componentes principales de un template de Packer?
 
 a) Source, Target, Pipeline
@@ -26,7 +30,7 @@ d) Provider, Resource, Module
 Los tres componentes de un template Packer son: Builder (crea la imagen para una plataforma), Provisioner (configura la imagen durante la construcción) y Post-processor (procesa la imagen resultante, como comprimir o subir).
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Qué comando de Packer verifica la sintaxis de un template sin construir la imagen?
 
 a) `packer check .`
@@ -41,7 +45,7 @@ d) `packer lint .`
 `packer validate` verifica que el template es sintácticamente correcto y que todas las configuraciones requeridas están presentes, sin iniciar ningún proceso de construcción.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué formato de template utiliza Packer en versiones modernas (1.7+)?
 
 a) JSON exclusivamente
@@ -56,7 +60,7 @@ d) TOML
 HCL2 (HashiCorp Configuration Language v2) es el formato recomendado desde Packer 1.7+. Los archivos usan la extensión `.pkr.hcl`. El formato JSON anterior sigue soportado pero se considera legacy.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Qué provisioner de Packer permite subir archivos desde el host a la imagen en construcción?
 
 a) `upload`
@@ -71,7 +75,7 @@ d) `transfer`
 El provisioner `file` sube archivos o directorios desde el host a la imagen en construcción. Como las subidas suelen ejecutarse sin privilegios, es común subir a `/tmp/` y luego mover con un provisioner `shell` usando sudo.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Qué opción de `packer build` permite construir solo un source específico de un template multi-plataforma?
 
 a) `packer build --source qemu.ubuntu .`
@@ -86,7 +90,7 @@ d) `packer build --builder qemu .`
 La opción `-only` filtra qué sources se construyen. El formato es `tipo.nombre` (ej. `qemu.ubuntu`). La opción inversa es `-except` para excluir sources específicos.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Cuál es la principal ventaja de usar Packer para crear imágenes?
 
 a) Es más rápido que clonar VMs manualmente
@@ -101,7 +105,7 @@ d) Reemplaza la necesidad de usar Terraform
 Packer puede construir imágenes para QEMU, VirtualBox, VMware, AWS, Azure, GCP y más, todo desde un único template. Esto garantiza que las imágenes sean idénticas independientemente de la plataforma de destino.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué builder de Packer crea imágenes para QEMU/KVM en formato qcow2?
 
 a) `kvm`
@@ -116,7 +120,7 @@ d) `qcow2`
 El builder `qemu` crea imágenes para QEMU/KVM. Puede generar imágenes en formatos qcow2 y raw. Se configura con opciones como `format`, `accelerator`, `disk_size`, `memory`, etc.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Qué post-processor de Packer convierte la imagen resultante en un box de Vagrant?
 
 a) `vagrant-box`
@@ -131,7 +135,7 @@ d) `vagrant-export`
 El post-processor `vagrant` convierte la imagen resultante en un archivo `.box` compatible con Vagrant. Esto permite usar imágenes creadas con Packer directamente en entornos Vagrant.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿En qué bloque HCL2 de Packer se definen los provisioners y post-processors?
 
 a) `source { }`
@@ -146,7 +150,7 @@ d) `config { }`
 El bloque `build` asocia uno o más `sources` con `provisioners` y `post-processors`. El bloque `source` define el builder y la configuración de la imagen base. El bloque `build` orquesta todo el proceso de construcción.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Qué comando inicializa Packer descargando los plugins necesarios definidos en el template?
 
 a) `packer setup`

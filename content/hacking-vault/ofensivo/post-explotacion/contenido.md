@@ -1,6 +1,10 @@
 ---
 title: "Post-Explotacion"
-tags: [hacking, ofensivo, post-explotacion]
+tags:
+  - hacking
+  - ofensivo
+  - post-explotacion
+  - hacking-ofensivo
 tipo: hacking-ofensivo
 certificacion: hacking-vault
 ---

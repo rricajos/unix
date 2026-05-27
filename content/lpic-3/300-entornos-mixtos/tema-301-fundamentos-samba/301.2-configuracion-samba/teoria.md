@@ -6,7 +6,10 @@ tema: "301"
 subtema: "301.2"
 titulo: "Configuración Samba"
 peso: 4
-tags: [lpic-3, tema-301, teoria]
+tags:
+  - lpic-3
+  - tema-301
+  - teoria
 ---
 
 # 301.2 Configuración Samba

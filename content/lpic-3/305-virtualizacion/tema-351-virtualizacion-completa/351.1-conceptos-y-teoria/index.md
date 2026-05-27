@@ -12,11 +12,9 @@ subtema: "351.1"
 
 # 351.1 - Conceptos y teoria
 
-## Objetivo del examen
-(Pendiente de completar)
+## Contenido
 
-## Conocimientos clave
-(Pendiente de completar)
-
-## Archivos, terminos y utilidades
-(Pendiente de completar)
+- [[teoria|Teoria]] — Conceptos y explicaciones detalladas
+- [[comandos-clave|Comandos clave]] — Referencia rapida de comandos
+- [[ejercicios|Ejercicios]] — Preguntas de practica
+- [[flashcards|Flashcards]] — Tarjetas de repaso espaciado

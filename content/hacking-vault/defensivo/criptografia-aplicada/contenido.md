@@ -1,6 +1,10 @@
 ---
 title: "Criptografia Aplicada en Linux"
-tags: [hacking, defensivo, criptografia-aplicada]
+tags:
+  - hacking
+  - defensivo
+  - criptografia-aplicada
+  - hacking-defensivo
 tipo: hacking-defensivo
 certificacion: hacking-vault
 ---

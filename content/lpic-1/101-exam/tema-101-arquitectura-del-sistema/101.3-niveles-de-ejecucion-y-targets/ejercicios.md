@@ -18,7 +18,7 @@ Preguntas tipo examen LPIC-1 sobre niveles de ejecucion (runlevels), targets de 
 
 ---
 
-## Pregunta 1: Equivalencia de runlevels y targets
+### Pregunta 1: Equivalencia de runlevels y targets
 
 **Cual de los siguientes targets de systemd es equivalente al runlevel 3 de SysVinit?**
 
@@ -47,7 +47,7 @@ El runlevel 3 corresponde al modo multiusuario con red pero sin entorno grafico,
 
 ---
 
-## Pregunta 2: Cambiar el target por defecto
+### Pregunta 2: Cambiar el target por defecto
 
 **Un administrador quiere que un servidor Linux arranque siempre en modo texto (sin entorno grafico). Cual es el comando correcto?**
 
@@ -70,7 +70,7 @@ Explicacion de cada opcion:
 
 ---
 
-## Pregunta 3: El archivo /etc/inittab
+### Pregunta 3: El archivo /etc/inittab
 
 **En un sistema con SysVinit, que linea en `/etc/inittab` establece el runlevel por defecto a 5 (modo grafico)?**
 
@@ -101,7 +101,7 @@ Las opciones (a), (c) y (d) usan acciones que no existen en la sintaxis de `/etc
 
 ---
 
-## Pregunta 4: Comandos de apagado
+### Pregunta 4: Comandos de apagado
 
 **Cual de los siguientes comandos programa un reinicio del sistema en 10 minutos y envia un mensaje de aviso a los usuarios?**
 
@@ -133,7 +133,7 @@ Las opciones (a), (c) y (d) no son sintaxis validas. `reboot` y `init 6` se ejec
 
 ---
 
-## Pregunta 5: Scripts de inicio SysVinit
+### Pregunta 5: Scripts de inicio SysVinit
 
 **En el directorio `/etc/rc3.d/`, que significan los prefijos "S" y "K" en los nombres de los enlaces simbolicos?**
 
@@ -164,7 +164,7 @@ Al cambiar de runlevel, primero se ejecutan todos los scripts K (detener) y lueg
 
 ---
 
-## Pregunta 6: systemctl isolate
+### Pregunta 6: systemctl isolate
 
 **Que hace el comando `systemctl isolate rescue.target`?**
 
@@ -192,7 +192,7 @@ Para cambiar el target por defecto, se usa `systemctl set-default`. Para ver dep
 
 ---
 
-## Pregunta 7: Comando wall
+### Pregunta 7: Comando wall
 
 **Cual es el proposito del comando `wall` en Linux?**
 
@@ -223,7 +223,7 @@ echo "Mantenimiento urgente" | wall
 
 ---
 
-## Pregunta 8: Diferencia entre halt y poweroff
+### Pregunta 8: Diferencia entre halt y poweroff
 
 **Cual es la diferencia principal entre los comandos `halt` y `poweroff`?**
 
@@ -250,7 +250,7 @@ Equivalencias en systemd:
 
 ---
 
-## Pregunta 9: Gestion de servicios con systemctl
+### Pregunta 9: Gestion de servicios con systemctl
 
 **Un administrador quiere que el servicio `nginx` se inicie automaticamente cada vez que el sistema arranque, y ademas quiere iniciarlo inmediatamente. Cuales son los comandos correctos?**
 
@@ -280,7 +280,7 @@ Las opciones (a), (c) y (d) usan subcomandos que no existen en systemctl (`defau
 
 ---
 
-## Pregunta 10: acpid
+### Pregunta 10: acpid
 
 **Cual es la funcion principal del demonio acpid?**
 

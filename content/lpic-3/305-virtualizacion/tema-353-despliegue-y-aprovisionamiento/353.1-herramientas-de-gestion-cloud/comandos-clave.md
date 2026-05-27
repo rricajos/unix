@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "353 - Despliegue y Aprovisionamiento"
 subtema: "353.1"
 peso: 2
-tags: [lpic-3, tema-353, comandos, terraform, ansible, openstack]
+tags:
+  - lpic-3
+  - tema-353
+  - comandos
+  - terraform
+  - ansible
+  - openstack
 ---
 
 # Comandos Clave - 353.1 Herramientas de Gestión Cloud

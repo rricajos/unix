@@ -6,7 +6,14 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "353 - Despliegue y Aprovisionamiento"
 subtema: "353.1"
 peso: 2
-tags: [lpic-3, tema-353, terraform, ansible, iac, cloud, openstack]
+tags:
+  - lpic-3
+  - tema-353
+  - terraform
+  - ansible
+  - iac
+  - cloud
+  - openstack
 ---
 
 # 353.1 Herramientas de Gestión Cloud

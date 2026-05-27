@@ -14,7 +14,7 @@ subtema: "103.7"
 
 # 103.7 - Buscar texto con expresiones regulares: Ejercicios
 
-## Pregunta 1
+### Pregunta 1
 Cual de los siguientes comandos muestra todas las lineas del archivo `config.txt` que NO son comentarios (no empiezan con `#`) y que NO estan vacias?
 
 A) `grep -v "#" config.txt`
@@ -32,7 +32,7 @@ La opcion B usa dos comandos `grep` encadenados: el primero (`grep -v "^#"`) eli
 
 ---
 
-## Pregunta 2
+### Pregunta 2
 Cual es la diferencia principal entre BRE (Basic Regular Expressions) y ERE (Extended Regular Expressions)?
 
 A) ERE soporta mas metacaracteres que BRE
@@ -50,7 +50,7 @@ La diferencia fundamental es como se interpretan ciertos metacaracteres. En BRE,
 
 ---
 
-## Pregunta 3
+### Pregunta 3
 Un administrador necesita encontrar todas las lineas que contienen una direccion IP en el archivo `access.log`. Cual de los siguientes comandos es mas adecuado?
 
 A) `grep "[0-9].[0-9].[0-9].[0-9]" access.log`
@@ -68,7 +68,7 @@ Esta opcion usa expresiones regulares extendidas (`-E`) con un patron que busca 
 
 ---
 
-## Pregunta 4
+### Pregunta 4
 Dado el archivo `datos.txt` con el siguiente contenido:
 ```
 color
@@ -93,7 +93,7 @@ El patron `colou?r` usa el cuantificador `?` que significa "cero o una ocurrenci
 
 ---
 
-## Pregunta 5
+### Pregunta 5
 Que comando muestra solo los nombres de los archivos en `/etc/` que contienen la palabra "root" (busqueda recursiva)?
 
 A) `grep -r "root" /etc/`
@@ -111,7 +111,7 @@ La opcion `-l` (letter "L" minuscula) hace que `grep` muestre **solo los nombres
 
 ---
 
-## Pregunta 6
+### Pregunta 6
 Cual de los siguientes comandos `sed` elimina todas las lineas vacias de un archivo?
 
 A) `sed 's/^$//' archivo.txt`
@@ -129,7 +129,7 @@ En `sed`, la sintaxis `/patron/d` elimina las lineas que coinciden con el patron
 
 ---
 
-## Pregunta 7
+### Pregunta 7
 Un usuario ejecuta:
 ```bash
 grep -E "^[A-Z][a-z]+ [A-Z][a-z]+" nombres.txt
@@ -151,7 +151,7 @@ El patron se descompone asi: `^` = inicio de linea, `[A-Z]` = una letra mayuscul
 
 ---
 
-## Pregunta 8
+### Pregunta 8
 Cual es la diferencia entre `grep -w "log" archivo.txt` y `grep "log" archivo.txt`?
 
 A) No hay diferencia

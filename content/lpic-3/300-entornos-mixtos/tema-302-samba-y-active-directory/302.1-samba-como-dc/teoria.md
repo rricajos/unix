@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.1"
 titulo: "Samba como Controlador de Dominio"
 peso: 5
-tags: [lpic-3, tema-302, teoria]
+tags:
+  - lpic-3
+  - tema-302
+  - teoria
 ---
 
 # 302.1 Samba como Controlador de Dominio

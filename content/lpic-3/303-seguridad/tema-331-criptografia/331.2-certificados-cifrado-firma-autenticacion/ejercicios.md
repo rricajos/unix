@@ -17,7 +17,7 @@ tags:
 
 # Ejercicios - 331.2 Certificados para Cifrado, Firma y Autenticación
 
-## Pregunta 1
+### Pregunta 1
 ¿Qué comando exporta la clave pública de un usuario en formato ASCII (blindado)?
 
 a) `gpg2 --output pub.asc --export-public usuario@ej.com`
@@ -32,7 +32,7 @@ d) `gpg2 --dump-key --ascii usuario@ej.com > pub.asc`
 La opción `--armor` (o `-a`) produce salida en formato ASCII Base64, adecuada para enviar por correo electrónico o publicar en texto plano.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 En el modelo Web of Trust de GPG, ¿cuántas firmas de confianza "marginal" se necesitan por defecto para considerar una clave como válida?
 
 a) 1
@@ -47,7 +47,7 @@ d) 5
 Por defecto, GPG requiere al menos 3 firmas de claves con confianza "marginal" o 1 firma de una clave con confianza "full" para considerar una clave como válida.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué comando crea una firma separada (detached) de un archivo sin modificar el original?
 
 a) `gpg2 --sign archivo.txt`
@@ -62,7 +62,7 @@ d) `gpg2 --separate-sign archivo.txt`
 `--detach-sign` crea un archivo de firma separado (archivo.txt.sig) sin modificar el archivo original. Esto es ideal para distribuir software con su firma.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Cuál es la principal diferencia entre GPG/OpenPGP y S/MIME?
 
 a) GPG solo permite cifrado simétrico, S/MIME solo asimétrico
@@ -77,7 +77,7 @@ d) GPG es más rápido que S/MIME en todos los casos
 GPG/OpenPGP utiliza la Web of Trust donde los usuarios se firman mutuamente las claves. S/MIME se basa en certificados X.509 emitidos por Autoridades de Certificación en una estructura jerárquica.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Qué archivo almacena la configuración del agente GPG, incluyendo el tiempo de caché de passphrases?
 
 a) `~/.gnupg/gpg.conf`
@@ -92,7 +92,7 @@ d) `~/.gnupg/agent.conf`
 El archivo `gpg-agent.conf` contiene directivas como `default-cache-ttl` y `max-cache-ttl` que controlan cuánto tiempo el agente mantiene las passphrases en caché.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 Un administrador necesita cifrar un archivo para dos destinatarios diferentes. ¿Qué comando es correcto?
 
 a) `gpg2 --encrypt --multi-recipient user1@ej.com,user2@ej.com archivo.txt`
@@ -107,7 +107,7 @@ d) `gpg2 --encrypt --to user1@ej.com --to user2@ej.com archivo.txt`
 Se utiliza la opción `-r` (o `--recipient`) múltiples veces, una por cada destinatario. GPG cifrará el archivo de forma que cualquiera de los destinatarios pueda descifrarlo con su clave privada.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué algoritmo hash se considera actualmente como el estándar mínimo recomendado para firmas digitales?
 
 a) MD5
@@ -122,7 +122,7 @@ d) CRC32
 SHA-256 es el estándar mínimo recomendado actualmente. MD5 está completamente roto, SHA-1 se considera obsoleto. SHA-256 y SHA-512 son las opciones recomendadas.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Qué comando publica una clave pública en un servidor de claves?
 
 a) `gpg2 --keyserver hkps://keys.openpgp.org --upload-key ID`
@@ -137,7 +137,7 @@ d) `gpg2 --push-key hkps://keys.openpgp.org ID`
 `--send-keys` envía la clave pública identificada por su ID al servidor de claves especificado con `--keyserver`. El protocolo `hkps://` utiliza HTTPS.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Qué opción de `gpg2 --clearsign` produce un archivo que permite leer el texto original sin necesidad de GPG?
 
 a) Es una característica inherente de `--clearsign`; el texto es legible dentro del archivo firmado
@@ -152,7 +152,7 @@ d) Se debe usar `--clearsign --plaintext`
 `--clearsign` produce una firma "en claro" donde el texto original es visible directamente, enmarcado por cabeceras PGP. La firma se añade al final, permitiendo verificar la integridad sin perder legibilidad.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Qué comando de OpenSSL se utiliza para firmar un correo electrónico con S/MIME?
 
 a) `openssl cms -sign -in msg.txt -signer cert.pem -inkey key.pem`

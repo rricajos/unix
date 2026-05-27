@@ -15,7 +15,7 @@ tags:
 
 # 361.1 - Ejercicios: Conceptos y Teoría HA
 
-## Pregunta 1
+### Pregunta 1
 ¿Cuánto tiempo de inactividad máximo al año permite una disponibilidad de 99.99%?
 
 a) 8.76 horas
@@ -30,7 +30,7 @@ d) 31.5 segundos
 99.99% (cuatro nueves) permite aproximadamente 52.6 minutos de inactividad al año. 99.9% = 8.76 horas, 99.999% = 5.26 minutos y 99.9999% = 31.5 segundos.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Qué componente de la arquitectura Pacemaker/Corosync se encarga de la comunicación entre nodos y la gestión de membresía?
 
 a) Pacemaker
@@ -45,7 +45,7 @@ d) LRMd
 Corosync es la capa de mensajería que gestiona la comunicación entre nodos, la membresía del cluster y el quorum. Pacemaker se encarga de la gestión de recursos.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 En un cluster de 5 nodos, ¿cuántos nodos deben estar activos para mantener el quorum?
 
 a) 2
@@ -60,7 +60,7 @@ d) 5
 El quorum requiere (N+1)/2 nodos para N impar. Con 5 nodos: (5+1)/2 = 3. Esto permite tolerar el fallo de hasta 2 nodos.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Qué es STONITH?
 
 a) Un protocolo de comunicación entre nodos del cluster
@@ -75,7 +75,7 @@ d) Un tipo de sistema de archivos cluster
 STONITH (Shoot The Other Node In The Head) es un mecanismo de fencing que garantiza que un nodo problemático sea eliminado físicamente del cluster para evitar corrupción de datos.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Cuál es la principal consecuencia de un split-brain en un cluster?
 
 a) Mejora del rendimiento
@@ -90,7 +90,7 @@ d) Reducción del consumo de recursos
 El split-brain ocurre cuando los nodos pierden comunicación y ambos creen ser el primario. Si ambos escriben simultáneamente en almacenamiento compartido, se produce corrupción de datos.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Qué almacena el CIB (Cluster Information Base)?
 
 a) Los logs del cluster
@@ -105,7 +105,7 @@ d) Las credenciales de los nodos
 El CIB es una base de datos XML que contiene la configuración del cluster, incluyendo nodos, recursos, restricciones y propiedades. Se replica automáticamente entre todos los nodos.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué valor de `no-quorum-policy` detiene todos los recursos cuando se pierde el quorum?
 
 a) `freeze`
@@ -120,7 +120,7 @@ d) `suicide`
 `stop` es el valor predeterminado y detiene todos los recursos. `freeze` mantiene los activos pero no inicia nuevos. `ignore` ignora la pérdida de quorum. `suicide` apaga el nodo.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Cuál es la clase de agente de recurso más completa y recomendada en Pacemaker?
 
 a) LSB
@@ -135,7 +135,7 @@ d) service
 Los agentes OCF (Open Cluster Framework) son los más completos, soportando operaciones como start, stop, monitor, promote, demote y migrate. Se encuentran en `/usr/lib/ocf/resource.d/`.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 Un sistema tiene un MTBF de 1000 horas y un MTTR de 1 hora. ¿Cuál es su disponibilidad aproximada?
 
 a) 99%
@@ -150,7 +150,7 @@ d) 99.999%
 Disponibilidad = MTBF / (MTBF + MTTR) = 1000 / (1000 + 1) = 1000 / 1001 ≈ 0.999 = 99.9%.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Qué mecanismo adicional se necesita en un cluster de exactamente 2 nodos para resolver el problema de quorum?
 
 a) Un tercer anillo de Corosync

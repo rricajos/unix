@@ -16,7 +16,7 @@ tags:
 
 # 364.2 - Ejercicios: RAID Avanzado
 
-## Pregunta 1
+### Pregunta 1
 ¿Que comando de mdadm permite cambiar el nivel de RAID de un array existente sin desmontarlo?
 
 a) `mdadm --change /dev/md0 --level=5`
@@ -31,7 +31,7 @@ d) `mdadm --convert /dev/md0 --level=5`
 `mdadm --grow` permite hacer reshape del array en linea, incluyendo cambio de nivel RAID, numero de discos y tamaño de chunk. El proceso se realiza sin interrumpir el servicio.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que funcion tiene el bitmap (write-intent bitmap) en un array RAID?
 
 a) Mejorar el rendimiento de lectura
@@ -46,7 +46,7 @@ d) Cifrar los datos del array
 El bitmap registra que bloques han sido modificados pero no sincronizados. Despues de un fallo breve y reconexion, solo los bloques marcados necesitan resincronizarse, en lugar de todo el array.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Que archivo del sistema muestra el estado de todos los arrays RAID por software?
 
 a) `/sys/block/md0/status`
@@ -61,7 +61,7 @@ d) `/var/log/mdadm`
 `/proc/mdstat` muestra el estado en tiempo real de todos los arrays md, incluyendo el nivel, discos, estado de sincronizacion y progreso de reconstruccion.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Que herramienta se usa para gestionar controladores RAID HP Smart Array?
 
 a) `storcli`
@@ -76,7 +76,7 @@ d) `arcconf`
 `ssacli` (Smart Storage Administrator CLI) es la herramienta para controladores HP Smart Array. Es el sucesor de `hpacucli`. `storcli` es para controladores MegaRAID (LSI/Broadcom).
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que modo de bcache escribe primero en el SSD y luego en el HDD de forma asincrona?
 
 a) `writethrough`
@@ -91,7 +91,7 @@ d) `writebehind`
 En modo `writeback`, las escrituras se confirman cuando llegan al SSD cache, y se escriben en el HDD despues de forma asincrona. Es mas rapido pero menos seguro que `writethrough`.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Que comando verifica la integridad de un array RAID por software?
 
 a) `mdadm --check /dev/md0`
@@ -106,7 +106,7 @@ d) `fsck /dev/md0`
 Escribir `check` en `sync_action` inicia una verificacion de integridad del array. Los bloques discrepantes se reportan en `mismatch_cnt`. Para reparar se usa `echo repair`.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Que comando de lvmcache convierte un LV existente para usar cache SSD?
 
 a) `lvconvert --type cache --cachepool VG/cache_pool VG/datos`
@@ -121,7 +121,7 @@ d) `lvchange --cache-enable VG/datos`
 `lvconvert --type cache` convierte un LV existente para usar un cache pool SSD previamente creado con `lvcreate --type cache-pool`.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Que parametro controla la velocidad maxima de reconstruccion RAID?
 
 a) `/sys/block/md0/md/rebuild_speed`
@@ -136,7 +136,7 @@ d) `/sys/block/md0/md/sync_speed_max`
 `speed_limit_max` (y `speed_limit_min`) controlan la velocidad de reconstruccion en KB/s. Aumentar estos valores acelera la reconstruccion pero puede impactar el rendimiento del sistema.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Que funcion tiene un disco journal en RAID 5/6?
 
 a) Almacenar los metadatos del array
@@ -151,7 +151,7 @@ d) Almacenar la tabla de paridad
 El disco journal registra las escrituras antes de aplicarlas al array, eliminando el "write hole" de RAID 5/6 (riesgo de inconsistencia si el sistema falla durante una escritura parcial).
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Que valor en `/proc/mdstat` indica que todos los discos de un array RAID estan funcionando correctamente?
 
 a) `[AAAA]`

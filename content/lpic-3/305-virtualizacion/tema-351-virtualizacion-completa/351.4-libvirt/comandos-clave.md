@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.4"
 peso: 9
-tags: [lpic-3, tema-351, comandos, libvirt, virsh, virt-install]
+tags:
+  - lpic-3
+  - tema-351
+  - comandos
+  - libvirt
+  - virsh
+  - virt-install
 ---
 
 # Comandos Clave - 351.4 Libvirt

@@ -14,7 +14,7 @@ subtema: "103.6"
 
 # 103.6 - Modificar prioridades de procesos: Ejercicios
 
-## Pregunta 1
+### Pregunta 1
 Cual es el rango valido de valores nice en Linux y cual es el valor por defecto al iniciar un proceso normalmente?
 
 A) -20 a 20, por defecto 0
@@ -32,7 +32,7 @@ El rango de valores nice en Linux va de **-20** (maxima prioridad) a **19** (min
 
 ---
 
-## Pregunta 2
+### Pregunta 2
 Un usuario normal ejecuta el siguiente comando:
 ```bash
 nice -n -5 ./mi_script.sh
@@ -54,7 +54,7 @@ Un usuario normal **no puede** asignar valores nice negativos. Los valores negat
 
 ---
 
-## Pregunta 3
+### Pregunta 3
 Un administrador tiene un proceso con PID 5678 ejecutandose con nice 0. Quiere bajar su prioridad a nice 15. Cual es el comando correcto?
 
 A) `nice -n 15 -p 5678`
@@ -72,7 +72,7 @@ Para cambiar la prioridad de un proceso **ya en ejecucion**, se utiliza `renice`
 
 ---
 
-## Pregunta 4
+### Pregunta 4
 Un usuario normal tiene un proceso con PID 3456 ejecutandose con nice 10. Ejecuta:
 ```bash
 renice -n 5 -p 3456
@@ -94,7 +94,7 @@ Un usuario normal **no puede disminuir** el valor nice de un proceso, ni siquier
 
 ---
 
-## Pregunta 5
+### Pregunta 5
 Si un proceso tiene un valor nice de -10, cual sera su valor de prioridad (PR) mostrado en `top`?
 
 A) -10
@@ -112,7 +112,7 @@ La relacion entre el valor nice (NI) y la prioridad del kernel (PR) es: **PR = 2
 
 ---
 
-## Pregunta 6
+### Pregunta 6
 Que tecla se presiona en `top` para cambiar interactivamente la prioridad (nice) de un proceso?
 
 A) `k`
@@ -130,7 +130,7 @@ En la interfaz interactiva de `top`, la tecla `r` (de "renice") permite cambiar 
 
 ---
 
-## Pregunta 7
+### Pregunta 7
 Un administrador quiere ejecutar una compilacion pesada sin que afecte el rendimiento del servidor. Cual es el comando mas apropiado?
 
 A) `nice make -j4`
@@ -148,7 +148,7 @@ D) `renice -n 19 make -j4`
 
 ---
 
-## Pregunta 8
+### Pregunta 8
 Cual de los siguientes comandos muestra el PID, valor nice, prioridad y nombre de todos los procesos del sistema?
 
 A) `ps aux`

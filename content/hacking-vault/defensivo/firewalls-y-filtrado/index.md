@@ -4,7 +4,7 @@ tags:
   - indice-hacking
   - hacking
   - defensivo
-  - firewalls
+  - firewalls-y-filtrado
 tipo: indice-hacking
 ---
 

@@ -6,7 +6,10 @@ tema: "301"
 subtema: "301.2"
 titulo: "Configuración Samba - Comandos Clave"
 peso: 4
-tags: [lpic-3, tema-301, comandos]
+tags:
+  - lpic-3
+  - tema-301
+  - comandos
 ---
 
 # Comandos clave - 301.2 Configuración Samba

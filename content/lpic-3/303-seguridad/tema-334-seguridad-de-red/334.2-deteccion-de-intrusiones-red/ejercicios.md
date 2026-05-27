@@ -17,7 +17,7 @@ tags:
 
 # Ejercicios - 334.2 Deteccion de Intrusiones en la Red
 
-## Pregunta 1
+### Pregunta 1
 ¿Cual es la diferencia principal entre un IDS y un IPS?
 
 a) IDS es mas rapido que IPS
@@ -32,7 +32,7 @@ d) IDS analiza solo encabezados; IPS analiza el contenido completo
 Un IDS (Intrusion Detection System) monitoriza el trafico de forma pasiva y genera alertas. Un IPS (Intrusion Prevention System) se coloca en linea (inline) y puede bloquear o descartar trafico malicioso activamente.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que comando ejecuta Snort en modo NIDS utilizando un archivo de configuracion?
 
 a) `snort -v -i eth0`
@@ -47,7 +47,7 @@ d) `snort -dev -l /var/log/snort`
 La opcion `-c` especifica el archivo de configuracion que incluye las reglas de deteccion, activando el modo NIDS. `-l` indica el directorio de logs. Sin `-c`, Snort opera como sniffer o logger.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Que filtro de tcpdump captura solo paquetes TCP con el flag SYN activado (sin ACK)?
 
 a) `tcpdump -i eth0 'tcp syn'`
@@ -62,7 +62,7 @@ d) `tcpdump -i eth0 -syn`
 El filtro `tcp[tcpflags] == tcp-syn` captura paquetes donde SOLO el flag SYN esta activo. Usar `& tcp-syn != 0` capturaria cualquier paquete con SYN, incluyendo SYN-ACK.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Que ventaja principal tiene Suricata sobre Snort?
 
 a) Suricata es gratuito y Snort es de pago
@@ -77,7 +77,7 @@ d) Suricata solo funciona en modo IPS
 Suricata fue diseñado desde el inicio con soporte multi-hilo, permitiendo aprovechar multiples nucleos de CPU para mejor rendimiento. Snort clasico es mono-hilo. Ambos son open source.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que archivo de log de Zeek contiene informacion sobre todas las conexiones de red observadas?
 
 a) `http.log`
@@ -92,7 +92,7 @@ d) `network.log`
 `conn.log` registra un resumen de cada conexion observada, incluyendo IPs de origen y destino, puertos, protocolo, duracion, bytes transferidos y servicio detectado.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 En una regla de Snort, ¿que opcion especifica el patron de contenido a buscar en el payload del paquete?
 
 a) `pattern:`
@@ -107,7 +107,7 @@ d) `payload:`
 La opcion `content:` especifica una cadena o patron hexadecimal que Snort buscara en el payload del paquete. Puede combinarse con `nocase` para busqueda insensible a mayusculas y con `http_uri` para limitar la busqueda a la URI HTTP.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Que comando de tshark extrae solo las direcciones IP de origen y destino de un archivo PCAP?
 
 a) `tshark -r captura.pcap -Y "ip.src and ip.dst"`
@@ -122,7 +122,7 @@ d) `tshark -r captura.pcap -f "ip.src ip.dst"`
 `-T fields` cambia el formato de salida a campos, y `-e campo` especifica que campos extraer. Esto permite obtener datos estructurados para analisis posterior.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Que tipo de deteccion de intrusiones es mas eficaz contra ataques zero-day?
 
 a) Basada en firmas
@@ -137,7 +137,7 @@ d) Basada en protocolos
 La deteccion basada en anomalias establece una linea base del comportamiento normal y alerta cuando se detectan desviaciones. Esto permite detectar ataques nuevos (zero-day) que no tienen firma conocida, aunque genera mas falsos positivos.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Que opcion de tcpdump captura paquetes sin truncar el contenido?
 
 a) `tcpdump -i eth0 -full`
@@ -152,7 +152,7 @@ d) `tcpdump -i eth0 -l 65535`
 La opcion `-s 0` (snaplen 0) captura el paquete completo sin truncar. Por defecto, tcpdump puede truncar paquetes grandes. El valor 0 significa capturar el maximo posible (65535 bytes).
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Que herramienta proporciona monitorizacion de trafico de red en tiempo real con interfaz web?
 
 a) Snort

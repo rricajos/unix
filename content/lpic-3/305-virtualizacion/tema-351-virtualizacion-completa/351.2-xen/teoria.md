@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.2"
 peso: 3
-tags: [lpic-3, tema-351, xen, hypervisor, dom0, domu]
+tags:
+  - lpic-3
+  - tema-351
+  - xen
+  - hypervisor
+  - dom0
+  - domu
 ---
 
 # 351.2 Xen

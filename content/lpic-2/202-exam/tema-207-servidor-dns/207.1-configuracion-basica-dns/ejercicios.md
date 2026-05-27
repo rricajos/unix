@@ -10,7 +10,7 @@ subtema: "207.1"
 
 # 207.1 - Ejercicios: Configuracion basica DNS
 
-## Pregunta 1
+### Pregunta 1
 
 ¿Que tipo de zona contiene la lista de servidores raiz DNS y es necesaria para que BIND pueda resolver consultas recursivas?
 
@@ -27,7 +27,7 @@ La zona de tipo `hint` contiene las direcciones de los servidores raiz DNS (root
 
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 ¿Que comando se utiliza para verificar la sintaxis del archivo `named.conf` antes de recargar BIND?
 
@@ -44,7 +44,7 @@ d) `dns-verify`
 
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 ¿Que directiva en el bloque `options` de `named.conf` define los servidores DNS a los que se reenviaran las consultas que BIND no pueda resolver?
 
@@ -61,7 +61,7 @@ La directiva `forwarders` dentro del bloque `options` especifica una lista de se
 
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 ¿Cual es la diferencia entre `forward only` y `forward first`?
 
@@ -78,7 +78,7 @@ Con `forward only`, si los forwarders no responden, la consulta falla. Con `forw
 
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 ¿Que comando de `rndc` vacia completamente la cache del servidor DNS?
 
@@ -95,7 +95,7 @@ El comando `rndc flush` elimina toda la informacion almacenada en la cache del s
 
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 ¿Que opcion de `dig` permite rastrear paso a paso el proceso completo de resolucion DNS desde los servidores raiz?
 
@@ -112,7 +112,7 @@ La opcion `+trace` hace que `dig` muestre cada paso del proceso de resolucion re
 
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 ¿Que ACL predefinida de BIND representa todas las redes directamente conectadas al servidor?
 
@@ -129,7 +129,7 @@ La ACL predefinida `localnets` incluye automaticamente todas las redes que estan
 
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 En una configuracion de zona esclava (slave), ¿que directiva indica la direccion IP del servidor maestro?
 
@@ -146,7 +146,7 @@ En una zona de tipo `slave`, la directiva `masters` especifica la lista de servi
 
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 ¿Que comando de `dig` realiza una consulta DNS inversa (de IP a nombre)?
 
@@ -163,7 +163,7 @@ La opcion `-x` de `dig` realiza una consulta inversa, traduciendo una direccion 
 
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 ¿Que directiva de `named.conf` restringe que hosts pueden realizar transferencias de zona?
 

@@ -6,12 +6,17 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.4"
 peso: 9
-tags: [lpic-3, tema-351, ejercicios, libvirt, virsh]
+tags:
+  - lpic-3
+  - tema-351
+  - ejercicios
+  - libvirt
+  - virsh
 ---
 
 # Ejercicios - 351.4 Libvirt
 
-## Pregunta 1
+### Pregunta 1
 ¿Cuál es la diferencia entre `virsh define` y `virsh create`?
 
 a) `define` arranca la VM inmediatamente, `create` solo la registra
@@ -26,7 +31,7 @@ d) `define` se usa para KVM y `create` para Xen
 `virsh define` lee un XML y registra la VM de forma persistente (sobrevive reinicios del host) pero no la arranca. `virsh create` arranca la VM inmediatamente pero es transitoria: desaparece al apagarse.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Qué URI se utiliza para conectar a KVM/QEMU local con privilegios de sistema?
 
 a) `kvm:///local`
@@ -41,7 +46,7 @@ d) `qemu://localhost/system`
 `qemu:///system` conecta al demonio libvirtd local con privilegios de sistema (root). `qemu:///session` conecta como usuario sin privilegios. La triple barra `///` indica conexión local.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué comando muestra los discos asignados a una VM?
 
 a) `virsh disk-list mi-vm`
@@ -56,7 +61,7 @@ d) `virsh vol-list mi-vm`
 `virsh domblklist` lista los dispositivos de bloque (discos) asignados a un dominio. `virsh vol-list` lista volúmenes de un storage pool, no discos de una VM específica.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Qué opción de `virsh migrate` permite migrar una VM sin almacenamiento compartido?
 
 a) `--live`
@@ -71,7 +76,7 @@ d) `--tunnelled`
 `--copy-storage-all` copia los discos de la VM al host destino durante la migración, eliminando la necesidad de almacenamiento compartido. `--live` mantiene la VM funcionando durante la migración pero requiere almacenamiento compartido por sí solo.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Qué hace `virsh undefine mi-vm` por defecto?
 
 a) Apaga y elimina la VM y sus discos
@@ -86,7 +91,7 @@ d) Elimina la VM, sus discos y sus snapshots
 `virsh undefine` solo elimina la definición (archivo XML) de la VM. Los discos permanecen en el sistema. Para eliminar también los discos se debe usar `virsh undefine mi-vm --remove-all-storage`.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Cuál es el directorio por defecto donde libvirt almacena las imágenes de disco?
 
 a) `/etc/libvirt/images/`
@@ -101,7 +106,7 @@ d) `/var/lib/qemu/images/`
 Este directorio es el storage pool predeterminado (llamado "default") de libvirt. Las definiciones XML de las VMs se almacenan en `/etc/libvirt/qemu/`.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué herramienta permite crear una VM de forma automatizada especificando parámetros en la línea de comandos?
 
 a) `virsh create`
@@ -116,7 +121,7 @@ d) `virt-builder`
 `virt-install` permite crear VMs de forma automatizada desde la línea de comandos, especificando nombre, RAM, disco, fuente de instalación, red, etc. Es ideal para scripts y aprovisionamiento automatizado.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Qué tipo de red virtual libvirt proporciona acceso a la red externa a través de NAT?
 
 a) Bridge
@@ -131,7 +136,7 @@ d) Macvtap
 La red NAT es la red por defecto en libvirt (`default`, usando `virbr0`). Las VMs obtienen IPs privadas y acceden a la red externa a través de NAT. Bridge conecta directamente al bridge del host. Isolated no tiene salida al exterior.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Qué comando crea un snapshot de una VM con nombre y descripción?
 
 a) `virsh snapshot mi-vm --name snap1`
@@ -146,7 +151,7 @@ d) `virsh save mi-vm snap1`
 `snapshot-create-as` permite crear un snapshot especificando nombre y descripción directamente en la línea de comandos. `snapshot-create` acepta un XML. `virsh save` guarda el estado de la VM a un archivo (no es un snapshot).
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Qué diferencia hay entre `qemu:///system` y `qemu:///session`?
 
 a) `system` solo funciona localmente, `session` permite conexiones remotas

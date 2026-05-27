@@ -14,7 +14,7 @@ subtema: "103.5"
 
 # 103.5 - Crear, monitorizar y matar procesos: Ejercicios
 
-## Pregunta 1
+### Pregunta 1
 Un administrador necesita ver todos los procesos del sistema incluyendo el PID del proceso padre (PPID). Cual de los siguientes comandos muestra esta informacion?
 
 A) `ps aux`
@@ -32,7 +32,7 @@ D) `top`
 
 ---
 
-## Pregunta 2
+### Pregunta 2
 Un proceso esta colgado y no responde a `kill 1234`. Que comando garantiza que el proceso sera terminado inmediatamente?
 
 A) `kill -SIGTERM 1234`
@@ -50,7 +50,7 @@ D) `kill -9 1234`
 
 ---
 
-## Pregunta 3
+### Pregunta 3
 Un usuario esta ejecutando un proceso largo en primer plano. Quiere suspenderlo temporalmente para ejecutar otro comando y luego reanudarlo en segundo plano. Cual es la secuencia correcta?
 
 A) `Ctrl+C`, luego `bg`
@@ -68,7 +68,7 @@ D) `Ctrl+D`, luego `bg`
 
 ---
 
-## Pregunta 4
+### Pregunta 4
 Un administrador necesita ejecutar un script de backup que debe continuar ejecutandose incluso despues de cerrar la sesion SSH. Cual es la forma correcta de hacerlo?
 
 A) `./backup.sh &`
@@ -86,7 +86,7 @@ D) `nice ./backup.sh &`
 
 ---
 
-## Pregunta 5
+### Pregunta 5
 En `top`, que tecla se usa para ordenar los procesos por uso de memoria?
 
 A) `P`
@@ -104,7 +104,7 @@ En la interfaz interactiva de `top`, la tecla `M` (mayuscula) ordena los proceso
 
 ---
 
-## Pregunta 6
+### Pregunta 6
 Cual es la diferencia principal entre `killall` y `pkill`?
 
 A) `killall` usa PIDs y `pkill` usa nombres
@@ -122,7 +122,7 @@ D) No hay diferencia, son sinonimos
 
 ---
 
-## Pregunta 7
+### Pregunta 7
 Un administrador ejecuta los siguientes comandos:
 ```bash
 sleep 100 &
@@ -153,7 +153,7 @@ El simbolo `+` marca el trabajo mas reciente (el ultimo que se inicio o manipulo
 
 ---
 
-## Pregunta 8
+### Pregunta 8
 Que informacion muestra el comando `uptime` y que significan los valores de "load average"?
 
 A) Solo muestra cuanto tiempo lleva encendido el sistema

@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.3"
 titulo: "Gestión de Usuarios AD - Comandos Clave"
 peso: 3
-tags: [lpic-3, tema-302, comandos]
+tags:
+  - lpic-3
+  - tema-302
+  - comandos
 ---
 
 # Comandos clave - 302.3 Gestión de Usuarios en Active Directory

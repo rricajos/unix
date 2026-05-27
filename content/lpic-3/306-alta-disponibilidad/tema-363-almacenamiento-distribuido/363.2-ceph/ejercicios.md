@@ -15,7 +15,7 @@ tags:
 
 # 363.2 - Ejercicios: Ceph
 
-## Pregunta 1
+### Pregunta 1
 ¿Que componente de Ceph almacena los datos y gestiona la replicacion?
 
 a) MON (Monitor)
@@ -30,7 +30,7 @@ d) MGR (Manager)
 Los OSDs almacenan los datos como objetos, gestionan la replicacion, la recuperacion y el rebalanceo. Hay un OSD por cada disco del cluster.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que algoritmo usa Ceph para determinar la ubicacion de los datos sin necesidad de una tabla centralizada?
 
 a) DHT
@@ -45,7 +45,7 @@ d) Round Robin
 CRUSH (Controlled Replication Under Scalable Hashing) calcula la ubicacion de los datos de forma determinista usando un mapa jerarquico del cluster. Esto elimina la necesidad de una tabla de localizacion centralizada.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Cuantos monitores (MON) se recomienda como minimo en un cluster Ceph de produccion?
 
 a) 1
@@ -60,7 +60,7 @@ d) 5
 Se necesitan al menos 3 monitores para mantener quorum (algoritmo Paxos). Un numero impar (3 o 5) es recomendado para evitar empates en la votacion de quorum.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Que comando muestra el arbol jerarquico de todos los OSDs del cluster Ceph?
 
 a) `ceph osd ls`
@@ -75,7 +75,7 @@ d) `ceph osd dump`
 `ceph osd tree` muestra la jerarquia CRUSH completa incluyendo roots, racks, hosts y OSDs con su estado (up/down) y peso.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que componente de Ceph es necesario unicamente para CephFS y no para RBD o RGW?
 
 a) MON
@@ -90,7 +90,7 @@ d) MGR
 El MDS gestiona los metadatos del sistema de archivos (directorios, permisos, etc.) y solo es necesario para CephFS. RBD y RGW no requieren MDS.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Que tipo de almacenamiento proporciona RBD (RADOS Block Device)?
 
 a) Almacenamiento de objetos compatible con S3
@@ -105,7 +105,7 @@ d) Almacenamiento NAS por NFS
 RBD proporciona dispositivos de bloque sobre RADOS. Se mapea como `/dev/rbdN` y puede usarse como cualquier disco (crear FS, montar). Es ideal para volumenes de VMs y contenedores.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Que estado de un Placement Group (PG) indica funcionamiento normal y completo?
 
 a) `active+degraded`
@@ -120,7 +120,7 @@ d) `active+recovering`
 `active+clean` indica que el PG esta activo (sirviendo peticiones) y limpio (todas las replicas estan sincronizadas). `degraded` indica replicas faltantes y `recovering` indica recuperacion en curso.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Que protocolo de almacenamiento de objetos es compatible con RGW (RADOS Gateway)?
 
 a) NFS y SMB
@@ -135,7 +135,7 @@ d) FTP y WebDAV
 RGW proporciona una interfaz REST compatible con las APIs de Amazon S3 y OpenStack Swift, permitiendo que aplicaciones existentes que usan estos protocolos se conecten a Ceph.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Que herramienta es la oficial para desplegar clusters Ceph modernos (desde version Octopus)?
 
 a) ceph-deploy
@@ -150,7 +150,7 @@ d) ceph-installer
 `cephadm` es la herramienta oficial de despliegue desde Ceph Octopus. Usa contenedores para los daemons y SSH para gestionar los nodos. Reemplazo a `ceph-deploy` que esta obsoleto.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 En `/etc/ceph/ceph.conf`, ¿que parametro define la red usada para el trafico de replicacion entre OSDs?
 
 a) `public_network`

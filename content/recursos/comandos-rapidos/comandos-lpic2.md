@@ -9,7 +9,7 @@ tipo: contenido
 
 # Comandos Rapidos - LPIC-2
 
-(Pendiente de completar a medida que se avance con LPIC-2)
+Referencia rapida de los comandos mas importantes para los examenes 201-450 y 202-450.
 
 ## Kernel
 

@@ -17,7 +17,7 @@ tags:
 
 # 364.4 - Ejercicios: HA de Red
 
-## Pregunta 1
+### Pregunta 1
 ¿Que modo de bonding proporciona redundancia activo/pasivo sin necesidad de configuracion especial en el switch?
 
 a) mode 0 (balance-rr)
@@ -32,7 +32,7 @@ d) mode 6 (balance-alb)
 El modo 1 (active-backup) mantiene una interfaz activa y las demas en espera. No requiere ninguna configuracion especial en el switch, a diferencia de los modos 0, 2, 3 y 4.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que protocolo estandar IEEE usa el modo 4 de bonding?
 
 a) STP (802.1d)
@@ -47,7 +47,7 @@ d) WPA (802.11i)
 El modo 4 de bonding implementa LACP (Link Aggregation Control Protocol) definido en el estandar IEEE 802.3ad. Requiere que el switch tambien soporte y tenga habilitado LACP.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Que herramienta se usa para ver el estado y gestionar un network team en tiempo real?
 
 a) `teamctl`
@@ -62,7 +62,7 @@ d) `nmcli team`
 `teamdctl` es la herramienta de control para teamd. Permite ver el estado (`teamdctl team0 state`), la configuracion (`config dump`) y gestionar puertos (`port disable/enable`).
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Que parametro de VRRP en keepalived debe ser unico en la red para cada instancia?
 
 a) `priority`
@@ -77,7 +77,7 @@ d) `state`
 El `virtual_router_id` (0-255) identifica de forma unica una instancia VRRP en la red. Si dos instancias diferentes comparten el mismo ID en la misma red, se produciran conflictos.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que runner de teaming es equivalente al modo 4 (802.3ad/LACP) de bonding?
 
 a) `activebackup`
@@ -92,7 +92,7 @@ d) `lacp`
 El runner `lacp` de teaming implementa LACP (IEEE 802.3ad), equivalente al modo 4 de bonding. Requiere soporte LACP en el switch.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Que archivo muestra el estado de un bond de red en Linux?
 
 a) `/sys/net/bond0/status`
@@ -107,7 +107,7 @@ d) `/var/run/bond0.state`
 `/proc/net/bonding/bond0` muestra informacion detallada del bond incluyendo el modo, interfaces esclavas, estado de cada interfaz y la interfaz activa actualmente.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 En keepalived, ¿que directiva evita que un nodo BACKUP recupere automaticamente el rol MASTER cuando vuelve a estar disponible?
 
 a) `nopreempt`
@@ -122,7 +122,7 @@ d) `no_recovery`
 La directiva `nopreempt` en una instancia VRRP evita que el nodo con mayor prioridad recupere automaticamente el rol MASTER. Esto reduce los cambios de estado innecesarios. Solo funciona cuando `state` es `BACKUP`.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Que parametro de bonding define cada cuantos milisegundos se verifica el estado del enlace?
 
 a) `updelay`
@@ -137,7 +137,7 @@ d) `arp_interval`
 `miimon` define el intervalo en milisegundos para la verificacion del estado del enlace usando MII (Media Independent Interface). Un valor tipico es 100 ms. `arp_interval` es una alternativa que usa peticiones ARP.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Que comando crea una ruta predeterminada con dos gateways para balanceo de carga?
 
 a) `ip route add default via 10.0.0.1 via 10.0.0.2`
@@ -152,7 +152,7 @@ d) `ip route add default multipath 10.0.0.1 10.0.0.2`
 La sintaxis `nexthop` de `ip route` permite definir multiples gateways con pesos para balanceo de carga. El kernel distribuye el trafico entre los nexthops segun los pesos.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Que ventaja principal tiene network teaming sobre bonding?
 
 a) Mejor rendimiento en modo LACP

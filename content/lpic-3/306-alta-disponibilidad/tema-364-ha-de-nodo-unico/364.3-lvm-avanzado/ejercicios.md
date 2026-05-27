@@ -17,7 +17,7 @@ tags:
 
 # 364.3 - Ejercicios: LVM Avanzado
 
-## Pregunta 1
+### Pregunta 1
 ¿Que permite el thin provisioning de LVM?
 
 a) Comprimir datos automaticamente
@@ -32,7 +32,7 @@ d) Cifrar volumenes logicos
 El thin provisioning permite overprovisioning: crear volumenes logicos cuyo tamaño total supera el espacio fisico disponible. El espacio real se asigna dinamicamente solo cuando se escriben datos.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que comando crea un thin pool de 100 GB llamado "mi_pool" en el VG "mi_vg"?
 
 a) `lvcreate -L 100G -n mi_pool mi_vg`
@@ -47,7 +47,7 @@ d) `lvcreate --pool -L 100G -n mi_pool mi_vg`
 `--type thin-pool` crea un pool de thin provisioning. Despues se pueden crear thin LVs dentro del pool con `lvcreate --type thin -V tamaño --thinpool mi_pool`.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Que herramienta de VDO proporciona estadisticas de deduplicacion y compresion?
 
 a) `vdo status`
@@ -62,7 +62,7 @@ d) `lvs --vdo`
 `vdostats --human-readable` muestra las estadisticas de uso, incluyendo el espacio fisico, logico, ahorro por deduplicacion y compresion.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Que comando migra los datos de un PV a otro sin tiempo de inactividad?
 
 a) `pvresize`
@@ -77,7 +77,7 @@ d) `pvcopy`
 `pvmove /dev/origen /dev/destino` migra todos los LVs del PV de origen al destino de forma online, sin necesidad de desmontar los volumenes logicos.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que politica de cache LVM es la predeterminada y recomendada?
 
 a) `mq`
@@ -92,7 +92,7 @@ d) `fifo`
 SMQ (Stochastic Multi Queue) es la politica de cache predeterminada y recomendada para dm-cache/lvmcache. Es mas eficiente y usa menos memoria que la politica `mq` anterior.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Donde almacena LVM automaticamente las copias de seguridad de metadatos?
 
 a) `/var/lib/lvm/`
@@ -107,7 +107,7 @@ d) `/proc/lvm/metadata/`
 `/etc/lvm/backup/` contiene el backup mas reciente de cada VG. `/etc/lvm/archive/` contiene el historial de todos los cambios. Se pueden restaurar con `vgcfgrestore`.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Que tipo de RAID LVM crea un espejo de datos?
 
 a) `raid0`
@@ -122,7 +122,7 @@ d) `striped`
 `lvcreate --type raid1 -m 1` crea un LV con espejo (mirror). El parametro `-m 1` indica una copia adicional (total 2 copias de los datos).
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Que hace el comando `lvconvert --uncache mi_vg/datos`?
 
 a) Elimina el LV de datos
@@ -137,7 +137,7 @@ d) Limpia el cache de datos sucios
 `--uncache` primero vuelca los datos sucios (dirty) del cache al disco principal, y luego elimina el cache pool. El LV de datos sigue funcionando sin cache.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Que sistema de archivos se recomienda sobre VDO?
 
 a) ext4
@@ -152,7 +152,7 @@ d) GFS2
 XFS es el sistema de archivos recomendado sobre VDO por Red Hat. Se debe usar `mkfs.xfs -K` (sin descartar bloques) para que VDO pueda gestionar correctamente la deduplicacion.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Que modo de activacion LVM permite que solo un nodo del cluster acceda al LV?
 
 a) `lvchange -a y`

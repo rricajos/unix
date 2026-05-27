@@ -14,7 +14,7 @@ subtema: "103.2"
 
 # 103.2 - Procesar flujos de texto con filtros: Ejercicios
 
-## Pregunta 1
+### Pregunta 1
 Un administrador necesita ver en tiempo real las nuevas lineas que se van anadiendo a un archivo de log. Cual de los siguientes comandos es el mas adecuado?
 
 A) `head -f /var/log/syslog`
@@ -32,7 +32,7 @@ La opcion `-f` (follow) de `tail` permite monitorizar un archivo en tiempo real,
 
 ---
 
-## Pregunta 2
+### Pregunta 2
 Dado el archivo `datos.txt` con el siguiente contenido:
 ```
 manzana
@@ -66,7 +66,7 @@ La salida seria:
 
 ---
 
-## Pregunta 3
+### Pregunta 3
 Cual de los siguientes comandos extrae correctamente los nombres de usuario (primer campo) del archivo `/etc/passwd`?
 
 A) `cut -f 1 /etc/passwd`
@@ -84,7 +84,7 @@ El archivo `/etc/passwd` usa `:` como delimitador de campos. La opcion `-d ":"` 
 
 ---
 
-## Pregunta 4
+### Pregunta 4
 Que hace el siguiente comando?
 ```bash
 sed -i.bak 's/error/ERROR/g' registro.log
@@ -105,7 +105,7 @@ El comando `sed` con la opcion `-i.bak` modifica el archivo in-place (directamen
 
 ---
 
-## Pregunta 5
+### Pregunta 5
 Un usuario tiene un archivo con lineas de texto que contienen retornos de carro de Windows (`\r\n`) y necesita convertirlo al formato Linux (`\n`). Cual es el comando correcto?
 
 A) `sed 's/\n/\r\n/g' archivo.txt`
@@ -123,7 +123,7 @@ El comando `tr -d '\r'` elimina todos los caracteres de retorno de carro (`\r`, 
 
 ---
 
-## Pregunta 6
+### Pregunta 6
 Que comando se utilizaria para dividir un archivo de 10 GB en partes de 500 MB cada una con el prefijo "parte_"?
 
 A) `split -l 500 archivo.bin parte_`
@@ -141,7 +141,7 @@ D) `dd if=archivo.bin bs=500M`
 
 ---
 
-## Pregunta 7
+### Pregunta 7
 Dado el siguiente archivo `numeros.txt`:
 ```
 5
@@ -174,7 +174,7 @@ La salida seria:
 
 ---
 
-## Pregunta 8
+### Pregunta 8
 Un administrador necesita verificar que un archivo ISO descargado no se ha corrompido. Dispone del hash SHA-256 proporcionado por el sitio web. Cual de los siguientes comandos genera el hash SHA-256 del archivo descargado para compararlo?
 
 A) `md5sum ubuntu.iso`

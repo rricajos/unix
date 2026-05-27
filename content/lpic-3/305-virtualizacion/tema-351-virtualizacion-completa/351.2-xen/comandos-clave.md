@@ -6,7 +6,12 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.2"
 peso: 3
-tags: [lpic-3, tema-351, comandos, xen, xl]
+tags:
+  - lpic-3
+  - tema-351
+  - comandos
+  - xen
+  - xl
 ---
 
 # Comandos Clave - 351.2 Xen

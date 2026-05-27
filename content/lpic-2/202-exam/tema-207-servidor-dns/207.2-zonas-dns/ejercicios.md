@@ -10,7 +10,7 @@ subtema: "207.2"
 
 # 207.2 - Ejercicios: Zonas DNS
 
-## Pregunta 1
+### Pregunta 1
 
 En un registro SOA, ¿que formato se recomienda para el numero de serie (serial)?
 
@@ -27,7 +27,7 @@ El formato recomendado para el serial del SOA es `YYYYMMDDNN`, donde YYYY es el 
 
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 ¿Que ocurre si un nombre en un archivo de zona NO termina en punto (`.`)?
 
@@ -44,7 +44,7 @@ En los archivos de zona BIND, los nombres que no terminan en punto se consideran
 
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 ¿Cual es la zona inversa correcta para la red `10.20.30.0/24`?
 
@@ -61,7 +61,7 @@ Las zonas inversas IPv4 se construyen invirtiendo los octetos de la red y anadie
 
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 ¿Que restriccion importante tiene el registro CNAME?
 
@@ -78,7 +78,7 @@ Un registro CNAME no puede compartir un nombre con ningun otro tipo de registro.
 
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 En un registro MX, ¿que significa un valor de prioridad mas bajo?
 
@@ -95,7 +95,7 @@ En los registros MX, un valor numerico menor indica mayor prioridad. El correo s
 
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 En el registro SOA, ¿que representa el campo "Expire"?
 
@@ -112,7 +112,7 @@ El campo Expire del SOA define el periodo maximo durante el cual un servidor esc
 
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 ¿Que tipo de transferencia de zona envia solo los cambios realizados desde un serial determinado?
 
@@ -129,7 +129,7 @@ IXFR (Incremental Zone Transfer) transfiere unicamente los cambios realizados en
 
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 ¿Que campo del registro SOA se debe utilizar para indicar la direccion de correo del administrador de la zona `admin@ejemplo.com`?
 
@@ -146,7 +146,7 @@ En el registro SOA, el campo RNAME (email del administrador) reemplaza el simbol
 
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 ¿Que son los "glue records" en una delegacion de subdominio?
 
@@ -163,7 +163,7 @@ Los glue records son registros A necesarios cuando un servidor NS de un subdomin
 
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 ¿Cual es el formato correcto de un registro SRV para un servicio LDAP en TCP con prioridad 10, peso 0, puerto 389?
 

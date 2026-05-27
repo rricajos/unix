@@ -1,6 +1,10 @@
 ---
 title: "Hardening de Sistemas Linux"
-tags: [hacking, defensivo, hardening]
+tags:
+  - hacking
+  - defensivo
+  - hardening
+  - hacking-defensivo
 tipo: hacking-defensivo
 certificacion: hacking-vault
 ---

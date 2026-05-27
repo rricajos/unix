@@ -6,12 +6,17 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "352 - Virtualización de Contenedores"
 subtema: "352.3"
 peso: 9
-tags: [lpic-3, tema-352, ejercicios, docker, dockerfile]
+tags:
+  - lpic-3
+  - tema-352
+  - ejercicios
+  - docker
+  - dockerfile
 ---
 
 # Ejercicios - 352.3 Docker
 
-## Pregunta 1
+### Pregunta 1
 ¿Cuál es la diferencia entre las instrucciones `CMD` y `ENTRYPOINT` en un Dockerfile?
 
 a) No hay diferencia, son sinónimos
@@ -26,7 +31,7 @@ d) `CMD` solo acepta formato shell, `ENTRYPOINT` solo formato exec
 `ENTRYPOINT` define el ejecutable que siempre se ejecuta. `CMD` proporciona argumentos por defecto que se pasan a `ENTRYPOINT` y pueden ser sobrescritos al hacer `docker run imagen nuevos-args`. `ENTRYPOINT` solo se sobrescribe con `--entrypoint`.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Qué ventaja proporcionan los multi-stage builds en un Dockerfile?
 
 a) Permiten ejecutar múltiples contenedores simultáneamente
@@ -41,7 +46,7 @@ d) Permiten usar múltiples sistemas operativos en un mismo contenedor
 Los multi-stage builds permiten usar una imagen con herramientas de compilación en la primera etapa y copiar solo el binario resultante a una imagen mínima final. `COPY --from=builder` copia archivos de una etapa anterior.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué tipo de red Docker permite la resolución DNS automática de contenedores por nombre?
 
 a) La red bridge por defecto (docker0)
@@ -56,7 +61,7 @@ d) La red none
 Las redes bridge personalizadas (creadas con `docker network create`) incluyen un servidor DNS interno que permite a los contenedores resolverse por nombre. La red bridge por defecto (`docker0`) no ofrece esta funcionalidad; solo permite comunicación por IP.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Qué hace el archivo `.dockerignore`?
 
 a) Lista las imágenes que Docker debe ignorar del registry
@@ -71,7 +76,7 @@ d) Lista contenedores que no deben iniciarse automáticamente
 `.dockerignore` funciona como `.gitignore`: excluye archivos del contexto de build. Esto reduce el tamaño del contexto enviado al daemon, acelera la construcción y evita incluir archivos sensibles (.env, .git, node_modules) en la imagen.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Qué comando ejecuta un proceso bash interactivo dentro de un contenedor Docker ya en ejecución?
 
 a) `docker run -it contenedor bash`
@@ -86,7 +91,7 @@ d) `docker shell contenedor`
 `docker exec` ejecuta un nuevo proceso dentro de un contenedor en ejecución. `-i` mantiene stdin abierto y `-t` asigna un pseudo-TTY. `docker run` crearía un nuevo contenedor. `docker attach` conecta al proceso principal del contenedor, no crea uno nuevo.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Cuál es la diferencia entre un volumen Docker y un bind mount?
 
 a) Los bind mounts son más portátiles que los volúmenes
@@ -101,7 +106,7 @@ d) No hay diferencia, son sinónimos
 Los volúmenes Docker son creados y gestionados por Docker (almacenados en `/var/lib/docker/volumes/`). Los bind mounts mapean directamente un directorio o archivo del host al contenedor. Los volúmenes son más portátiles y recomendados para datos persistentes.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué comando detiene todos los servicios definidos en un docker-compose.yml y elimina los volúmenes asociados?
 
 a) `docker compose stop --volumes`
@@ -116,7 +121,7 @@ d) `docker compose destroy -v`
 `docker compose down` detiene y elimina contenedores, redes y la configuración creada por `up`. La opción `-v` (o `--volumes`) también elimina los volúmenes nombrados definidos en la sección `volumes` del archivo compose.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Qué instrucción del Dockerfile se recomienda en lugar de `ADD` para copiar archivos locales?
 
 a) `PUT`
@@ -131,7 +136,7 @@ d) `IMPORT`
 `COPY` es la instrucción recomendada para copiar archivos locales al contenedor. `ADD` tiene funcionalidad extra (descomprimir tar, descargar URLs) que puede causar comportamientos inesperados. `ADD` solo se justifica cuando se necesita específicamente la descompresión automática de archivos tar.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Qué opción de `docker run` hace que el contenedor se elimine automáticamente cuando se detiene?
 
 a) `--auto-remove`
@@ -146,7 +151,7 @@ d) `--disposable`
 La opción `--rm` elimina automáticamente el contenedor y su filesystem cuando el proceso principal sale. Es útil para contenedores efímeros usados en pruebas o ejecuciones puntuales: `docker run -it --rm ubuntu bash`.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Qué comando elimina contenedores detenidos, redes no usadas, imágenes sin referencia y caché de build?
 
 a) `docker cleanup`

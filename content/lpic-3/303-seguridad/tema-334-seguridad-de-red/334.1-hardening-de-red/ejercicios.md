@@ -16,7 +16,7 @@ tags:
 
 # Ejercicios - 334.1 Hardening de Red
 
-## Pregunta 1
+### Pregunta 1
 ¿Que parametro sysctl habilita la proteccion contra ataques SYN flood?
 
 a) `net.ipv4.tcp_syn_protect = 1`
@@ -31,7 +31,7 @@ d) `net.ipv4.syn_cookies_enable = 1`
 TCP SYN cookies es un mecanismo que permite al servidor responder a conexiones SYN sin mantener estado en memoria, protegiendo contra ataques SYN flood que intentan agotar los recursos del servidor.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que hace el parametro `net.ipv4.conf.all.rp_filter = 1`?
 
 a) Filtra paquetes por protocolo
@@ -46,7 +46,7 @@ d) Bloquea paquetes fragmentados
 El Reverse Path Filtering verifica que la direccion de origen de cada paquete recibido sea alcanzable a traves de la interfaz por la que llego. El valor 1 (strict) requiere coincidencia exacta de interfaz; el valor 2 (loose) solo requiere que exista alguna ruta.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 En TCP Wrappers, ¿cual es el orden de evaluacion entre hosts.allow y hosts.deny?
 
 a) hosts.deny se evalua primero, luego hosts.allow
@@ -61,7 +61,7 @@ d) El orden depende de la configuracion en /etc/nsswitch.conf
 El flujo es: 1) Si coincide en hosts.allow -> PERMITIDO. 2) Si coincide en hosts.deny -> DENEGADO. 3) Si no coincide en ninguno -> PERMITIDO (por defecto).
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Que comando de nftables crea una cadena de entrada con politica de descarte por defecto?
 
 a) `nft create chain inet filtro entrada policy drop`
@@ -76,7 +76,7 @@ d) `nft add filter inet entrada DROP`
 En nftables, las cadenas base requieren especificar type (filter/nat/route), hook (input/output/forward), priority y policy dentro de llaves.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que modulo de iptables permite limitar el numero de conexiones nuevas a un servicio en un periodo de tiempo?
 
 a) `conntrack`
@@ -91,7 +91,7 @@ d) `hashlimit`
 El modulo `recent` mantiene una lista de IPs recientes y permite establecer umbrales de conexion por IP en un periodo. El modulo `limit` limita la tasa global, no por IP. `hashlimit` combina ambas funcionalidades.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Que comando crea un namespace de red aislado llamado "seguro"?
 
 a) `netns create seguro`
@@ -106,7 +106,7 @@ d) `nsenter --net seguro`
 `ip netns add` crea un nuevo namespace de red con su propio stack de red aislado (interfaces, tabla de rutas, reglas de firewall, etc.). Se ejecutan comandos dentro con `ip netns exec seguro comando`.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Que parametro sysctl deshabilita completamente IPv6 en todas las interfaces?
 
 a) `net.ipv6.disable = 1`
@@ -121,7 +121,7 @@ d) `net.ipv6.enabled = 0`
 Este parametro deshabilita IPv6 en todas las interfaces. Tambien se recomienda establecer `net.ipv6.conf.default.disable_ipv6 = 1` para que las nuevas interfaces tambien lo tengan deshabilitado.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Que familia de nftables permite crear reglas que aplican tanto a IPv4 como a IPv6?
 
 a) `ip`
@@ -136,7 +136,7 @@ d) `dual`
 La familia `inet` en nftables es una familia dual-stack que aplica las reglas tanto a trafico IPv4 como IPv6, evitando duplicar reglas. Las familias `ip` e `ip6` solo aplican a su respectivo protocolo.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Para que sirve el comando `conntrack -L`?
 
 a) Lista las reglas de firewall activas
@@ -151,7 +151,7 @@ d) Lista las rutas de red
 `conntrack -L` muestra la tabla de seguimiento de conexiones del kernel, incluyendo estado (ESTABLISHED, TIME_WAIT, etc.), direcciones de origen y destino, y puertos de cada conexion.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Que parametro sysctl registra paquetes con direcciones IP de origen imposibles (paquetes marcianos)?
 
 a) `net.ipv4.conf.all.log_impossible = 1`

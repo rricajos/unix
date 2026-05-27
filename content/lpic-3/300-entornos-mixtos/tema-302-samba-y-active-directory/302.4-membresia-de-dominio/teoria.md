@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.4"
 titulo: "Membresía de Dominio"
 peso: 4
-tags: [lpic-3, tema-302, teoria]
+tags:
+  - lpic-3
+  - tema-302
+  - teoria
 ---
 
 # 302.4 Membresía de Dominio

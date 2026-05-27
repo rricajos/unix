@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.3"
 peso: 4
-tags: [lpic-3, tema-351, qemu, kvm, qemu-img, snapshots]
+tags:
+  - lpic-3
+  - tema-351
+  - qemu
+  - kvm
+  - qemu-img
+  - snapshots
 ---
 
 # 351.3 QEMU

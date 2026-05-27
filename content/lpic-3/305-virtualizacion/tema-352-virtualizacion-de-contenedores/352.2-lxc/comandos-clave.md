@@ -6,7 +6,12 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "352 - Virtualización de Contenedores"
 subtema: "352.2"
 peso: 6
-tags: [lpic-3, tema-352, comandos, lxc, lxd]
+tags:
+  - lpic-3
+  - tema-352
+  - comandos
+  - lxc
+  - lxd
 ---
 
 # Comandos Clave - 352.2 LXC

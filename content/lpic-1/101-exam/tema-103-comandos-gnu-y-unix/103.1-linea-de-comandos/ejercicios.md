@@ -14,7 +14,7 @@ subtema: "103.1"
 
 # 103.1 - Trabajar en la linea de comandos: Ejercicios
 
-## Pregunta 1
+### Pregunta 1
 Un administrador necesita saber si el comando `echo` es un comando interno del shell o un programa externo. Cual de los siguientes comandos muestra esta informacion de forma mas completa?
 
 A) `which echo`
@@ -32,7 +32,7 @@ D) `find / -name echo`
 
 ---
 
-## Pregunta 2
+### Pregunta 2
 Cual es la diferencia entre ejecutar `env` y `set` sin argumentos?
 
 A) `env` muestra las variables locales y `set` las de entorno
@@ -50,7 +50,7 @@ D) `set` solo muestra las opciones del shell activas
 
 ---
 
-## Pregunta 3
+### Pregunta 3
 Un usuario ejecuta los siguientes comandos:
 ```bash
 ANIMAL=gato
@@ -76,7 +76,7 @@ D) Dos lineas vacias
 
 ---
 
-## Pregunta 4
+### Pregunta 4
 Que comando buscaria en las descripciones de las paginas de manual todas las entradas relacionadas con "password"?
 
 A) `man password`
@@ -94,7 +94,7 @@ D) `info password`
 
 ---
 
-## Pregunta 5
+### Pregunta 5
 Dado el siguiente comando:
 ```bash
 echo "El directorio home es $HOME y el usuario es $(whoami)"
@@ -116,7 +116,7 @@ Las comillas dobles permiten la expansion de variables (`$VARIABLE`) y la sustit
 
 ---
 
-## Pregunta 6
+### Pregunta 6
 Un usuario quiere crear los directorios `proyecto/src`, `proyecto/bin` y `proyecto/doc` con un solo comando. Cual de las siguientes opciones es correcta?
 
 A) `mkdir proyecto/src proyecto/bin proyecto/doc`
@@ -134,7 +134,7 @@ La expansion de llaves `{src,bin,doc}` genera tres cadenas: `proyecto/src`, `pro
 
 ---
 
-## Pregunta 7
+### Pregunta 7
 Cual es la diferencia entre los operadores `&&` y `;` en la linea de comandos?
 
 A) `;` ejecuta comandos en paralelo, `&&` en secuencia
@@ -152,7 +152,7 @@ El operador `;` ejecuta los comandos secuencialmente sin importar el codigo de s
 
 ---
 
-## Pregunta 8
+### Pregunta 8
 Un usuario ejecuta `!grep` en la linea de comandos. Que ocurre?
 
 A) Se busca la palabra "grep" en el directorio actual

@@ -10,7 +10,7 @@ subtema: "206.3"
 
 # 206.3 - Ejercicios: Notificacion a usuarios
 
-## Pregunta 1
+### Pregunta 1
 
 ¿Que archivo se muestra al usuario ANTES de iniciar sesion en una consola local?
 
@@ -27,7 +27,7 @@ El archivo `/etc/issue` se muestra en la pantalla de login de la consola local a
 
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 ¿Que directiva se debe configurar en `/etc/ssh/sshd_config` para que SSH muestre un banner antes del login?
 
@@ -44,7 +44,7 @@ La directiva `Banner` en `/etc/ssh/sshd_config` especifica el archivo cuyo conte
 
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 ¿Que comando envia un mensaje a TODOS los usuarios conectados al sistema?
 
@@ -61,7 +61,7 @@ El comando `wall` (Write to ALL) envia un mensaje a todas las terminales de todo
 
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 Un usuario ejecuta `mesg n` en su terminal. ¿Cual es el efecto?
 
@@ -78,7 +78,7 @@ d) Solo bloqueara los mensajes del sistema
 
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 ¿Que secuencia de escape en `/etc/issue` muestra el nombre del host?
 
@@ -95,7 +95,7 @@ En el archivo `/etc/issue`, la secuencia `\n` muestra el nombre del host (hostna
 
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 ¿Como se cancela un apagado programado con `shutdown` y se notifica a los usuarios?
 
@@ -112,7 +112,7 @@ La opcion `-c` (cancel) de `shutdown` cancela un apagado o reinicio previamente 
 
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 ¿Cual es la diferencia principal entre `/etc/issue` y `/etc/issue.net`?
 
@@ -129,7 +129,7 @@ d) No hay diferencia, son sinonimos
 
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 ¿Para que se utiliza `systemd-ask-password`?
 
@@ -146,7 +146,7 @@ d) Para enviar contrasenas cifradas a los usuarios
 
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 ¿En que directorio se encuentran los scripts que generan el MOTD dinamico en distribuciones basadas en Debian/Ubuntu?
 
@@ -163,7 +163,7 @@ En distribuciones basadas en Debian/Ubuntu, el MOTD puede generarse dinamicament
 
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 Un administrador necesita enviar un mensaje solo al usuario "maria" que esta conectada en la terminal `pts/3`. ¿Que comando debe usar?
 

@@ -16,7 +16,7 @@ tags:
 
 # 362.2 - Ejercicios: Acceso a Almacenamiento Cluster
 
-## Pregunta 1
+### Pregunta 1
 ¿Que tipo de almacenamiento proporciona acceso a nivel de bloque a traves de una red dedicada?
 
 a) DAS
@@ -31,7 +31,7 @@ d) NFS
 SAN (Storage Area Network) proporciona acceso a nivel de bloque a traves de una red dedicada usando protocolos como Fibre Channel o iSCSI. NAS proporciona acceso a nivel de archivo.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Cual es el puerto TCP predeterminado de iSCSI?
 
 a) 860
@@ -46,7 +46,7 @@ d) 5432
 El puerto predeterminado para iSCSI es 3260/TCP. Este se configura en los portals del target.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Que herramienta se usa para configurar iSCSI targets usando LIO en Linux?
 
 a) iscsiadm
@@ -61,7 +61,7 @@ d) iscsi-target
 `targetcli` es la interfaz de linea de comandos interactiva para configurar LIO (Linux-IO), el framework de iSCSI target integrado en el kernel Linux. `iscsiadm` es la herramienta del initiator (cliente).
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Que comando descubre targets iSCSI disponibles en un servidor?
 
 a) `iscsiadm -m node -T iqn... --login`
@@ -76,7 +76,7 @@ d) `targetcli discover 192.168.1.100`
 El modo `discovery` con tipo `sendtargets` consulta al portal iSCSI especificado para obtener la lista de targets disponibles.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que politica de agrupacion de multipath mantiene solo una ruta activa y las demas en espera?
 
 a) `multibus`
@@ -91,7 +91,7 @@ d) `round-robin`
 La politica `failover` usa una sola ruta activa a la vez. Las demas rutas quedan en espera y se activan solo si la ruta principal falla. `multibus` usa todas las rutas activas simultaneamente.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Que comando muestra la topologia multipath con el estado detallado de todas las rutas?
 
 a) `multipath -v0`
@@ -106,7 +106,7 @@ d) `dmsetup ls`
 `multipath -ll` muestra la topologia completa incluyendo el nombre del mapa, las politicas, los grupos de rutas y el estado de cada ruta individual.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Que operacion SPC-3 permite a un nodo del cluster quitar la reserva SCSI de otro nodo?
 
 a) register
@@ -121,7 +121,7 @@ d) preempt
 La operacion `preempt` permite a un nodo quitar forzosamente la reserva de otro nodo. Es fundamental para el fencing a nivel de almacenamiento en clusters HA.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿En que directorio del sistema se encuentra la informacion de los HBAs Fibre Channel?
 
 a) `/proc/fc_host/`
@@ -136,7 +136,7 @@ d) `/etc/fc/`
 La informacion de los HBAs (Host Bus Adapters) Fibre Channel se encuentra en `/sys/class/fc_host/`. Desde alli se pueden leer el WWPN, WWNN y estado del puerto.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Cual es el formato correcto de un IQN (iSCSI Qualified Name)?
 
 a) `wwn.50014380123456789`
@@ -151,7 +151,7 @@ d) `eui.0123456789ABCDEF`
 El formato IQN es: `iqn.YYYY-MM.dominio.invertido:identificador`. Las opciones a, c y d son formatos de identificacion de almacenamiento (WWN, NAA, EUI) pero no son IQN.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Que archivo configura el nombre IQN del initiator iSCSI?
 
 a) `/etc/iscsi/iscsid.conf`

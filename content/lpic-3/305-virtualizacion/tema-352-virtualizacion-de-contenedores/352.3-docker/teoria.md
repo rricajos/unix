@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "352 - Virtualización de Contenedores"
 subtema: "352.3"
 peso: 9
-tags: [lpic-3, tema-352, docker, dockerfile, docker-compose, contenedores]
+tags:
+  - lpic-3
+  - tema-352
+  - docker
+  - dockerfile
+  - docker-compose
+  - contenedores
 ---
 
 # 352.3 Docker

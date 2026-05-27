@@ -6,7 +6,10 @@ tema: "301"
 subtema: "301.3"
 titulo: "Mantenimiento Regular - Comandos Clave"
 peso: 2
-tags: [lpic-3, tema-301, comandos]
+tags:
+  - lpic-3
+  - tema-301
+  - comandos
 ---
 
 # Comandos clave - 301.3 Mantenimiento Regular

@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.1"
 peso: 6
-tags: [lpic-3, tema-351, comandos, virtualizacion, kvm, hardware]
+tags:
+  - lpic-3
+  - tema-351
+  - comandos
+  - virtualizacion
+  - kvm
+  - hardware
 ---
 
 # Comandos Clave - 351.1 Conceptos y Teoría

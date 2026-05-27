@@ -1,6 +1,10 @@
 ---
 title: "Ingenieria Social"
-tags: [hacking, ofensivo, ingenieria-social]
+tags:
+  - hacking
+  - ofensivo
+  - ingenieria-social
+  - hacking-ofensivo
 tipo: hacking-ofensivo
 certificacion: hacking-vault
 ---

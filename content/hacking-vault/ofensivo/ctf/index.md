@@ -4,6 +4,7 @@ tags:
   - indice-hacking
   - hacking
   - ofensivo
+  - ctf
 tipo: indice-hacking
 ---
 

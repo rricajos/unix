@@ -1,6 +1,10 @@
 ---
 title: "Firewalls y Filtrado de Paquetes"
-tags: [hacking, defensivo, firewalls-y-filtrado]
+tags:
+  - hacking
+  - defensivo
+  - firewalls-y-filtrado
+  - hacking-defensivo
 tipo: hacking-defensivo
 certificacion: hacking-vault
 ---

@@ -10,7 +10,7 @@ subtema: "206.1"
 
 # 206.1 - Ejercicios: Compilar e instalar desde fuentes
 
-## Pregunta 1
+### Pregunta 1
 
 ¿Cual es el directorio de instalacion por defecto cuando se ejecuta `./configure` sin la opcion `--prefix`?
 
@@ -27,7 +27,7 @@ El directorio por defecto para la instalacion de software compilado desde fuente
 
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 ¿Que comando se utiliza para regenerar todos los archivos de autotools de una sola vez?
 
@@ -44,7 +44,7 @@ El comando `autoreconf -i` ejecuta automaticamente `aclocal`, `autoheader`, `aut
 
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 ¿Que archivo genera `autoconf` a partir de `configure.ac`?
 
@@ -61,7 +61,7 @@ d) `config.h`
 
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 Despues de instalar una nueva biblioteca compartida en `/opt/custom/lib`, ¿cual es la forma correcta y permanente de hacerla accesible al sistema?
 
@@ -78,7 +78,7 @@ La forma correcta y permanente es crear un archivo `.conf` en `/etc/ld.so.conf.d
 
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 ¿Que comando muestra las bibliotecas compartidas que necesita un binario?
 
@@ -95,7 +95,7 @@ El comando `ldd` muestra todas las bibliotecas compartidas (shared libraries) qu
 
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 ¿Que opcion de `./configure` se utiliza para habilitar el soporte de un paquete externo como OpenSSL?
 
@@ -112,7 +112,7 @@ Las opciones `--with-PAQUETE` se usan para habilitar soporte para paquetes exter
 
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 En un proyecto que utiliza CMake, ¿cual es el procedimiento correcto de compilacion?
 
@@ -129,7 +129,7 @@ La practica recomendada con CMake es crear un directorio de compilacion separado
 
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 ¿Que comando de `pkg-config` muestra los flags necesarios para enlazar con una biblioteca?
 
@@ -146,7 +146,7 @@ d) `pkg-config --ldflags libreria`
 
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 ¿Que hace el comando `make -j$(nproc)`?
 
@@ -163,7 +163,7 @@ La opcion `-j` de `make` permite la compilacion en paralelo. `$(nproc)` es un co
 
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 ¿Que archivo almacena la cache binaria generada por `ldconfig`?
 

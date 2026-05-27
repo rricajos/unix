@@ -10,7 +10,7 @@ subtema: "207.3"
 
 # 207.3 - Ejercicios: Seguridad DNS
 
-## Pregunta 1
+### Pregunta 1
 
 ¿Cual es la funcion principal de DNSSEC?
 
@@ -27,7 +27,7 @@ DNSSEC garantiza que las respuestas DNS no han sido modificadas (integridad) y q
 
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 ¿Que tipo de clave DNSSEC se utiliza para firmar los registros de datos de una zona (A, MX, NS, etc.)?
 
@@ -44,7 +44,7 @@ La ZSK (Zone Signing Key) se utiliza para firmar los registros de datos de la zo
 
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 ¿Que registro DNSSEC se publica en la zona PADRE para vincular la cadena de confianza con la zona hija?
 
@@ -61,7 +61,7 @@ El registro DS se publica en la zona padre y contiene un hash de la KSK de la zo
 
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 ¿Que mejora aporta NSEC3 respecto a NSEC?
 
@@ -78,7 +78,7 @@ NSEC enumera los nombres existentes en la zona en orden, lo que permite a un ata
 
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 ¿Que protocolo utiliza TSIG para autenticar las transacciones DNS?
 
@@ -95,7 +95,7 @@ TSIG (Transaction Signatures) utiliza criptografia simetrica basada en HMAC (Has
 
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 ¿Cual es el proposito principal de ejecutar BIND en un entorno chroot?
 
@@ -112,7 +112,7 @@ El chroot confina el proceso `named` en un directorio aislado. Si un atacante ex
 
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 En una configuracion de Split DNS con views en BIND, ¿que directiva determina que clientes son atendidos por cada vista?
 
@@ -129,7 +129,7 @@ La directiva `match-clients` dentro de un bloque `view` determina que clientes s
 
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 ¿Que flag en la respuesta de `dig` indica que los datos han sido autenticados mediante DNSSEC?
 
@@ -146,7 +146,7 @@ El flag `ad` en la respuesta de dig indica que el resolver recursivo ha verifica
 
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 ¿Que parametro de rate limiting en BIND permite que algunos clientes reciban una respuesta truncada (TC) en lugar de ser completamente bloqueados?
 
@@ -163,7 +163,7 @@ El parametro `slip` determina con que frecuencia se envia una respuesta truncada
 
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 ¿Que comando genera una clave TSIG para autenticar transferencias de zona entre servidores BIND?
 

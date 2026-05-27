@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.5"
 peso: 3
-tags: [lpic-3, tema-351, comandos, imagenes, qemu-img, libguestfs]
+tags:
+  - lpic-3
+  - tema-351
+  - comandos
+  - imagenes
+  - qemu-img
+  - libguestfs
 ---
 
 # Comandos Clave - 351.5 Imágenes de Disco VM

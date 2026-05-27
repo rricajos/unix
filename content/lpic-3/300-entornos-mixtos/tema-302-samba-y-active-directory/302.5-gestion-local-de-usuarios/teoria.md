@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.5"
 titulo: "Gestión Local de Usuarios"
 peso: 2
-tags: [lpic-3, tema-302, teoria]
+tags:
+  - lpic-3
+  - tema-302
+  - teoria
 ---
 
 # 302.5 Gestión Local de Usuarios

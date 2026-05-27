@@ -1,6 +1,10 @@
 ---
 title: "Enumeracion de Servicios y Vulnerabilidades"
-tags: [hacking, ofensivo, enumeracion]
+tags:
+  - hacking
+  - ofensivo
+  - enumeracion
+  - hacking-ofensivo
 tipo: hacking-ofensivo
 certificacion: hacking-vault
 ---

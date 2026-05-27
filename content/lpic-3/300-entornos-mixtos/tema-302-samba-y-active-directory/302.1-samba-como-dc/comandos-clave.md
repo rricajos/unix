@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.1"
 titulo: "Samba como DC - Comandos Clave"
 peso: 5
-tags: [lpic-3, tema-302, comandos]
+tags:
+  - lpic-3
+  - tema-302
+  - comandos
 ---
 
 # Comandos clave - 302.1 Samba como Controlador de Dominio

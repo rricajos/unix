@@ -14,7 +14,7 @@ subtema: "103.8"
 
 # 103.8 - Edicion basica de archivos: Ejercicios
 
-## Pregunta 1
+### Pregunta 1
 Un usuario ha abierto un archivo con `vi` y ha realizado varios cambios. Ahora quiere guardar los cambios y salir. Cual de los siguientes comandos NO logra este objetivo?
 
 A) `:wq`
@@ -32,7 +32,7 @@ D) `:q!`
 
 ---
 
-## Pregunta 2
+### Pregunta 2
 En vi, un usuario esta en modo normal y quiere insertar texto al final de la linea actual. Cual es la tecla correcta?
 
 A) `i`
@@ -50,7 +50,7 @@ D) `o`
 
 ---
 
-## Pregunta 3
+### Pregunta 3
 Que comando de vi reemplaza todas las ocurrencias de "foo" por "bar" en todo el archivo, pidiendo confirmacion en cada una?
 
 A) `:%s/foo/bar/g`
@@ -68,7 +68,7 @@ D) `:%s/foo/bar/c`
 
 ---
 
-## Pregunta 4
+### Pregunta 4
 Un usuario abre vi y quiere ir directamente a la linea 50 del archivo. Cual de los siguientes metodos es correcto?
 
 A) Escribir `50` y luego presionar `G`
@@ -86,7 +86,7 @@ Las tres formas son validas para ir a la linea 50: `50G` en modo normal antepone
 
 ---
 
-## Pregunta 5
+### Pregunta 5
 En vi, cual es la diferencia entre `dd` y `yy`?
 
 A) `dd` borra la linea y `yy` la copia; ambos almacenan en el buffer
@@ -104,7 +104,7 @@ D) `dd` borra un caracter y `yy` copia un caracter
 
 ---
 
-## Pregunta 6
+### Pregunta 6
 En nano, cual es el atajo de teclado para guardar un archivo?
 
 A) `Ctrl+S`
@@ -122,7 +122,7 @@ En nano, `Ctrl+O` (Write Out) guarda el archivo. Nano pide confirmacion del nomb
 
 ---
 
-## Pregunta 7
+### Pregunta 7
 Un administrador necesita deshacer los ultimos 5 cambios realizados en vi. Que debe hacer?
 
 A) Presionar `u` cinco veces
@@ -140,7 +140,7 @@ En vim, la tecla `u` deshace la ultima accion, y se puede presionar multiples ve
 
 ---
 
-## Pregunta 8
+### Pregunta 8
 Que variable de entorno se utiliza para definir el editor de texto predeterminado en Linux?
 
 A) `SHELL`

@@ -1,6 +1,10 @@
 ---
 title: "Blue Team - Deteccion y Respuesta"
-tags: [hacking, defensivo, blue-team]
+tags:
+  - hacking
+  - defensivo
+  - blue-team
+  - hacking-defensivo
 tipo: hacking-defensivo
 certificacion: hacking-vault
 ---

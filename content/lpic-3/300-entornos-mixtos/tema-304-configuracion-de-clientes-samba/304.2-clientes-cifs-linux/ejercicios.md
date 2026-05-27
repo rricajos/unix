@@ -17,7 +17,7 @@ tags:
 
 # 304.2 Ejercicios - Clientes CIFS Linux
 
-## Pregunta 1
+### Pregunta 1
 ¿Cuál es la forma más segura de proporcionar credenciales al montar un share CIFS?
 
 a) `mount -t cifs //srv/share /mnt -o username=user,password=pass`
@@ -32,7 +32,7 @@ d) Escribir la contraseña en /etc/fstab
 Usar un archivo de credenciales con la opción `credentials=` es la forma más segura porque el archivo puede protegerse con permisos 0600. Las contraseñas en línea de comandos son visibles con `ps` y en /etc/fstab son legibles por cualquier usuario.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Qué opción `sec=` proporciona Kerberos con cifrado de datos?
 
 a) sec=krb5
@@ -47,7 +47,7 @@ d) sec=krb5e
 `sec=krb5p` proporciona autenticación Kerberos con cifrado de datos (privacidad). `krb5` solo autentica, `krb5i` añade verificación de integridad, y `krb5p` añade cifrado completo de los datos transmitidos.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué opción en /etc/fstab indica al sistema que espere a que la red esté disponible antes de montar un share CIFS?
 
 a) `noauto`
@@ -62,7 +62,7 @@ d) `x-systemd.requires=network`
 `_netdev` es la opción estándar que indica al sistema que el montaje depende de la red. Sin esta opción, el sistema podría intentar montar el share CIFS antes de que la interfaz de red esté activa, causando un fallo en el arranque.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Qué formato se utiliza en el archivo de mapa de autofs para especificar un recurso CIFS?
 
 a) `share -fstype=cifs //servidor/share`
@@ -77,7 +77,7 @@ d) `share -fstype=cifs smb://servidor/share`
 En autofs, el formato para recursos CIFS incluye dos puntos antes de la ruta: `://servidor/share`. Los dos puntos separan el host de la ubicación en el formato estándar de autofs.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Qué permite la opción `multiuser` en un montaje CIFS?
 
 a) Que múltiples usuarios monten el mismo share simultáneamente
@@ -92,7 +92,7 @@ d) Que varios servidores compartan el mismo recurso
 Con `multiuser`, el montaje se realiza una sola vez (generalmente por root), pero cada usuario puede establecer sus propias credenciales mediante `cifscreds`. El kernel aplica los permisos individuales basándose en las credenciales de cada usuario.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Qué comando de smbclient lista los recursos compartidos disponibles en un servidor?
 
 a) `smbclient //servidor -c "ls"`
@@ -107,7 +107,7 @@ d) `smbclient //servidor/share -c "shares"`
 La opción `-L` (o `--list`) de smbclient lista todos los recursos compartidos disponibles en el servidor especificado, incluyendo shares de archivos, impresoras e IPC$.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué herramienta se usa para monitorizar las estadísticas de I/O de montajes CIFS?
 
 a) iostat
@@ -122,7 +122,7 @@ d) smbstat
 `cifsiostat` es la herramienta específica para monitorizar estadísticas de I/O de montajes CIFS, mostrando bytes leídos/escritos, operaciones por segundo y aperturas/cierres de archivos.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Cuál es el contenido correcto de un archivo de credenciales CIFS?
 
 a) `user:password:domain`
@@ -137,7 +137,7 @@ d) `credentials: user/pass@DOM`
 El archivo de credenciales usa el formato `clave=valor` con cada campo en una línea separada: `username=`, `password=` y opcionalmente `domain=`. El archivo debe tener permisos 0600.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Cómo se ejecuta un comando en modo batch con smbclient?
 
 a) `smbclient //srv/share -U user --batch "ls"`
@@ -152,7 +152,7 @@ d) `smbclient //srv/share -U user < "ls"`
 La opción `-c` de smbclient ejecuta los comandos especificados en modo batch (no interactivo) y luego finaliza. Se pueden encadenar múltiples comandos separándolos con punto y coma.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 Un administrador necesita montar un share CIFS automáticamente solo cuando un usuario accede al directorio, y desmontarlo tras 5 minutos de inactividad. ¿Qué solución es la más adecuada?
 
 a) Entrada en /etc/fstab con `auto`

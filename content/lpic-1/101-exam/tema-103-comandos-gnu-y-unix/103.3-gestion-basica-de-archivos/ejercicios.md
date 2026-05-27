@@ -14,7 +14,7 @@ subtema: "103.3"
 
 # 103.3 - Gestion basica de archivos: Ejercicios
 
-## Pregunta 1
+### Pregunta 1
 Un administrador necesita copiar el directorio `/home/sandra/proyecto/` a `/backup/` preservando todos los permisos, propietarios, timestamps y enlaces simbolicos. Cual es el comando mas adecuado?
 
 A) `cp -r /home/sandra/proyecto/ /backup/`
@@ -32,7 +32,7 @@ La opcion `-a` (archive) es equivalente a `-dR --preserve=all`, lo que significa
 
 ---
 
-## Pregunta 2
+### Pregunta 2
 Cual de los siguientes comandos `find` localiza todos los archivos regulares mayores de 50 MB en `/var` que fueron modificados hace mas de 30 dias?
 
 A) `find /var -type f -size +50 -mtime +30`
@@ -50,7 +50,7 @@ El comando correcto usa: `-type f` para archivos regulares, `-size +50M` (con el
 
 ---
 
-## Pregunta 3
+### Pregunta 3
 Un usuario necesita crear un archivo tar comprimido con bzip2 del directorio `/etc/` y guardarlo como `/tmp/etc_backup.tar.bz2`. Cual es el comando correcto?
 
 A) `tar -czvf /tmp/etc_backup.tar.bz2 /etc/`
@@ -68,7 +68,7 @@ Las opciones son: `-c` para crear, `-j` para compresion bzip2, `-v` para verbose
 
 ---
 
-## Pregunta 4
+### Pregunta 4
 Que hace el siguiente comando?
 ```bash
 find /tmp -name "*.log" -mtime +7 -exec rm {} \;
@@ -89,7 +89,7 @@ El comando `find` busca en `/tmp` archivos cuyo nombre termine en `.log` (`-name
 
 ---
 
-## Pregunta 5
+### Pregunta 5
 Cual es la diferencia entre `rmdir` y `rm -r`?
 
 A) `rmdir` es mas rapido que `rm -r`
@@ -107,7 +107,7 @@ D) No hay diferencia, son equivalentes
 
 ---
 
-## Pregunta 6
+### Pregunta 6
 Un administrador necesita crear una imagen exacta del disco `/dev/sda` con bloques de 4 MB mostrando el progreso. Cual es el comando correcto?
 
 A) `cp /dev/sda /backup/disco.img`
@@ -125,7 +125,7 @@ D) `dd of=/dev/sda if=/backup/disco.img bs=4M`
 
 ---
 
-## Pregunta 7
+### Pregunta 7
 El comando `file /usr/bin/python3` muestra la informacion `ELF 64-bit LSB pie executable, x86-64`. Que se puede concluir?
 
 A) El archivo es un script de Python
@@ -143,7 +143,7 @@ El comando `file` examina el contenido real del archivo (no su extension ni su n
 
 ---
 
-## Pregunta 8
+### Pregunta 8
 Cual de los siguientes comandos `find` busca archivos con nombre que termine en `.txt` O en `.md`, que sean archivos regulares?
 
 A) `find /home -name "*.txt" -name "*.md" -type f`

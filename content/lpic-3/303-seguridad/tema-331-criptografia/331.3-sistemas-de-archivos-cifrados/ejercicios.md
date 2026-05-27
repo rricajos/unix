@@ -16,7 +16,7 @@ tags:
 
 # Ejercicios - 331.3 Sistemas de Archivos Cifrados
 
-## Pregunta 1
+### Pregunta 1
 ¿Qué comando formatea una partición con LUKS utilizando cifrado AES-XTS con clave de 512 bits?
 
 a) `cryptsetup create --cipher aes-xts-plain64 --key-size 512 /dev/sdb1`
@@ -31,7 +31,7 @@ d) `cryptsetup luksCreate --aes-xts 512 /dev/sdb1`
 `cryptsetup luksFormat` inicializa la partición con formato LUKS. `--cipher` especifica el algoritmo y `--key-size` el tamaño de clave en bits.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Cuántos slots de clave soporta LUKS por defecto?
 
 a) 4
@@ -46,7 +46,7 @@ d) Ilimitados
 LUKS soporta hasta 8 slots de clave (numerados del 0 al 7), permitiendo que múltiples contraseñas o archivos de clave puedan desbloquear el mismo volumen.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué archivo se configura para desbloquear automáticamente volúmenes cifrados durante el arranque del sistema?
 
 a) `/etc/fstab`
@@ -61,7 +61,7 @@ d) `/etc/dm-crypt.conf`
 El archivo `/etc/crypttab` define los volúmenes cifrados que deben desbloquearse durante el arranque, incluyendo el nombre del mapeo, dispositivo, archivo de clave y opciones.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 Un administrador necesita hacer backup de la cabecera LUKS antes de una operación de mantenimiento. ¿Qué comando debe usar?
 
 a) `cryptsetup luksDump /dev/sdb1 > backup.img`
@@ -76,7 +76,7 @@ d) `cryptsetup luksBackup --header /dev/sdb1 backup.img`
 `luksHeaderBackup` es el método correcto y seguro para respaldar la cabecera LUKS. `luksDump` solo muestra información, no crea un backup restaurable.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Cuál es la principal ventaja de dm-crypt en modo plano (plain mode) sobre LUKS?
 
 a) Mayor rendimiento de cifrado
@@ -91,7 +91,7 @@ d) Mejor compatibilidad con sistemas de archivos
 En modo plano, no existe cabecera LUKS en el disco, por lo que no hay forma de probar que la partición contiene datos cifrados. Esto ofrece denegabilidad plausible, a costa de perder gestión de múltiples claves y cambio de contraseña.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Qué diferencia principal existe entre eCryptfs y EncFS?
 
 a) eCryptfs opera en el kernel, EncFS opera en espacio de usuario (FUSE)
@@ -106,7 +106,7 @@ d) EncFS es más seguro que eCryptfs
 eCryptfs es un sistema de archivos apilado que opera en el espacio del kernel, ofreciendo mejor rendimiento. EncFS usa FUSE (Filesystem in Userspace), siendo más fácil de configurar pero con menor rendimiento.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué entrada en `/etc/crypttab` configura swap cifrado con clave aleatoria en cada arranque?
 
 a) `swap_cifrado /dev/sdb2 none swap,luks`
@@ -121,7 +121,7 @@ d) `swap_cifrado /dev/sdb2 /dev/random luks,swap`
 Se utiliza `/dev/urandom` como fuente de clave aleatoria. La opción `swap` indica que se formateará como swap tras abrir. La clave cambia en cada arranque, por lo que los datos de swap del arranque anterior son irrecuperables.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Qué comando elimina el slot de clave número 3 de un volumen LUKS?
 
 a) `cryptsetup luksRemoveKey --slot 3 /dev/sdb1`
@@ -136,7 +136,7 @@ d) `cryptsetup luksRemoveSlot 3 /dev/sdb1`
 `luksKillSlot` elimina un slot de clave específico por su número. `luksRemoveKey` elimina una clave proporcionando la passphrase, sin necesidad de conocer el número de slot.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Qué comando se necesita para regenerar el initramfs con soporte de cifrado en sistemas basados en RHEL?
 
 a) `update-initramfs -u`
@@ -151,7 +151,7 @@ d) `initramfs-tools --update`
 En sistemas RHEL/CentOS/Fedora, `dracut --force` regenera el initramfs. En Debian/Ubuntu se usa `update-initramfs -u`. En Arch Linux se usa `mkinitcpio`.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 Un administrador quiere crear la configuración "LVM sobre LUKS". ¿Cuál es el orden correcto de operaciones?
 
 a) Crear PV -> Crear VG -> Crear LV -> Cifrar LV con LUKS

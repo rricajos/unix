@@ -6,7 +6,14 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.5"
 peso: 3
-tags: [lpic-3, tema-351, imagenes, qcow2, raw, libguestfs, ovf]
+tags:
+  - lpic-3
+  - tema-351
+  - imagenes
+  - qcow2
+  - raw
+  - libguestfs
+  - ovf
 ---
 
 # 351.5 Imágenes de Disco de Máquinas Virtuales

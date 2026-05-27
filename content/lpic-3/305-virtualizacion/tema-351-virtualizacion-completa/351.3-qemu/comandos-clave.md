@@ -6,7 +6,12 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.3"
 peso: 4
-tags: [lpic-3, tema-351, comandos, qemu, qemu-img]
+tags:
+  - lpic-3
+  - tema-351
+  - comandos
+  - qemu
+  - qemu-img
 ---
 
 # Comandos Clave - 351.3 QEMU

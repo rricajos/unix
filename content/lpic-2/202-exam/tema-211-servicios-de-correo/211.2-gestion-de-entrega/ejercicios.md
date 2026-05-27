@@ -10,7 +10,7 @@ subtema: "211.2"
 
 # 211.2 - Ejercicios: Gestión de entrega
 
-## Pregunta 1
+### Pregunta 1
 
 ¿Cuáles son los tres subdirectorios estándar de un buzón Maildir?
 
@@ -26,7 +26,7 @@ d) mail/, queue/, archive/
 Un buzón Maildir tiene tres subdirectorios: `new/` (mensajes nuevos no leídos), `cur/` (mensajes leídos o procesados) y `tmp/` (mensajes en proceso de entrega). Cada mensaje se almacena como un archivo individual.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 ¿Qué ventaja tiene Maildir sobre mbox para acceso concurrente?
 
@@ -42,7 +42,7 @@ d) Maildir es más rápido en lectura secuencial
 Como cada mensaje es un archivo individual en Maildir, no hay necesidad de bloquear un archivo compartido para escribir. En mbox, todos los mensajes están en un solo archivo y se necesita bloqueo para evitar corrupción durante el acceso concurrente.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 En una regla Procmail, ¿qué indica la barra final (`/`) en la ruta del destino?
 
@@ -58,7 +58,7 @@ d) Que se sobrescribe el contenido anterior
 En Procmail, una ruta que termina en `/` indica que el destino es un buzón Maildir. Sin la barra final, Procmail trata la ruta como un archivo mbox. Por ejemplo, `.spam/` entrega al Maildir y `.spam` entrega a un archivo mbox.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 ¿Qué flag de Procmail se utiliza para hacer una copia del mensaje y continuar procesando reglas?
 
@@ -74,7 +74,7 @@ d) :0 d
 El flag `c` (copy) hace que Procmail entregue una copia del mensaje al destino indicado y continúe evaluando las reglas siguientes con el mensaje original. Sin este flag, la primera regla que coincida entrega el mensaje y detiene el procesamiento.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 ¿Qué acción de Sieve se utiliza para mover un mensaje a una carpeta específica?
 
@@ -90,7 +90,7 @@ d) store "carpeta"
 La acción `fileinto` de Sieve mueve el mensaje a la carpeta especificada. Es una de las acciones más utilizadas en los scripts Sieve para organizar el correo automáticamente.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 ¿Qué herramienta actúa como interfaz entre Postfix y los filtros de contenido como SpamAssassin y ClamAV?
 
@@ -106,7 +106,7 @@ d) content-filter
 amavisd-new es un intermediario entre el MTA (Postfix) y los filtros de contenido (antivirus y antispam). Recibe correo del MTA en el puerto 10024, lo pasa por los filtros configurados y lo devuelve al MTA en el puerto 10025.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 ¿Qué comando se utiliza para actualizar las firmas de virus de ClamAV?
 
@@ -122,7 +122,7 @@ d) clamav-update
 `freshclam` es el comando que descarga y actualiza las bases de datos de firmas de virus de ClamAV. Normalmente se ejecuta como un demonio o mediante cron para mantener las firmas actualizadas.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 ¿Qué parámetro de Postfix se configura para activar el uso de buzones virtuales?
 
@@ -138,7 +138,7 @@ d) virtual_transport
 `virtual_mailbox_domains` en main.cf define los dominios para los que Postfix gestiona buzones virtuales. Se complementa con `virtual_mailbox_maps` (mapa de buzones), `virtual_mailbox_base` (directorio base) y `virtual_uid_maps`/`virtual_gid_maps` (propietario).
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 ¿Dónde se almacenan las reglas de filtrado Sieve del usuario cuando se usa Dovecot?
 
@@ -154,7 +154,7 @@ d) /etc/dovecot/sieve/usuario
 Las reglas Sieve del usuario se almacenan por defecto en `~/.dovecot.sieve`. La ubicación se puede cambiar en la configuración de Dovecot mediante la directiva `sieve` en el archivo de configuración del plugin Sieve.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 ¿Qué parámetro en SpamAssassin define la puntuación mínima para considerar un mensaje como spam?
 

@@ -18,7 +18,7 @@ Preguntas tipo examen LPIC-1 sobre el proceso de arranque del sistema Linux. Int
 
 ---
 
-## Pregunta 1: Secuencia de arranque
+### Pregunta 1: Secuencia de arranque
 
 **Ordena correctamente la secuencia de arranque de un sistema Linux:**
 
@@ -44,7 +44,7 @@ La secuencia correcta es:
 
 ---
 
-## Pregunta 2: Configuracion de GRUB2
+### Pregunta 2: Configuracion de GRUB2
 
 **Un administrador necesita cambiar el tiempo de espera del menu de GRUB2 de 5 a 10 segundos. Cual es el procedimiento correcto?**
 
@@ -67,7 +67,7 @@ El procedimiento correcto es:
 
 ---
 
-## Pregunta 3: initramfs
+### Pregunta 3: initramfs
 
 **Cual es el proposito principal de initramfs durante el arranque?**
 
@@ -91,7 +91,7 @@ Una vez montado el sistema raiz real, el initramfs se descarta de la memoria.
 
 ---
 
-## Pregunta 4: dmesg vs journalctl
+### Pregunta 4: dmesg vs journalctl
 
 **Cual de las siguientes afirmaciones sobre `dmesg` y `journalctl` es correcta?**
 
@@ -115,7 +115,7 @@ Explicacion:
 
 ---
 
-## Pregunta 5: Parametros del kernel
+### Pregunta 5: Parametros del kernel
 
 **Un administrador necesita arrancar el sistema en modo monousuario para realizar tareas de mantenimiento. Cual de los siguientes parametros del kernel puede usar en la linea de GRUB2?**
 
@@ -140,7 +140,7 @@ El modo monousuario proporciona un shell de root con servicios minimos, util par
 
 ---
 
-## Pregunta 6: Ubicacion de logs de arranque
+### Pregunta 6: Ubicacion de logs de arranque
 
 **En un sistema Red Hat/CentOS, cual de los siguientes archivos contiene mensajes generales del sistema, incluyendo informacion de arranque?**
 
@@ -167,7 +167,7 @@ La opcion (a) es el equivalente en Debian/Ubuntu, no en Red Hat. Las opciones (c
 
 ---
 
-## Pregunta 7: BIOS vs UEFI
+### Pregunta 7: BIOS vs UEFI
 
 **Cual de las siguientes afirmaciones describe correctamente una diferencia entre BIOS+MBR y UEFI+GPT?**
 
@@ -191,7 +191,7 @@ Las opciones (a), (c) y (d) tienen los valores invertidos o son incorrectas.
 
 ---
 
-## Pregunta 8: Generar initramfs
+### Pregunta 8: Generar initramfs
 
 **En un sistema Debian/Ubuntu, cual es el comando correcto para regenerar la imagen initramfs del kernel actual?**
 
@@ -218,7 +218,7 @@ La opcion (a) es para Red Hat, no Debian. La opcion (b) usa `mkinitrd`, que es l
 
 ---
 
-## Pregunta 9: Opciones de /etc/default/grub
+### Pregunta 9: Opciones de /etc/default/grub
 
 **Cual de las siguientes lineas en `/etc/default/grub` agrega los parametros "quiet" y "splash" a la linea de arranque del kernel?**
 
@@ -243,7 +243,7 @@ Despues de cualquier cambio en este archivo, se debe ejecutar `grub-mkconfig -o 
 
 ---
 
-## Pregunta 10: Logs del arranque anterior
+### Pregunta 10: Logs del arranque anterior
 
 **Un administrador necesita revisar los logs del arranque anterior del sistema porque hubo un fallo. Que comando debe usar?**
 

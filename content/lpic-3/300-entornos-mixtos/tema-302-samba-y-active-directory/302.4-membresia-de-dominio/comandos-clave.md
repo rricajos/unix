@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.4"
 titulo: "Membresía de Dominio - Comandos Clave"
 peso: 4
-tags: [lpic-3, tema-302, comandos]
+tags:
+  - lpic-3
+  - tema-302
+  - comandos
 ---
 
 # Comandos clave - 302.4 Membresía de Dominio

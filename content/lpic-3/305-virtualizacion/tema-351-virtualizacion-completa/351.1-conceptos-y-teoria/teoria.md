@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.1"
 peso: 6
-tags: [lpic-3, tema-351, virtualizacion, hypervisor, kvm, hardware-assisted]
+tags:
+  - lpic-3
+  - tema-351
+  - virtualizacion
+  - hypervisor
+  - kvm
+  - hardware-assisted
 ---
 
 # 351.1 Conceptos y Teoría de Virtualización

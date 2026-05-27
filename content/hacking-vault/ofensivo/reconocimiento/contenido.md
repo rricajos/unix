@@ -1,6 +1,10 @@
 ---
 title: "Reconocimiento y Recopilacion de Informacion"
-tags: [hacking, ofensivo, reconocimiento]
+tags:
+  - hacking
+  - ofensivo
+  - reconocimiento
+  - hacking-ofensivo
 tipo: hacking-ofensivo
 certificacion: hacking-vault
 ---

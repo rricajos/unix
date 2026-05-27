@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.4"
 peso: 9
-tags: [lpic-3, tema-351, libvirt, virsh, virt-install, virt-manager]
+tags:
+  - lpic-3
+  - tema-351
+  - libvirt
+  - virsh
+  - virt-install
+  - virt-manager
 ---
 
 # 351.4 Libvirt y Herramientas Relacionadas

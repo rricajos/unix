@@ -1,6 +1,10 @@
 ---
 title: "Tecnicas de Explotacion"
-tags: [hacking, ofensivo, explotacion]
+tags:
+  - hacking
+  - ofensivo
+  - explotacion
+  - hacking-ofensivo
 tipo: hacking-ofensivo
 certificacion: hacking-vault
 ---

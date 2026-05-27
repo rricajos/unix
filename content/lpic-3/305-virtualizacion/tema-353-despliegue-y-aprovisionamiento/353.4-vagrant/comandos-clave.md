@@ -6,7 +6,12 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "353 - Despliegue y Aprovisionamiento"
 subtema: "353.4"
 peso: 3
-tags: [lpic-3, tema-353, comandos, vagrant, vagrantfile]
+tags:
+  - lpic-3
+  - tema-353
+  - comandos
+  - vagrant
+  - vagrantfile
 ---
 
 # Comandos Clave - 353.4 Vagrant

@@ -16,7 +16,7 @@ tags:
 
 # Ejercicios - 332.2 Deteccion de Intrusiones en el Host
 
-## Pregunta 1
+### Pregunta 1
 Despues de ejecutar `aide --init`, ¿que paso es necesario antes de poder ejecutar `aide --check`?
 
 a) Ejecutar `aide --validate`
@@ -31,7 +31,7 @@ d) Ejecutar `aide --activate`
 `aide --init` genera la base de datos como `aide.db.new.gz`. Se debe copiar o renombrar a `aide.db.gz` (la ubicacion definida en `database_in` de aide.conf) antes de poder realizar verificaciones.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que regla de auditd monitoriza escrituras y cambios de atributos en el archivo `/etc/passwd`?
 
 a) `auditctl -w /etc/passwd -p rx -k identity`
@@ -46,7 +46,7 @@ d) `auditctl -f /etc/passwd -m wa -k identity`
 La opcion `-w` define una vigilancia sobre un archivo, `-p wa` monitoriza escrituras (w) y cambios de atributos (a), y `-k identity` asigna una etiqueta para facilitar busquedas posteriores.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Que comando de auditoria busca todos los eventos marcados con la etiqueta "network"?
 
 a) `aureport -k network`
@@ -61,7 +61,7 @@ d) `audit-find -key network`
 `ausearch -k` busca eventos en los logs de auditoria filtrados por la clave (key) especificada. Las claves se asignan con `-k` al crear las reglas con `auditctl -w`.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 En la configuracion de AIDE, ¿que significa la regla `NORMAL = p+i+n+u+g+s+m+c+sha256`?
 
 a) Define una regla que solo verifica el hash SHA-256
@@ -76,7 +76,7 @@ d) Configura el nivel de logging normal
 AIDE permite definir grupos de reglas personalizados que combinan multiples verificaciones. Luego se aplican a directorios: `/etc/ NORMAL`.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que comando genera un informe de todos los intentos de autenticacion fallidos registrados por auditd?
 
 a) `ausearch --failed --auth`
@@ -91,7 +91,7 @@ d) `auditctl --report failed`
 `aureport --failed` genera un informe de todos los eventos fallidos registrados por auditd. Se puede combinar con `--auth` para filtrar solo autenticacion: `aureport --auth --failed`.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Que herramienta de deteccion de intrusiones incluye capacidades de analisis de logs, integridad de archivos, deteccion de rootkits y respuesta activa?
 
 a) AIDE
@@ -106,7 +106,7 @@ d) Samhain
 OSSEC (y su fork Wazuh) es un HIDS completo que combina multiples capacidades: analisis de logs en tiempo real, verificacion de integridad de archivos, deteccion de rootkits, respuesta activa automatizada y arquitectura cliente-servidor.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Que comando muestra los ultimos comandos ejecutados por un usuario especifico usando process accounting?
 
 a) `sa -u usuario`
@@ -121,7 +121,7 @@ d) `psacct -l usuario`
 `lastcomm` muestra los comandos ejecutados recientemente en el sistema. Cuando se especifica un nombre de usuario, filtra solo los comandos de ese usuario.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Que archivo contiene las reglas persistentes de auditoria que se cargan al iniciar el sistema?
 
 a) `/etc/audit/auditd.conf`
@@ -136,7 +136,7 @@ d) `/etc/auditctl.conf`
 Las reglas persistentes se almacenan en `/etc/audit/rules.d/`. El archivo principal es `audit.rules`. Se cargan con `augenrules --load`. El archivo `/etc/audit/auditd.conf` es la configuracion del demonio, no de las reglas.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Cual es la diferencia principal entre `aide --check` y `aide --update`?
 
 a) `--check` modifica la base de datos, `--update` solo verifica
@@ -151,7 +151,7 @@ d) No hay diferencia, son alias del mismo comando
 `aide --check` compara el estado actual con la base de datos existente sin modificarla. `aide --update` hace lo mismo pero ademas genera una nueva base de datos que refleja el estado actual, util tras cambios legitimos del sistema.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Que herramienta analiza logs del sistema y genera informes diarios resumidos por correo electronico?
 
 a) swatch

@@ -15,7 +15,7 @@ tags:
 
 # 362.1 - Ejercicios: DRBD
 
-## Pregunta 1
+### Pregunta 1
 ¿Que protocolo de replicacion DRBD confirma la escritura solo cuando los datos han sido escritos en el disco del nodo remoto?
 
 a) Protocolo A
@@ -30,7 +30,7 @@ d) Protocolo D
 El protocolo C (sincrono) es el mas seguro. La escritura se confirma a la aplicacion solo cuando los datos se han escrito tanto en el disco local como en el disco remoto. Es el mas recomendado para produccion.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que comando se usa para crear los metadatos DRBD en un recurso llamado "datos"?
 
 a) `drbdadm init-md datos`
@@ -45,7 +45,7 @@ d) `drbdadm format datos`
 `drbdadm create-md` inicializa los metadatos DRBD en el disco subyacente. Debe ejecutarse en ambos nodos antes de activar el recurso por primera vez.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Que archivo del sistema proporciona informacion sobre el estado de DRBD en formato legacy?
 
 a) `/proc/drbd`
@@ -60,7 +60,7 @@ d) `/etc/drbd.d/status`
 `/proc/drbd` muestra el estado de todos los dispositivos DRBD en formato legacy del kernel, incluyendo el estado de conexion (cs), rol (ro) y estado del disco (ds).
 </details>
 
-## Pregunta 4
+### Pregunta 4
 En una recuperacion de split-brain manual, ¿que flag se usa en el nodo cuyos datos se van a descartar?
 
 a) `--force`
@@ -75,7 +75,7 @@ d) `--invalidate`
 En la recuperacion de split-brain, el nodo victima usa `drbdadm connect --discard-my-data recurso` para indicar que sus datos deben ser reemplazados por los del otro nodo.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que significa el estado de disco (ds) "UpToDate/Inconsistent"?
 
 a) Ambos nodos estan sincronizados
@@ -90,7 +90,7 @@ d) El disco local es inconsistente, el remoto esta actualizado
 El formato es "local/remoto". `UpToDate` indica datos actualizados e `Inconsistent` indica que el nodo esta recibiendo datos de resincronizacion o que sus datos no estan completos.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Que se requiere para usar DRBD en modo dual-primary?
 
 a) Solo configurar `allow-two-primaries yes`
@@ -105,7 +105,7 @@ d) Un minimo de 3 nodos
 El modo dual-primary requiere `allow-two-primaries yes` en la configuracion, un sistema de archivos cluster que soporte escrituras concurrentes (como GFS2 u OCFS2), y fencing configurado para proteger contra split-brain.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Que comando aplica los cambios de configuracion de DRBD sin necesidad de reiniciar el recurso?
 
 a) `drbdadm reload datos`
@@ -120,7 +120,7 @@ d) `drbdadm reconfigure datos`
 `drbdadm adjust` compara la configuracion actual en ejecucion con la del archivo de configuracion y aplica los cambios necesarios sin detener el recurso.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿En que seccion del archivo de configuracion DRBD se define el protocolo de replicacion?
 
 a) `global { }`
@@ -135,7 +135,7 @@ d) `startup { }`
 El protocolo de replicacion (A, B o C) se define en la seccion `net { }`, ya que es un parametro de red. Ejemplo: `net { protocol C; }`.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Que hace el comando `drbdadm verify datos`?
 
 a) Verifica la configuracion del recurso
@@ -150,7 +150,7 @@ d) Verifica la conexion de red entre nodos
 La verificacion online compara los datos bloque a bloque entre ambos nodos usando el algoritmo definido en `verify-alg`. No detiene el servicio ni corrige automaticamente las diferencias encontradas.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Cual es el valor predeterminado de `meta-disk` en la configuracion de un recurso DRBD?
 
 a) `external`

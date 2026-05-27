@@ -4,6 +4,7 @@ tags:
   - hacking
   - ofensivo
   - ctf
+  - hacking-ofensivo
 tipo: hacking-ofensivo
 certificacion: hacking-vault
 ---

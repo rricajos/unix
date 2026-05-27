@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "353 - Despliegue y Aprovisionamiento"
 subtema: "353.3"
 peso: 3
-tags: [lpic-3, tema-353, cloud-init, user-data, meta-data, nocloud]
+tags:
+  - lpic-3
+  - tema-353
+  - cloud-init
+  - user-data
+  - meta-data
+  - nocloud
 ---
 
 # 353.3 cloud-init

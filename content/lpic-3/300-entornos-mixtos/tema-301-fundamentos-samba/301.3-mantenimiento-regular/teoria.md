@@ -6,7 +6,10 @@ tema: "301"
 subtema: "301.3"
 titulo: "Mantenimiento Regular"
 peso: 2
-tags: [lpic-3, tema-301, teoria]
+tags:
+  - lpic-3
+  - tema-301
+  - teoria
 ---
 
 # 301.3 Mantenimiento Regular

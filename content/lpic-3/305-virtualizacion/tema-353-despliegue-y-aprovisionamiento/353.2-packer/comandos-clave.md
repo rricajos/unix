@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "353 - Despliegue y Aprovisionamiento"
 subtema: "353.2"
 peso: 2
-tags: [lpic-3, tema-353, comandos, packer, builders, provisioners]
+tags:
+  - lpic-3
+  - tema-353
+  - comandos
+  - packer
+  - builders
+  - provisioners
 ---
 
 # Comandos Clave - 353.2 Packer

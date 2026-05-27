@@ -6,7 +6,14 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "352 - Virtualización de Contenedores"
 subtema: "352.1"
 peso: 7
-tags: [lpic-3, tema-352, contenedores, namespaces, cgroups, oci, seccomp]
+tags:
+  - lpic-3
+  - tema-352
+  - contenedores
+  - namespaces
+  - cgroups
+  - oci
+  - seccomp
 ---
 
 # 352.1 Conceptos de Contenedores

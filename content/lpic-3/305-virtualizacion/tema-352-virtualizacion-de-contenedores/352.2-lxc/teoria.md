@@ -6,7 +6,12 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "352 - Virtualización de Contenedores"
 subtema: "352.2"
 peso: 6
-tags: [lpic-3, tema-352, lxc, lxd, contenedores-sistema]
+tags:
+  - lpic-3
+  - tema-352
+  - lxc
+  - lxd
+  - contenedores-sistema
 ---
 
 # 352.2 LXC (Linux Containers)

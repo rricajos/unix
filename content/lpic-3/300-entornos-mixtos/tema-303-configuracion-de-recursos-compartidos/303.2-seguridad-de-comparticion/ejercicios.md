@@ -17,7 +17,7 @@ tags:
 
 # 303.2 Ejercicios - Seguridad de Compartición
 
-## Pregunta 1
+### Pregunta 1
 Un share tiene `writable = yes` en smb.conf, pero el directorio en el sistema de archivos tiene permisos `drwxr-xr-x root root`. ¿Qué sucede cuando un usuario no-root intenta escribir?
 
 a) Puede escribir porque Samba lo permite
@@ -32,7 +32,7 @@ d) El acceso se deniega completamente, incluyendo la lectura
 El acceso efectivo es la intersección de los permisos de Samba y los permisos del sistema de archivos. Samba nunca puede otorgar más permisos de los que permite el sistema de archivos subyacente.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Qué herramienta se utiliza para gestionar ACLs NT en recursos compartidos de Samba desde la línea de comandos?
 
 a) setfacl
@@ -47,7 +47,7 @@ d) ntacl
 `smbcacls` es la herramienta de línea de comandos para ver y gestionar ACLs NT (Windows) en recursos compartidos de Samba. `setfacl` gestiona ACLs POSIX, no ACLs NT.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué parámetro de smb.conf hace que los usuarios solo vean los shares a los que tienen acceso?
 
 a) browseable = no
@@ -62,7 +62,7 @@ d) valid users = %U
 `access based share enum = yes` filtra la lista de shares visibles basándose en los permisos del usuario. Solo muestra los shares a los que el usuario tiene acceso. `browseable = no` oculta un share para todos los usuarios.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Cuál es el formato correcto para añadir una ACL NT con `smbcacls`?
 
 a) `smbcacls //srv/share archivo -U admin -a "DOMINIO\usuario:rwx"`
@@ -77,7 +77,7 @@ d) `smbcacls //srv/share archivo -U admin -a "NT:DOMINIO\usuario:FULL_CONTROL"`
 El formato correcto de una ACL NT en smbcacls es `ACL:quien:TIPO/FLAGS/PERMISOS`. El tipo puede ser ALLOWED o DENIED, los flags controlan la herencia (0x0 = sin herencia), y los permisos pueden ser FULL, READ, CHANGE, WRITE o una máscara hexadecimal.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Qué efecto tiene `inherit permissions = yes`?
 
 a) Los nuevos archivos heredan las ACLs NT del directorio padre
@@ -92,7 +92,7 @@ d) Los permisos del share se propagan a todos los subdirectorios existentes
 `inherit permissions = yes` hace que los nuevos archivos y directorios hereden los permisos POSIX del directorio padre en lugar de utilizar los valores de `create mask` y `directory mask`.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 Si se configuran tanto `hosts allow` como `hosts deny` en un share, ¿cuál tiene prioridad?
 
 a) `hosts deny` siempre tiene prioridad
@@ -107,7 +107,7 @@ d) Se produce un error de configuración
 Cuando ambos están presentes, `hosts allow` se evalúa primero. Si una IP coincide con `hosts allow`, se le permite el acceso incluso si también aparece en `hosts deny`.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué módulo VFS permite almacenar ACLs NT completas en atributos extendidos del sistema de archivos?
 
 a) vfs objects = recycle
@@ -122,7 +122,7 @@ d) vfs objects = full_audit
 El módulo `acl_xattr` almacena las ACLs NT completas como atributos extendidos (xattrs) en el sistema de archivos Linux, preservando toda la información de permisos Windows incluyendo herencia.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Qué parámetro permite mapear los flags de herencia de ACLs NT a ACLs POSIX por defecto?
 
 a) inherit permissions
@@ -137,7 +137,7 @@ d) nt acl support
 `map acl inherit = yes` traduce los flags de herencia de las ACLs NT (como "aplicar a subcarpetas y archivos") a ACLs POSIX por defecto en Linux, permitiendo que la herencia configurada desde Windows funcione correctamente.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Qué comando establece una ACL POSIX por defecto para que todos los archivos nuevos en un directorio sean legibles por el grupo `contabilidad`?
 
 a) `setfacl -m g:contabilidad:r /srv/datos`
@@ -152,7 +152,7 @@ d) `smbcacls //srv/datos -a "ACL:contabilidad:r"`
 La opción `-d` (o `--default`) de `setfacl` establece una ACL por defecto que se aplica automáticamente a los nuevos archivos y directorios creados dentro del directorio especificado.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 Un administrador quiere que los usuarios de Windows puedan gestionar permisos desde la pestaña "Seguridad" de las propiedades de archivo. ¿Qué combinación de parámetros es necesaria?
 
 a) `writable = yes` y `valid users = @todos`

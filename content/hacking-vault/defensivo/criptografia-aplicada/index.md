@@ -4,7 +4,7 @@ tags:
   - indice-hacking
   - hacking
   - defensivo
-  - criptografia
+  - criptografia-aplicada
 tipo: indice-hacking
 ---
 

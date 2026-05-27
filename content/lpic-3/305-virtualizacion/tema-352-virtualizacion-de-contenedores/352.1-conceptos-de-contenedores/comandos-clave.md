@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "352 - Virtualización de Contenedores"
 subtema: "352.1"
 peso: 7
-tags: [lpic-3, tema-352, comandos, contenedores, namespaces, cgroups]
+tags:
+  - lpic-3
+  - tema-352
+  - comandos
+  - contenedores
+  - namespaces
+  - cgroups
 ---
 
 # Comandos Clave - 352.1 Conceptos de Contenedores

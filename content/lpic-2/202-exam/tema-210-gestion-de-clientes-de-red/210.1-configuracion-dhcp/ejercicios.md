@@ -10,7 +10,7 @@ subtema: "210.1"
 
 # 210.1 - Ejercicios: Configuración DHCP
 
-## Pregunta 1
+### Pregunta 1
 
 ¿En qué archivo se almacenan las concesiones activas del servidor ISC DHCP en IPv4?
 
@@ -26,7 +26,7 @@ d) /run/dhcp/dhcpd.leases
 El archivo `/var/lib/dhcp/dhcpd.leases` es la base de datos donde el servidor ISC DHCP registra todas las concesiones activas, expiradas y liberadas.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 
 ¿Qué directiva en dhcpd.conf se utiliza para asignar siempre la misma IP a un cliente específico?
 
@@ -42,7 +42,7 @@ d) permanent-address
 La directiva `fixed-address` dentro de una declaración `host` permite asignar una IP fija a un cliente identificado por su dirección MAC mediante `hardware ethernet`.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 
 ¿Cuáles son los puertos UDP que utiliza DHCPv4?
 
@@ -58,7 +58,7 @@ d) 69 (servidor) y 70 (cliente)
 DHCPv4 utiliza el puerto UDP 67 para el servidor y el puerto UDP 68 para el cliente. Los puertos 546/547 corresponden a DHCPv6.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 
 ¿Qué comando se utiliza para verificar la sintaxis del archivo de configuración de dhcpd sin iniciar el servicio?
 
@@ -74,7 +74,7 @@ d) dhcpd -c
 El comando `dhcpd -t` analiza el archivo de configuración y reporta errores de sintaxis sin iniciar el demonio. Se puede especificar el archivo con `-cf`: `dhcpd -t -cf /etc/dhcp/dhcpd.conf`.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 
 ¿Qué utilidad se usa para retransmitir peticiones DHCP entre subredes cuando el servidor DHCP está en una red diferente?
 
@@ -90,7 +90,7 @@ d) dhcpbridge
 `dhcrelay` es el agente relay de DHCP que retransmite mensajes DHCP entre clientes y servidores que se encuentran en subredes diferentes. Se usa con la sintaxis: `dhcrelay -i eth0 <IP_servidor_DHCP>`.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 
 En el siguiente fragmento de configuración, ¿cuántas direcciones IP puede asignar el servidor DHCP?
 
@@ -113,7 +113,7 @@ d) 254
 El rango `range 10.0.0.50 10.0.0.60` incluye ambos extremos, por lo que son 11 direcciones disponibles: de 10.0.0.50 a 10.0.0.60 inclusive.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 
 ¿Cuáles son los cuatro pasos del proceso de obtención de una dirección DHCP?
 
@@ -129,7 +129,7 @@ d) Solicit, Advertise, Request, Reply
 El proceso DORA de DHCP consiste en: **D**iscover (cliente busca servidores), **O**ffer (servidor ofrece IP), **R**equest (cliente acepta la oferta), **A**cknowledge (servidor confirma). La opción d) corresponde al proceso de DHCPv6.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 
 ¿Qué directiva establece el tiempo máximo que un cliente puede mantener una concesión DHCP?
 
@@ -145,7 +145,7 @@ d) timeout-lease
 `max-lease-time` establece el tiempo máximo (en segundos) que un cliente puede mantener una concesión, incluso si solicita un tiempo mayor. `default-lease-time` es el tiempo asignado cuando el cliente no solicita uno específico.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 
 ¿Qué puertos utiliza DHCPv6?
 
@@ -161,7 +161,7 @@ d) 68 (cliente) y 67 (servidor)
 DHCPv6 utiliza puertos diferentes a DHCPv4: el puerto UDP 546 para el cliente y el puerto UDP 547 para el servidor.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 
 ¿Qué directiva en dhcpd.conf se usa para definir la puerta de enlace que se entregará a los clientes?
 

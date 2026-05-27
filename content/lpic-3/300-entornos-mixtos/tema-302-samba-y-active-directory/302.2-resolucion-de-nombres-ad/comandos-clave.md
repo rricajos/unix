@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.2"
 titulo: "Resolución de Nombres AD - Comandos Clave"
 peso: 2
-tags: [lpic-3, tema-302, comandos]
+tags:
+  - lpic-3
+  - tema-302
+  - comandos
 ---
 
 # Comandos clave - 302.2 Resolución de Nombres en Active Directory

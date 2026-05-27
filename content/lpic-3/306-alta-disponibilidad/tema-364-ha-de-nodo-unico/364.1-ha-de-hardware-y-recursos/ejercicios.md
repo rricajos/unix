@@ -17,7 +17,7 @@ tags:
 
 # 364.1 - Ejercicios: HA de Hardware y Recursos
 
-## Pregunta 1
+### Pregunta 1
 ¿Que tipo de memoria puede detectar y corregir automaticamente errores de un solo bit?
 
 a) DDR4
@@ -32,7 +32,7 @@ d) Buffered
 La memoria ECC (Error-Correcting Code) detecta y corrige automaticamente errores de un bit, y detecta errores de dos bits. Es esencial en servidores para garantizar la integridad de los datos.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Que dispositivo del sistema representa el watchdog timer en Linux?
 
 a) `/dev/timer`
@@ -47,7 +47,7 @@ d) `/proc/watchdog`
 El watchdog timer se accede a traves de `/dev/watchdog`. Las aplicaciones deben escribir periodicamente en este dispositivo para mantener el sistema vivo. Si dejan de escribir, el watchdog reinicia el sistema.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Que modulo del kernel proporciona un watchdog por software?
 
 a) `iTCO_wdt`
@@ -62,7 +62,7 @@ d) `ipmi_watchdog`
 `softdog` es el modulo de watchdog por software del kernel Linux. No requiere hardware especifico, a diferencia de `iTCO_wdt` (Intel), `hpwdt` (HP) o `ipmi_watchdog` (IPMI).
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿En que archivo de NUT se define el modo de operacion (standalone, netserver, netclient)?
 
 a) `/etc/nut/ups.conf`
@@ -77,7 +77,7 @@ d) `/etc/nut/upsd.conf`
 El archivo `/etc/nut/nut.conf` define el modo de operacion con la directiva `MODE=`. Los valores posibles son: `standalone`, `netserver`, `netclient` y `none`.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Que modo de NUT permite compartir la informacion del UPS con otros servidores por red?
 
 a) `standalone`
@@ -92,7 +92,7 @@ d) `shared`
 El modo `netserver` configura NUT para que el UPS conectado localmente sea accesible por otros servidores (clientes) a traves de la red. Los clientes usan el modo `netclient`.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Que comando de ipmitool reinicia un servidor remoto?
 
 a) `ipmitool -I lanplus -H IP -U user -P pass power restart`
@@ -107,7 +107,7 @@ d) `ipmitool -I lanplus -H IP -U user -P pass chassis restart`
 `power cycle` apaga y enciende el servidor remotamente via IPMI. Las opciones de `ipmitool power` son: `status`, `on`, `off`, `cycle` y `reset`.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿En que archivo de NUT se configuran el driver y puerto del UPS?
 
 a) `/etc/nut/nut.conf`
@@ -122,7 +122,7 @@ d) `/etc/nut/upsmon.conf`
 El archivo `/etc/nut/ups.conf` define cada UPS con su nombre, driver (ej: `usbhid-ups`), puerto y descripcion.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Que comando muestra los sensores de hardware (temperatura, voltaje, ventiladores) via IPMI?
 
 a) `ipmitool mc info`
@@ -137,7 +137,7 @@ d) `ipmitool lan print`
 `ipmitool sensor list` muestra todos los sensores del servidor incluyendo temperatura, voltaje, velocidad de ventiladores y su estado. `sdr list` muestra informacion similar desde el Sensor Data Repository.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Que parametro de systemd configura el watchdog del sistema?
 
 a) `WatchdogSec=`
@@ -152,7 +152,7 @@ d) `WatchdogTimeout=`
 `RuntimeWatchdogSec=` en `/etc/systemd/system.conf` configura el timeout del watchdog de systemd. Si systemd no responde dentro de este tiempo, el watchdog reinicia el sistema.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Que funcion tiene el BMC (Baseboard Management Controller) en un servidor?
 
 a) Gestionar la BIOS/UEFI

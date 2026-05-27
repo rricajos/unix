@@ -6,7 +6,10 @@ tema: "301"
 subtema: "301.4"
 titulo: "Resolución de Problemas - Comandos Clave"
 peso: 3
-tags: [lpic-3, tema-301, comandos]
+tags:
+  - lpic-3
+  - tema-301
+  - comandos
 ---
 
 # Comandos clave - 301.4 Resolución de Problemas

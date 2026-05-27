@@ -6,12 +6,15 @@ tema: "302"
 subtema: "302.5"
 titulo: "Gestión Local de Usuarios - Ejercicios"
 peso: 2
-tags: [lpic-3, tema-302, ejercicios]
+tags:
+  - lpic-3
+  - tema-302
+  - ejercicios
 ---
 
 # Ejercicios - 302.5 Gestión Local de Usuarios
 
-## Pregunta 1
+### Pregunta 1
 ¿Qué requisito debe cumplirse antes de poder añadir un usuario a la base de datos de Samba con `smbpasswd -a`?
 
 a) El usuario debe existir en Active Directory
@@ -26,7 +29,7 @@ d) El usuario debe pertenecer al grupo samba
 `smbpasswd -a` añade una contraseña Samba para un usuario que ya debe existir como usuario UNIX en `/etc/passwd`. Si el usuario no existe en el sistema, el comando fallará. Primero se debe crear el usuario con `useradd` y luego añadirlo a Samba con `smbpasswd -a`.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Qué ventaja tiene `pdbedit` sobre `smbpasswd` para la gestión de usuarios locales de Samba?
 
 a) pdbedit es más rápido
@@ -41,7 +44,7 @@ d) pdbedit funciona con Active Directory
 `pdbedit` es más completo que `smbpasswd`: permite gestionar atributos como el nombre completo, directorio home de red, letra de unidad, script de login, perfil de usuario y descripción. Además, permite exportar/importar la base de datos y migrar entre backends (de smbpasswd a tdbsam, por ejemplo).
 </details>
 
-## Pregunta 3
+### Pregunta 3
 En el archivo de mapeo de usuarios (`username map`), ¿qué hace la entrada `root = administrator admin`?
 
 a) Crea los usuarios administrator y admin como alias de root
@@ -56,7 +59,7 @@ d) Sincroniza las contraseñas entre root, administrator y admin
 El formato del archivo username map es `usuario_unix = nombre_windows1 [nombre_windows2 ...]`. Cuando un cliente se conecta como "administrator" o "admin", Samba traduce ese nombre a "root" antes de la autenticación. Esto es útil para que el administrador de Windows pueda gestionar recursos como root.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Qué efecto tiene `force group = +proyecto` en un recurso compartido?
 
 a) Fuerza el grupo "proyecto" para todos los usuarios
@@ -71,7 +74,7 @@ d) Crea el grupo "proyecto" si no existe
 El signo `+` antes del nombre del grupo indica que `force group` solo aplica si el usuario autenticado ya pertenece al grupo "proyecto". Si el usuario no es miembro, se utiliza su grupo primario normal. Sin el `+`, el grupo se fuerza para todos los usuarios sin importar su membresía.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Cuál es la diferencia entre `map to guest = Bad User` y `map to guest = Bad Password`?
 
 a) No hay diferencia
@@ -86,7 +89,7 @@ d) "Bad User" requiere winbind; "Bad Password" no
 `Bad User` mapea a la cuenta de invitado cuando el nombre de usuario enviado no existe en la base de datos de Samba. `Bad Password` mapea a invitado incluso cuando el usuario existe pero la contraseña es incorrecta, lo cual es inseguro porque un usuario legítimo con contraseña errónea obtendría acceso de invitado en lugar de un error de autenticación.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Cómo se exporta la base de datos de usuarios de Samba al formato smbpasswd con pdbedit?
 
 a) `pdbedit --export smbpasswd`
@@ -101,7 +104,7 @@ d) `pdbedit --dump /tmp/export.txt`
 La opción `-e` (export) de `pdbedit` exporta la base de datos al formato especificado. La sintaxis es `pdbedit -e backend:ruta`. Se puede exportar a formato smbpasswd (texto plano) o tdbsam (base TDB). Para importar se usa `-i`: `pdbedit -i smbpasswd:/tmp/export.txt`. La opción `-L -w` también lista en formato smbpasswd pero es solo para visualización.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué cuenta Unix se utiliza por defecto para los accesos de invitado en Samba?
 
 a) guest
@@ -116,7 +119,7 @@ d) anonymous
 Por defecto, Samba utiliza la cuenta `nobody` como cuenta de invitado (`guest account = nobody` en smb.conf). Esta cuenta debe existir en el sistema Linux. Los archivos creados por usuarios invitados pertenecerán a esta cuenta. Se puede cambiar con el parámetro `guest account` en la sección [global].
 </details>
 
-## Pregunta 8
+### Pregunta 8
 Un administrador quiere que todos los archivos creados en el recurso compartido "web" pertenezcan al usuario "www-data" y al grupo "www-data". ¿Qué configuración necesita?
 
 a) `valid users = www-data`
@@ -131,7 +134,7 @@ d) `owner = www-data`
 La combinación de `force user = www-data` y `force group = www-data` hace que todas las operaciones de archivos en el recurso compartido se realicen con la identidad de www-data, independientemente del usuario que se haya autenticado. Esto es común en recursos para servidores web donde todos los archivos deben pertenecer al usuario del servidor web.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Qué parámetro de smb.conf debe estar activado para que `getent passwd` muestre los usuarios del dominio a través de winbind?
 
 a) `winbind use default domain = yes`
@@ -146,7 +149,7 @@ d) `passdb backend = tdbsam`
 El parámetro `winbind enum users = yes` permite que winbind enumere todos los usuarios del dominio, lo que hace posible que `getent passwd` (sin argumentos) liste los usuarios de dominio. Sin este parámetro, `getent passwd usuario_específico` puede funcionar, pero la lista completa no se mostrará. En dominios grandes, la enumeración puede ser lenta.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Cuál es el propósito del comodín `!nobody = *` al final de un archivo username map?
 
 a) Eliminar al usuario nobody

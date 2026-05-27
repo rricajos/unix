@@ -17,7 +17,7 @@ tags:
 
 # 305.4 Ejercicios - NFS
 
-## Pregunta 1
+### Pregunta 1
 ¿Qué nivel de seguridad NFSv4 proporciona autenticación Kerberos con cifrado completo de datos?
 
 a) sec=krb5
@@ -32,7 +32,7 @@ d) sec=krb5e
 `sec=krb5p` proporciona el nivel más alto de seguridad: autenticación Kerberos, verificación de integridad y cifrado completo (privacidad) de todos los datos transmitidos. La "p" significa "privacy" (privacidad).
 </details>
 
-## Pregunta 2
+### Pregunta 2
 En `/etc/exports`, ¿cómo se especifica que una exportación acepta tanto `krb5` como `krb5i`?
 
 a) `sec=krb5,krb5i`
@@ -47,7 +47,7 @@ d) `sec=krb5|krb5i`
 En `/etc/exports`, los múltiples mecanismos de seguridad se separan con dos puntos (`:`). Por ejemplo, `sec=krb5:krb5i:krb5p` acepta cualquiera de los tres niveles de seguridad Kerberos.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué servicio moderno gestiona las credenciales GSS-API (Kerberos) para NFS?
 
 a) rpc.gssd
@@ -62,7 +62,7 @@ d) krb5kdc
 `gssproxy` es el servicio moderno que reemplaza a `rpc.gssd` (cliente) y `rpc.svcgssd` (servidor) para la gestión de credenciales GSS-API en NFS con Kerberos. Proporciona una gestión más segura y eficiente de las credenciales.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Qué sucede si el parámetro `Domain` en `/etc/idmapd.conf` no coincide entre el servidor y el cliente NFSv4?
 
 a) La conexión NFS falla completamente
@@ -77,7 +77,7 @@ d) El rendimiento se degrada significativamente
 Si el `Domain` de idmapd no coincide entre servidor y cliente, el mapeo de identidades falla y todos los archivos se muestran con propietario y grupo `nobody:nobody`, ya que el sistema no puede traducir los nombres de usuario correctamente.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Qué principal Kerberos necesita el servidor NFS en su keytab?
 
 a) `host/nfsserver@REALM`
@@ -92,7 +92,7 @@ d) `HTTP/nfsserver@REALM`
 El servidor NFS necesita un keytab con el principal `nfs/FQDN@REALM`. Este principal se crea en FreeIPA con `ipa service-add nfs/nfsserver.dominio` y el keytab se obtiene con `ipa-getkeytab`.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Cómo se almacenan los mapas de automount centralizadamente en FreeIPA?
 
 a) En archivos /etc/auto.* sincronizados por rsync
@@ -107,7 +107,7 @@ d) En el share SYSVOL de FreeIPA
 FreeIPA almacena los mapas de automount en su directorio LDAP (389 DS). Los clientes acceden a estos mapas a través de SSSD configurando `automount: sss` en `/etc/nsswitch.conf`.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué comando de FreeIPA se usa para crear un servicio NFS antes de obtener su keytab?
 
 a) `ipa nfs-add nfsserver.empresa.local`
@@ -122,7 +122,7 @@ d) `ipa-getkeytab -p nfs/nfsserver`
 `ipa service-add` registra un servicio Kerberos en FreeIPA. El formato del principal es `servicio/FQDN`. Después de crear el servicio, se obtiene el keytab con `ipa-getkeytab`.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Qué diferencia hay entre `sec=sys` y `sec=krb5` en NFSv4?
 
 a) No hay diferencia, son equivalentes
@@ -137,7 +137,7 @@ d) `krb5` solo funciona con NFSv3
 `sec=sys` confía en el UID/GID que envía el cliente sin verificación (susceptible a suplantación si un usuario tiene el mismo UID en otra máquina). `sec=krb5` usa Kerberos para verificar criptográficamente la identidad del usuario.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Qué comando limpia la caché de mapeo de identidades de NFSv4?
 
 a) `nfsidmap -c`
@@ -152,7 +152,7 @@ d) `exportfs -c`
 `nfsidmap -c` limpia la caché de mapeo de identidades del kernel NFSv4. Esto es útil cuando se han realizado cambios en `/etc/idmapd.conf` o en la configuración de NSS y se necesita que los nuevos mapeos surtan efecto.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 Un administrador quiere configurar automount centralizado en FreeIPA para que los clientes monten `/nfs/datos` desde `nfsserver.empresa.local:/export/datos` con Kerberos. ¿Cuál es la secuencia correcta de comandos?
 
 a) Solo crear el archivo `/etc/auto.nfs` en cada cliente

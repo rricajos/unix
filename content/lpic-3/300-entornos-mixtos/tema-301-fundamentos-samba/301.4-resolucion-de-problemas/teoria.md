@@ -6,7 +6,10 @@ tema: "301"
 subtema: "301.4"
 titulo: "Resolución de Problemas"
 peso: 3
-tags: [lpic-3, tema-301, teoria]
+tags:
+  - lpic-3
+  - tema-301
+  - teoria
 ---
 
 # 301.4 Resolución de Problemas

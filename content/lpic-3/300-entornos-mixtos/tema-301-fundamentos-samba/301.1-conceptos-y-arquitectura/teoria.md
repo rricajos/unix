@@ -6,7 +6,10 @@ tema: "301"
 subtema: "301.1"
 titulo: "Conceptos y Arquitectura"
 peso: 2
-tags: [lpic-3, tema-301, teoria]
+tags:
+  - lpic-3
+  - tema-301
+  - teoria
 ---
 
 # 301.1 Conceptos y Arquitectura

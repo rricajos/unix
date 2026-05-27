@@ -6,12 +6,17 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "351 - Virtualización Completa"
 subtema: "351.1"
 peso: 6
-tags: [lpic-3, tema-351, ejercicios, virtualizacion, kvm]
+tags:
+  - lpic-3
+  - tema-351
+  - ejercicios
+  - virtualizacion
+  - kvm
 ---
 
 # Ejercicios - 351.1 Conceptos y Teoría
 
-## Pregunta 1
+### Pregunta 1
 ¿Qué tipo de hipervisor se ejecuta directamente sobre el hardware sin un sistema operativo anfitrión?
 
 a) Hipervisor Tipo 2
@@ -26,7 +31,7 @@ d) Hipervisor Hosted
 Los hipervisores Tipo 1 (bare-metal) se ejecutan directamente sobre el hardware. Ejemplos: Xen, VMware ESXi, KVM. Los Tipo 2 se ejecutan como aplicación dentro de un SO anfitrión.
 </details>
 
-## Pregunta 2
+### Pregunta 2
 ¿Qué comando permite verificar si un procesador Intel soporta virtualización por hardware?
 
 a) `grep -c svm /proc/cpuinfo`
@@ -41,7 +46,7 @@ d) `cat /sys/kernel/kvm/enabled`
 La flag `vmx` en `/proc/cpuinfo` indica soporte Intel VT-x. La flag `svm` corresponde a AMD-V. Ambas son necesarias para usar KVM.
 </details>
 
-## Pregunta 3
+### Pregunta 3
 ¿Qué módulo del kernel proporciona aceleración de red moviendo el procesamiento de paquetes del espacio de usuario al kernel?
 
 a) `kvm-intel`
@@ -56,7 +61,7 @@ d) `bridge`
 El módulo `vhost-net` mueve el procesamiento de paquetes de red de QEMU (espacio de usuario) al kernel, reduciendo latencia y consumo de CPU significativamente.
 </details>
 
-## Pregunta 4
+### Pregunta 4
 ¿Qué tecnología permite que un único dispositivo PCI físico se presente como múltiples dispositivos virtuales independientes?
 
 a) VT-d
@@ -71,7 +76,7 @@ d) SR-IOV
 SR-IOV (Single Root I/O Virtualization) permite que un dispositivo físico (Physical Function) genere múltiples Virtual Functions que se asignan directamente a las VMs. VT-d/IOMMU permiten passthrough de dispositivos completos.
 </details>
 
-## Pregunta 5
+### Pregunta 5
 ¿Cuál es la diferencia principal entre paravirtualización y virtualización completa?
 
 a) La paravirtualización requiere hardware VT-x, la completa no
@@ -86,7 +91,7 @@ d) La paravirtualización solo funciona con hipervisores Tipo 2
 En paravirtualización, el guest es consciente del hipervisor y usa hypercalls para comunicarse directamente. Esto requiere modificaciones en el kernel o drivers PV (como virtio), pero ofrece mejor rendimiento que la virtualización completa pura.
 </details>
 
-## Pregunta 6
+### Pregunta 6
 ¿Cómo se clasifica KVM en términos de tipo de hipervisor?
 
 a) Tipo 2, ya que se ejecuta sobre Linux
@@ -101,7 +106,7 @@ d) Depende de si se usa con QEMU o sin él
 Aunque KVM se ejecuta sobre un kernel Linux, al cargarse como módulo (`kvm.ko`) convierte el propio kernel en un hipervisor bare-metal, clasificándose como Tipo 1. El kernel Linux pasa a ser el hipervisor.
 </details>
 
-## Pregunta 7
+### Pregunta 7
 ¿Qué mecanismo de gestión de memoria utiliza traducción de direcciones en hardware con dos niveles de tablas de páginas?
 
 a) Shadow Page Tables
@@ -116,7 +121,7 @@ d) KSM (Kernel Same-page Merging)
 EPT (Intel) y NPT/RVI (AMD) realizan la traducción de direcciones Guest Virtual → Guest Physical → Host Physical directamente en hardware, con mejor rendimiento que las Shadow Page Tables que lo hacen por software.
 </details>
 
-## Pregunta 8
+### Pregunta 8
 ¿Qué parámetro debe añadirse a la línea de arranque del kernel para activar IOMMU en sistemas Intel?
 
 a) `kvm.iommu=on`
@@ -131,7 +136,7 @@ d) `vt-d=enable`
 Se añade en `/etc/default/grub` en la variable `GRUB_CMDLINE_LINUX`. Para AMD se usa `amd_iommu=on`. Adicionalmente `iommu=pt` mejora el rendimiento en modo passthrough.
 </details>
 
-## Pregunta 9
+### Pregunta 9
 ¿Cuál de las siguientes afirmaciones sobre QEMU es correcta?
 
 a) QEMU solo puede funcionar como virtualizador, nunca como emulador
@@ -146,7 +151,7 @@ d) QEMU es un hipervisor Tipo 1 por sí mismo
 QEMU funciona como emulador puro (traduciendo instrucciones de cualquier arquitectura por software) o como virtualizador con KVM (ejecutando código nativo para la misma arquitectura). Sin KVM es mucho más lento pero puede emular ARM en x86, por ejemplo.
 </details>
 
-## Pregunta 10
+### Pregunta 10
 ¿Qué comando muestra la configuración actual de un switch Open vSwitch?
 
 a) `ovs-vsctl list-bridges`

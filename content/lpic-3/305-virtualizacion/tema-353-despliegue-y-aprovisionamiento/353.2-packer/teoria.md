@@ -6,7 +6,13 @@ especialidad: "305 - Virtualización y Contenedores"
 tema: "353 - Despliegue y Aprovisionamiento"
 subtema: "353.2"
 peso: 2
-tags: [lpic-3, tema-353, packer, imagenes, builders, provisioners]
+tags:
+  - lpic-3
+  - tema-353
+  - packer
+  - imagenes
+  - builders
+  - provisioners
 ---
 
 # 353.2 Packer

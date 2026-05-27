@@ -6,7 +6,10 @@ tema: "302"
 subtema: "302.3"
 titulo: "Gestión de Usuarios en Active Directory"
 peso: 3
-tags: [lpic-3, tema-302, teoria]
+tags:
+  - lpic-3
+  - tema-302
+  - teoria
 ---
 
 # 302.3 Gestión de Usuarios en Active Directory
