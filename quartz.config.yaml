@@ -113,6 +113,21 @@ plugins:
       priority: 50
   - source: github:quartz-community/graph
     enabled: true
+    options:
+      localGraph:
+        depth: 2
+        repelForce: 0.5
+        centerForce: 0.3
+        linkDistance: 30
+        fontSize: 0.6
+        opacityScale: 3
+      globalGraph:
+        depth: -1
+        repelForce: 0.1
+        centerForce: 0.3
+        linkDistance: 40
+        fontSize: 0.5
+        opacityScale: 2
     layout:
       position: right
       priority: 10
@@ -177,6 +192,8 @@ plugins:
     options:
       links:
         GitHub: https://github.com/rricajos/unix
+        "LPI Official": https://www.lpi.org
+        "Autor": https://github.com/rricajos
   - source: github:quartz-community/spacer
     enabled: true
     options: {}
