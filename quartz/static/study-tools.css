@@ -459,6 +459,34 @@
   margin-bottom: 0.3rem;
 }
 
+/* Anki download button */
+.st-btn-anki {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  background: #235dff;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  cursor: pointer;
+  margin-top: 0.4rem;
+  margin-bottom: 0.3rem;
+  transition: background 0.2s, transform 0.15s;
+}
+.st-btn-anki:hover {
+  background: #1a47cc;
+  transform: translateY(-1px);
+  color: #fff;
+  text-decoration: none;
+}
+.st-btn-anki svg {
+  flex-shrink: 0;
+}
+
 .st-fc-count {
   font-size: 0.88rem;
   color: var(--darkgray);

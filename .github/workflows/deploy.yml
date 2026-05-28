@@ -43,6 +43,9 @@ jobs:
       - name: Fix CLI permissions
         run: chmod +x quartz/bootstrap-cli.mjs
 
+      - name: Generate Anki decks
+        run: node scripts/generate-anki.mjs
+
       - name: Install Quartz plugins
         run: npm run quartz -- plugin install
 

@@ -99,6 +99,32 @@
     return arr
   }
 
+  /** Detect which certification the current page belongs to for Anki download. */
+  function detectAnkiCert() {
+    var slug = (document.body.getAttribute("data-slug") || window.location.pathname).toLowerCase()
+    if (slug.indexOf("lpic-1") !== -1 || slug.indexOf("lpic1") !== -1) return { file: "lpic-1.apkg", label: "LPIC-1" }
+    if (slug.indexOf("lpic-2") !== -1 || slug.indexOf("lpic2") !== -1) return { file: "lpic-2.apkg", label: "LPIC-2" }
+    if (slug.indexOf("lpic-3") !== -1 || slug.indexOf("lpic3") !== -1) return { file: "lpic-3.apkg", label: "LPIC-3" }
+    if (slug.indexOf("hacking") !== -1) return { file: "hacking-vault.apkg", label: "Hacking" }
+    return null
+  }
+
+  /** Get the base URL for static assets (handles GitHub Pages subpath). */
+  function getBaseUrl() {
+    // Detect from our own script src (most reliable)
+    var scripts = document.querySelectorAll('script[src*="study-tools"]')
+    if (scripts.length > 0) {
+      var src = scripts[0].getAttribute("src") || ""
+      var idx = src.indexOf("/static/")
+      if (idx > 0) return src.substring(0, idx)
+    }
+    // Fallback: check if we're on a subpath like /unix/
+    var path = window.location.pathname
+    var match = path.match(/^(\/[^/]+)\//)
+    if (match) return match[1]
+    return ""
+  }
+
   // =========================================================================
   // FEATURE 1: Quiz Runner
   // =========================================================================
@@ -695,6 +721,18 @@
       " total" +
       (cards.length !== 1 ? "es" : "")
     header.appendChild(dueInfo)
+
+    // --- Anki download button ---
+    var ankiCert = detectAnkiCert()
+    if (ankiCert) {
+      var ankiBtn = el("a", "st-btn st-btn-anki")
+      ankiBtn.href = getBaseUrl() + "/anki/" + ankiCert.file
+      ankiBtn.download = ankiCert.file
+      ankiBtn.innerHTML =
+        '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> ' +
+        "Anki (" + ankiCert.label + ")"
+      header.appendChild(ankiBtn)
+    }
 
     var progressBar = el("div", "st-progress-bar-container")
     var progressFill = el("div", "st-progress-bar-fill st-progress-good")
