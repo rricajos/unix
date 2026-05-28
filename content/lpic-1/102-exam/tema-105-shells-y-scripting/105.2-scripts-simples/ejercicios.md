@@ -14,279 +14,197 @@ subtema: "105.2"
 
 # 105.2 - Ejercicios: Personalizar o escribir scripts simples
 
-## Ejercicio 1
-Cual es la diferencia entre `$@` y `$*` cuando se usan con comillas dobles? Dado el script `./test.sh "uno dos" tres`, que imprime cada variante en un bucle `for`?
+### Pregunta 1
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia entre `"$@"` y `"$*"` cuando se usan con comillas dobles en un script que se ejecuta con `./script.sh "uno dos" tres`?
 
-**`"$@"`** expande cada argumento como una palabra separada, respetando las comillas originales:
-```bash
-for arg in "$@"; do echo "$arg"; done
-# uno dos
-# tres
-```
+a) `"$@"` genera una sola cadena `"uno dos tres"` y `"$*"` genera dos argumentos separados
+b) `"$@"` genera dos argumentos (`"uno dos"` y `"tres"`) y `"$*"` genera una sola cadena con todos los argumentos
+c) Ambos generan dos argumentos separados: `"uno dos"` y `"tres"`
+d) Ambos generan tres argumentos separados: `"uno"`, `"dos"` y `"tres"`
 
-**`"$*"`** expande todos los argumentos como una sola cadena:
-```bash
-for arg in "$*"; do echo "$arg"; done
-# uno dos tres
-```
+<details><summary>Respuesta</summary>
 
-Con `"$@"` se obtienen 2 iteraciones (preserva los argumentos originales). Con `"$*"` se obtiene 1 sola iteracion (todo junto). En la practica, `"$@"` es casi siempre la opcion correcta.
+**b) `"$@"` genera dos argumentos (`"uno dos"` y `"tres"`) y `"$*"` genera una sola cadena con todos los argumentos**
+
+`"$@"` expande cada argumento como una palabra separada, respetando las comillas originales. En un bucle `for arg in "$@"`, se obtienen 2 iteraciones: `uno dos` y `tres`. `"$*"` expande todos los argumentos como una sola cadena (concatenados con el primer caracter de IFS). En un bucle `for arg in "$*"`, se obtiene 1 sola iteracion con `uno dos tres`. En la practica, `"$@"` es casi siempre la opcion correcta para iterar sobre argumentos.
+
 </details>
 
 ---
 
-## Ejercicio 2
-Escribe un script que reciba un nombre de archivo como argumento y determine si: existe, es archivo regular o directorio, y si tiene permisos de lectura, escritura y ejecucion.
+### Pregunta 2
 
-<details>
-<summary>Respuesta</summary>
+Cual de las siguientes lineas shebang es la forma mas portable de indicar que un script debe ejecutarse con bash?
 
-```bash
-#!/bin/bash
-if [ $# -ne 1 ]; then
-    echo "Uso: $0 <archivo>"
-    exit 1
-fi
+a) `#!/bin/bash`
+b) `#!/usr/bin/env bash`
+c) `#!/usr/local/bin/bash`
+d) `#!bash`
 
-ARCHIVO="$1"
+<details><summary>Respuesta</summary>
 
-if [ ! -e "$ARCHIVO" ]; then
-    echo "$ARCHIVO no existe"
-    exit 2
-fi
+**b) `#!/usr/bin/env bash`**
 
-if [ -f "$ARCHIVO" ]; then
-    echo "$ARCHIVO es un archivo regular"
-elif [ -d "$ARCHIVO" ]; then
-    echo "$ARCHIVO es un directorio"
-elif [ -L "$ARCHIVO" ]; then
-    echo "$ARCHIVO es un enlace simbolico"
-fi
+`#!/usr/bin/env bash` usa el comando `env` para buscar `bash` en el `PATH` del sistema, lo que lo hace funcionar independientemente de donde este instalado bash. `#!/bin/bash` asume que bash esta en `/bin/bash`, lo cual puede fallar en sistemas donde bash esta en otra ubicacion (por ejemplo, `/usr/local/bin/bash` en FreeBSD). `#!/usr/local/bin/bash` es incluso menos portable. `#!bash` no es valido porque requiere una ruta absoluta o el uso de `env`.
 
-[ -r "$ARCHIVO" ] && echo "Tiene permiso de lectura"
-[ -w "$ARCHIVO" ] && echo "Tiene permiso de escritura"
-[ -x "$ARCHIVO" ] && echo "Tiene permiso de ejecucion"
-[ -s "$ARCHIVO" ] && echo "Tiene tamano mayor que cero"
-```
-
-Se usan los operadores de archivo de `test`: `-e` (existe), `-f` (archivo regular), `-d` (directorio), `-L` (enlace simbolico), `-r` (lectura), `-w` (escritura), `-x` (ejecucion), `-s` (tamano > 0).
 </details>
 
 ---
 
-## Ejercicio 3
-Cual es la diferencia entre `[ ]` y `[[ ]]`? En que casos usarias uno u otro? Por que se recomienda entrecomillar variables dentro de `[ ]` pero no es estrictamente necesario en `[[ ]]`?
+### Pregunta 3
 
-<details>
-<summary>Respuesta</summary>
+Que operador de test se usa para verificar si una cadena esta vacia y cual para verificar si un archivo es un directorio?
 
-**`[ ]` (test):**
-- Compatible con POSIX (funciona en cualquier shell)
-- Usa `-a` y `-o` para AND/OR
-- Requiere entrecomillar variables: si `$var` esta vacia, `[ $var = "algo" ]` genera error de sintaxis porque se expande a `[ = "algo" ]`
-- No soporta pattern matching ni regex
+a) `-e` para cadena vacia y `-f` para directorio
+b) `-z` para cadena vacia y `-d` para directorio
+c) `-n` para cadena vacia y `-d` para directorio
+d) `-z` para cadena vacia y `-f` para directorio
 
-**`[[ ]]` (bash extendido):**
-- Exclusivo de bash (no POSIX)
-- Usa `&&` y `||` para AND/OR (mas intuitivo)
-- No necesita entrecomillar variables: `[[ $var = "algo" ]]` funciona incluso si `$var` esta vacia, porque bash maneja `[[ ]]` de forma especial sin word splitting
-- Soporta pattern matching (`==` con globbing) y regex (`=~`)
+<details><summary>Respuesta</summary>
 
-**Cuando usar cada uno:**
-- `[ ]`: En scripts que deben ser POSIX compatibles (ejecutados con `/bin/sh`)
-- `[[ ]]`: En scripts bash donde se necesite pattern matching, regex o mayor seguridad
+**b) `-z` para cadena vacia y `-d` para directorio**
+
+`-z` (zero length) verifica si una cadena esta vacia: `[ -z "$variable" ]` es verdadero si la variable esta vacia o no definida. `-d` (directory) verifica si la ruta es un directorio: `[ -d /tmp ]` es verdadero si `/tmp` es un directorio. `-n` (non-zero) es lo opuesto a `-z` (verifica que la cadena NO este vacia). `-f` verifica si es un archivo regular (no directorio). `-e` verifica si existe (cualquier tipo).
+
 </details>
 
 ---
 
-## Ejercicio 4
-Escribe un script con `case` que reciba una extension de archivo como argumento y muestre el tipo de archivo. Incluye al menos 5 tipos y un caso por defecto.
+### Pregunta 4
 
-<details>
-<summary>Respuesta</summary>
+Cual de las siguientes afirmaciones sobre `[ ]` y `[[ ]]` es correcta?
 
-```bash
-#!/bin/bash
-if [ $# -ne 1 ]; then
-    echo "Uso: $0 <extension>"
-    exit 1
-fi
+a) `[ ]` es exclusivo de bash y `[[ ]]` es compatible con POSIX
+b) `[ ]` es POSIX compatible y usa `-a`/`-o` para logica; `[[ ]]` es exclusivo de bash y usa `&&`/`||`
+c) `[[ ]]` no soporta pattern matching ni expresiones regulares
+d) Dentro de `[ ]` no es necesario entrecomillar variables porque bash maneja la expansion automaticamente
 
-case "$1" in
-    txt|text)
-        echo "Archivo de texto plano"
-        ;;
-    sh|bash)
-        echo "Script de shell"
-        ;;
-    py|python)
-        echo "Script de Python"
-        ;;
-    jpg|jpeg|png|gif|bmp)
-        echo "Archivo de imagen"
-        ;;
-    tar|gz|bz2|xz|zip)
-        echo "Archivo comprimido"
-        ;;
-    conf|cfg|ini)
-        echo "Archivo de configuracion"
-        ;;
-    *)
-        echo "Tipo de archivo desconocido: $1"
-        exit 1
-        ;;
-esac
-```
+<details><summary>Respuesta</summary>
 
-**Puntos clave de `case`:**
-- Cada patron termina con `)`
-- Se pueden usar multiples patrones separados por `|` (OR)
-- Cada bloque termina con `;;`
-- `*)` es el caso por defecto (catch-all)
-- La estructura cierra con `esac` (case al reves)
+**b) `[ ]` es POSIX compatible y usa `-a`/`-o` para logica; `[[ ]]` es exclusivo de bash y usa `&&`/`||`**
+
+`[ ]` (equivalente al comando `test`) es POSIX compatible y funciona en cualquier shell. Usa `-a` para AND y `-o` para OR, y requiere entrecomillar variables para evitar errores si estan vacias. `[[ ]]` es una extension de bash (no POSIX) que usa `&&` y `||` para operadores logicos, soporta pattern matching con `==` y expresiones regulares con `=~`, y no necesita entrecomillar variables porque bash maneja `[[ ]]` de forma especial sin word splitting.
+
 </details>
 
 ---
 
-## Ejercicio 5
-Que imprime el siguiente script y por que?
+### Pregunta 5
+
+Que imprime el siguiente script?
 ```bash
 #!/bin/bash
 x=10
-if [ $x -gt 5 -a $x -lt 20 ]; then
-    echo "A"
-fi
-if [[ $x -gt 5 && $x -lt 20 ]]; then
-    echo "B"
-fi
 resultado=$((x * 2 + 5))
 echo $resultado
 echo $?
 ```
 
-<details>
-<summary>Respuesta</summary>
+a) `25` y `25`
+b) `25` y `0`
+c) `15` y `0`
+d) `25` y `1`
 
-El script imprime:
-```
-A
-B
-25
-0
-```
+<details><summary>Respuesta</summary>
 
-**Explicacion:**
-1. `x=10`
-2. `[ $x -gt 5 -a $x -lt 20 ]`: 10 > 5 AND 10 < 20 = verdadero. Usa `-a` como AND dentro de `[ ]`. Imprime `A`.
-3. `[[ $x -gt 5 && $x -lt 20 ]]`: Misma logica pero con `&&` dentro de `[[ ]]`. Imprime `B`.
-4. `resultado=$((x * 2 + 5))`: Aritmetica del shell: 10 * 2 + 5 = 25. Nota: dentro de `$(( ))` no se necesita `$` antes de la variable.
-5. `echo $resultado`: Imprime `25`.
-6. `echo $?`: Imprime `0` porque el `echo` anterior se ejecuto con exito.
+**b) `25` y `0`**
+
+Primero, `x=10`. Luego, `resultado=$((x * 2 + 5))` realiza la aritmetica del shell: 10 * 2 + 5 = 25. Nota: dentro de `$(( ))` no se necesita `$` antes de la variable. `echo $resultado` imprime `25`. `echo $?` imprime `0` porque el `echo` anterior se ejecuto con exito (codigo de salida 0). `$?` siempre contiene el codigo de salida del ultimo comando ejecutado: 0 indica exito, cualquier otro valor indica error.
+
 </details>
 
 ---
 
-## Ejercicio 6
-Escribe un script que use `while` y `read` para leer el archivo `/etc/passwd` linea por linea y muestre solo el nombre de usuario y su shell (campos 1 y 7), pero solo para usuarios cuyo UID (campo 3) sea mayor o igual a 1000.
+### Pregunta 6
 
-<details>
-<summary>Respuesta</summary>
+En una estructura `case` en bash, cual es la sintaxis correcta para terminar cada bloque de patron y cual es la palabra clave que cierra la estructura completa?
 
-```bash
-#!/bin/bash
-while IFS=: read usuario password uid gid gecos home shell; do
-    if [ "$uid" -ge 1000 ] 2>/dev/null; then
-        echo "Usuario: $usuario - Shell: $shell"
-    fi
-done < /etc/passwd
-```
+a) Cada bloque termina con `;;` y la estructura cierra con `esac`
+b) Cada bloque termina con `done` y la estructura cierra con `end`
+c) Cada bloque termina con `break` y la estructura cierra con `esac`
+d) Cada bloque termina con `;` y la estructura cierra con `case`
 
-**Explicacion:**
-- `IFS=:` establece el separador de campos como `:` (formato de /etc/passwd)
-- `read usuario password uid gid gecos home shell` lee los 7 campos
-- `[ "$uid" -ge 1000 ]` filtra por UID >= 1000 (usuarios regulares)
-- `2>/dev/null` suprime errores si algun UID no es numerico (como `nfsnobody`)
-- `done < /etc/passwd` redirige el archivo como entrada del bucle while
+<details><summary>Respuesta</summary>
 
-Alternativa mas simple con `cut`:
-```bash
-#!/bin/bash
-while read linea; do
-    uid=$(echo "$linea" | cut -d: -f3)
-    if [ "$uid" -ge 1000 ] 2>/dev/null; then
-        usuario=$(echo "$linea" | cut -d: -f1)
-        shell=$(echo "$linea" | cut -d: -f7)
-        echo "Usuario: $usuario - Shell: $shell"
-    fi
-done < /etc/passwd
-```
+**a) Cada bloque termina con `;;` y la estructura cierra con `esac`**
+
+En la estructura `case` de bash, cada patron termina con `)`, cada bloque de comandos termina con `;;` (doble punto y coma), y la estructura completa se cierra con `esac` (que es `case` escrito al reves). El patron comodin `*)` funciona como caso por defecto. Los patrones pueden usar `|` para combinar multiples opciones (por ejemplo, `start|begin)`). Esta es una sintaxis fundamental para el examen LPIC-1.
+
 </details>
 
 ---
 
-## Ejercicio 7
-Que hace `exec` en los siguientes contextos? Explica la diferencia entre cada uso.
-```bash
-# Caso 1
-exec /bin/zsh
+### Pregunta 7
 
-# Caso 2
-exec > /tmp/log.txt
-echo "Este mensaje va al archivo"
+Que hace `exec` cuando se usa con un comando versus cuando se usa solo con redirecciones?
 
-# Caso 3
-exec 3< /etc/passwd
-read linea <&3
-```
+a) Con un comando, abre un subshell; con redirecciones, modifica los file descriptors del shell actual
+b) Con un comando, reemplaza el shell actual por ese comando; con solo redirecciones, modifica los file descriptors sin reemplazar el shell
+c) En ambos casos reemplaza el shell actual por el comando o la redireccion
+d) Con un comando, ejecuta en segundo plano; con redirecciones, redirige la salida temporalmente
 
-<details>
-<summary>Respuesta</summary>
+<details><summary>Respuesta</summary>
 
-**Caso 1: `exec /bin/zsh`**
-Reemplaza el proceso actual del shell (bash) por `/bin/zsh`. El shell bash deja de existir y es sustituido por zsh. Cualquier linea despues de este `exec` NO se ejecutara porque el proceso original ya no existe.
+**b) Con un comando, reemplaza el shell actual por ese comando; con solo redirecciones, modifica los file descriptors sin reemplazar el shell**
 
-**Caso 2: `exec > /tmp/log.txt`**
-Redirige permanentemente la salida estandar (stdout) del shell actual al archivo `/tmp/log.txt`. A partir de esta linea, TODOS los `echo` y salidas van al archivo en lugar de la pantalla. El script SI continua ejecutandose (no hay comando que reemplace el shell).
+`exec comando` reemplaza el proceso actual del shell por el comando especificado; el shell deja de existir y cualquier linea posterior no se ejecutara. `exec > archivo` (solo redireccion, sin comando) modifica permanentemente los file descriptors del shell actual sin reemplazarlo; el script continua ejecutandose. Por ejemplo, `exec > /tmp/log.txt` redirige toda la salida estandar posterior al archivo. `exec 3< /etc/passwd` abre un file descriptor para lectura.
 
-**Caso 3: `exec 3< /etc/passwd`**
-Abre el archivo `/etc/passwd` y lo asigna al file descriptor 3. Luego, `read linea <&3` lee una linea desde ese file descriptor. El script continua. Para cerrar el descriptor se usa `exec 3<&-`.
-
-**Regla general:** `exec` con un comando reemplaza el shell. `exec` con solo redirecciones modifica los file descriptors del shell actual sin reemplazarlo.
 </details>
 
 ---
 
-## Ejercicio 8
-Escribe un here document que genere un archivo HTML basico en `/tmp/pagina.html` usando variables del shell para el titulo y el contenido. Luego explica que pasaria si usaras `<< 'EOF'` en lugar de `<< EOF`.
+### Pregunta 8
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia entre un here document con `<< EOF` y con `<< 'EOF'` (delimitador entre comillas)?
 
-```bash
-#!/bin/bash
-TITULO="Mi Pagina"
-CONTENIDO="Bienvenido, $USER"
-FECHA=$(date)
+a) `<< 'EOF'` permite la expansion de variables, `<< EOF` no
+b) `<< EOF` permite la expansion de variables y sustitucion de comandos, `<< 'EOF'` trata todo como texto literal
+c) `<< 'EOF'` genera un error de sintaxis
+d) No hay diferencia, ambos se comportan de la misma forma
 
-cat << EOF > /tmp/pagina.html
-<!DOCTYPE html>
-<html>
-<head>
-    <title>$TITULO</title>
-</head>
-<body>
-    <h1>$TITULO</h1>
-    <p>$CONTENIDO</p>
-    <p>Generado: $FECHA</p>
-</body>
-</html>
-EOF
-```
+<details><summary>Respuesta</summary>
 
-**Con `<< EOF`:** Las variables `$TITULO`, `$CONTENIDO`, `$USER` y `$FECHA` se expanden a sus valores. El HTML tendra el contenido real.
+**b) `<< EOF` permite la expansion de variables y sustitucion de comandos, `<< 'EOF'` trata todo como texto literal**
 
-**Con `<< 'EOF'` (comillas en el delimitador):** NINGUNA variable se expande. El archivo contendria literalmente `$TITULO`, `$CONTENIDO`, etc. como texto plano. Las comillas alrededor del delimitador desactivan toda expansion de variables y sustitucion de comandos dentro del heredoc.
+Con `<< EOF`, las variables como `$HOME` y las sustituciones de comandos como `$(date)` se expanden a sus valores reales dentro del bloque heredoc. Con `<< 'EOF'` (comillas simples en el delimitador), NINGUNA expansion se realiza: `$HOME` y `$(date)` aparecen como texto literal. Esto es util cuando se quiere generar un archivo que contenga literalmente sintaxis de variables de shell sin que se interpreten.
+
+</details>
+
+---
+
+### Pregunta 9
+
+Que variable especial contiene el numero de argumentos pasados a un script y cual contiene el nombre del propio script?
+
+a) `$@` contiene el numero de argumentos y `$0` el nombre del script
+b) `$#` contiene el numero de argumentos y `$1` el nombre del script
+c) `$#` contiene el numero de argumentos y `$0` el nombre del script
+d) `$*` contiene el numero de argumentos y `$$` el nombre del script
+
+<details><summary>Respuesta</summary>
+
+**c) `$#` contiene el numero de argumentos y `$0` el nombre del script**
+
+`$#` devuelve el numero total de parametros posicionales pasados al script (sin contar `$0`). `$0` contiene el nombre del script tal como fue invocado. Otras variables especiales importantes: `$1` a `$9` son los parametros posicionales individuales, `$@` y `$*` representan todos los parametros, `$?` es el codigo de salida del ultimo comando, `$$` es el PID del shell actual, y `$!` es el PID del ultimo proceso ejecutado en segundo plano.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Un script necesita leer `/etc/passwd` linea por linea usando `:` como separador de campos. Cual es la forma correcta de hacerlo con un bucle `while`?
+
+a) `while read -d ":" linea; do echo "$linea"; done < /etc/passwd`
+b) `while IFS=: read usuario password uid gid gecos home shell; do echo "$usuario"; done < /etc/passwd`
+c) `for linea in $(cat /etc/passwd); do IFS=: read usuario <<< "$linea"; done`
+d) `while read linea; do cut -d: -f1 "$linea"; done < /etc/passwd`
+
+<details><summary>Respuesta</summary>
+
+**b) `while IFS=: read usuario password uid gid gecos home shell; do echo "$usuario"; done < /etc/passwd`**
+
+La forma correcta es establecer `IFS=:` (Internal Field Separator) antes de `read` para que los campos se separen por `:` en lugar del separador por defecto (espacio/tab/newline). Al especificar multiples variables en `read`, cada campo se asigna a la variable correspondiente. La redireccion `< /etc/passwd` alimenta el archivo como entrada del bucle `while`. Esta tecnica es fundamental para procesar archivos con campos delimitados en scripts de shell.
+
 </details>

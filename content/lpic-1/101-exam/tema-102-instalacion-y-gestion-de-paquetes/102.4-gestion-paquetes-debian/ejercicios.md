@@ -14,237 +14,190 @@ subtema: "102.4"
 
 # 102.4 - Gestion de paquetes Debian: Ejercicios
 
-## Ejercicio 1
-**Cual es la diferencia entre `dpkg -r paquete` y `dpkg -P paquete`? Cual seria el equivalente con apt?**
+### Pregunta 1
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la diferencia entre `dpkg -r paquete` y `dpkg -P paquete`?
 
-- **`dpkg -r paquete`** (remove): Desinstala el paquete pero **conserva los archivos de configuracion**. Esto permite reinstalar el paquete mas tarde y recuperar la configuracion anterior.
+a) `-r` desinstala y purga, `-P` solo desinstala
+b) `-r` desinstala conservando los archivos de configuracion, `-P` elimina todo incluyendo la configuracion
+c) No hay diferencia, ambos eliminan todo completamente
+d) `-r` marca el paquete para eliminacion futura, `-P` lo desinstala inmediatamente
 
-- **`dpkg -P paquete`** (purge): **Elimina todo**: archivos del programa Y archivos de configuracion. Es una desinstalacion completa.
+<details><summary>Respuesta</summary>
 
-Equivalentes con apt:
-- `dpkg -r` equivale a **`apt remove paquete`**
-- `dpkg -P` equivale a **`apt purge paquete`**
+**b) `-r` desinstala conservando los archivos de configuracion, `-P` elimina todo incluyendo la configuracion**
 
-Un paquete eliminado con `-r` aparecera con estado `rc` en `dpkg -l` (removed, config-files). Un paquete purgado desaparecera completamente o mostrara `pn`/`un`.
+`dpkg -r` (remove) elimina los archivos del programa pero conserva los archivos de configuracion, permitiendo reinstalar el paquete y recuperar la configuracion anterior. El paquete aparecera con estado `rc` en `dpkg -l`. `dpkg -P` (purge) elimina todo: archivos del programa y archivos de configuracion. Los equivalentes con apt son `apt remove` y `apt purge` respectivamente.
+
 </details>
 
 ---
 
-## Ejercicio 2
-**Necesitas saber que paquete instalo el archivo `/usr/bin/vim`. Escribe el comando que usarias. Que comando usarias si el paquete NO esta instalado y quieres buscar en los repositorios?**
+### Pregunta 2
 
-<details>
-<summary>Ver respuesta</summary>
+Necesitas saber que paquete instalo el archivo `/usr/bin/vim` en tu sistema. Que comando usarias?
 
-Para buscar en **paquetes instalados**:
-```bash
-dpkg -S /usr/bin/vim
-```
+a) `apt-file search /usr/bin/vim`
+b) `apt search vim`
+c) `dpkg -S /usr/bin/vim`
+d) `dpkg -L vim`
 
-Para buscar en **todos los repositorios** (paquete instalado o no):
-```bash
-apt-file search /usr/bin/vim
-```
+<details><summary>Respuesta</summary>
 
-Nota: `apt-file` requiere tener actualizada su base de datos:
-```bash
-sudo apt-file update
-```
+**c) `dpkg -S /usr/bin/vim`**
 
-La diferencia clave:
-- `dpkg -S` solo busca entre los paquetes **instalados** en el sistema
-- `apt-file search` busca en **todos los paquetes disponibles** en los repositorios configurados
+`dpkg -S` busca entre los paquetes instalados en el sistema cual proporciona un archivo determinado. `apt-file search` tambien puede buscar archivos pero busca en todos los repositorios (incluso paquetes no instalados) y requiere tener su base de datos actualizada. `apt search` busca paquetes por nombre o descripcion, no por archivo. `dpkg -L` hace lo contrario: lista los archivos que pertenecen a un paquete, no busca a que paquete pertenece un archivo.
+
 </details>
 
 ---
 
-## Ejercicio 3
-**Explica la diferencia entre `apt update`, `apt upgrade` y `apt full-upgrade`. En que orden se ejecutan normalmente?**
+### Pregunta 3
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la diferencia entre `apt update` y `apt upgrade`?
 
-- **`apt update`**: Descarga la lista actualizada de paquetes disponibles desde los repositorios configurados en `/etc/apt/sources.list`. **No instala ni actualiza nada**, solo actualiza la informacion de que paquetes existen y en que versiones.
+a) `apt update` actualiza los paquetes instalados y `apt upgrade` descarga las listas de paquetes
+b) `apt update` descarga las listas de paquetes disponibles y `apt upgrade` actualiza los paquetes instalados
+c) Son equivalentes, ambos actualizan el sistema
+d) `apt update` solo actualiza el kernel y `apt upgrade` actualiza el resto
 
-- **`apt upgrade`**: Actualiza todos los paquetes instalados a su version mas reciente. Es una actualizacion **segura**: nunca elimina paquetes existentes ni instala paquetes nuevos. Si una actualizacion requiere eliminar algo, la omite.
+<details><summary>Respuesta</summary>
 
-- **`apt full-upgrade`** (equivalente a `apt-get dist-upgrade`): Actualizacion **completa** que puede eliminar paquetes obsoletos e instalar nuevas dependencias si es necesario para completar la actualizacion.
+**b) `apt update` descarga las listas de paquetes disponibles y `apt upgrade` actualiza los paquetes instalados**
 
-**Orden normal de ejecucion:**
-```bash
-sudo apt update          # 1. Actualizar listas
-sudo apt upgrade         # 2. Actualizar paquetes (seguro)
-# o
-sudo apt full-upgrade    # 2. Actualizacion completa (si es necesario)
-```
+`apt update` descarga la informacion actualizada de que paquetes estan disponibles en los repositorios configurados en `/etc/apt/sources.list`. No instala ni actualiza nada. `apt upgrade` actualiza los paquetes instalados a su version mas reciente usando esas listas. Siempre se debe ejecutar `apt update` antes de `apt upgrade`. Existe tambien `apt full-upgrade` (equivalente a `apt-get dist-upgrade`) que puede eliminar paquetes obsoletos e instalar nuevas dependencias.
 
-Siempre se ejecuta `apt update` primero para tener la informacion actualizada.
 </details>
 
 ---
 
-## Ejercicio 4
-**Tienes un paquete `.deb` descargado manualmente y al intentar instalarlo con `dpkg -i paquete.deb` falla porque faltan dependencias. Como solucionas el problema?**
+### Pregunta 4
 
-<details>
-<summary>Ver respuesta</summary>
+Has descargado un paquete `.deb` manualmente y al ejecutar `dpkg -i paquete.deb` falla por dependencias faltantes. Cual es la forma correcta de resolver el problema?
 
-Cuando `dpkg -i` falla por dependencias faltantes, el paquete queda en estado "parcialmente instalado". Para resolverlo:
+a) Ejecutar `dpkg --fix-broken paquete.deb`
+b) Ejecutar `apt --fix-broken install` o `apt-get install -f`
+c) Reinstalar el paquete con `dpkg -i --force-depends paquete.deb`
+d) Descargar e instalar manualmente cada dependencia con `dpkg -i`
 
-**Opcion 1** (recomendada):
-```bash
-# Primero intentar instalar el paquete
-sudo dpkg -i paquete.deb
+<details><summary>Respuesta</summary>
 
-# Si falla por dependencias, reparar con apt
-sudo apt --fix-broken install
-# o equivalentemente:
-sudo apt-get install -f
-```
+**b) Ejecutar `apt --fix-broken install` o `apt-get install -f`**
 
-Esto descargara e instalara las dependencias faltantes de los repositorios y completara la instalacion del paquete.
+Cuando `dpkg -i` falla por dependencias, el paquete queda en estado "parcialmente instalado". Al ejecutar `apt --fix-broken install` (o `apt-get install -f`), apt descarga e instala automaticamente las dependencias faltantes de los repositorios y completa la instalacion. Una alternativa mas directa es usar `apt install ./paquete.deb` (con el prefijo `./`), que resuelve dependencias automaticamente al instalar el archivo local.
 
-**Opcion 2** (mas directa, si el .deb es local):
-```bash
-# Usar apt para instalar el .deb local (resuelve dependencias automaticamente)
-sudo apt install ./paquete.deb
-```
-
-El prefijo `./` es importante para que apt interprete la ruta como un archivo local y no como un nombre de paquete del repositorio.
 </details>
 
 ---
 
-## Ejercicio 5
-**Describe la estructura del archivo `/etc/apt/sources.list`. Escribe una linea de ejemplo para un repositorio de Ubuntu y explica cada campo.**
+### Pregunta 5
 
-<details>
-<summary>Ver respuesta</summary>
+En la estructura del archivo `/etc/apt/sources.list`, que significa el campo `deb-src`?
 
-Estructura de una linea:
-```
-tipo  URI  distribucion  componente1 [componente2 ...]
-```
+a) Repositorio de paquetes binarios de codigo cerrado
+b) Repositorio de codigo fuente de los paquetes
+c) Repositorio de seguridad para actualizaciones criticas
+d) Repositorio secundario de respaldo
 
-Ejemplo:
-```
-deb http://archive.ubuntu.com/ubuntu jammy main restricted universe multiverse
-```
+<details><summary>Respuesta</summary>
 
-Explicacion de cada campo:
+**b) Repositorio de codigo fuente de los paquetes**
 
-| Campo | Valor | Significado |
-|-------|-------|-------------|
-| Tipo | `deb` | Paquetes binarios compilados (usar `deb-src` para codigo fuente) |
-| URI | `http://archive.ubuntu.com/ubuntu` | Direccion del servidor del repositorio |
-| Distribucion | `jammy` | Nombre en clave de la version (Ubuntu 22.04) |
-| Componente 1 | `main` | Software libre soportado oficialmente por Canonical |
-| Componente 2 | `restricted` | Controladores propietarios soportados |
-| Componente 3 | `universe` | Software libre mantenido por la comunidad |
-| Componente 4 | `multiverse` | Software propietario/no libre |
+En una linea de `sources.list`, el primer campo indica el tipo: `deb` es para paquetes binarios compilados y `deb-src` es para el codigo fuente de los paquetes. Una linea completa tiene el formato: `tipo URI distribucion componentes`. Por ejemplo: `deb http://archive.ubuntu.com/ubuntu jammy main restricted`. Los componentes tipicos de Ubuntu son `main` (libre oficial), `restricted` (propietario soportado), `universe` (libre comunitario) y `multiverse` (no libre).
 
-Los repositorios adicionales de terceros se pueden anadir en archivos individuales dentro de `/etc/apt/sources.list.d/` con extension `.list`.
 </details>
 
 ---
 
-## Ejercicio 6
-**Que comando usarias para listar todos los archivos instalados por el paquete `openssh-server`? Y para ver sus dependencias?**
+### Pregunta 6
 
-<details>
-<summary>Ver respuesta</summary>
+Que comando lista todos los archivos instalados por el paquete `openssh-server`?
 
-Para **listar archivos** instalados por el paquete:
-```bash
-dpkg -L openssh-server
-```
+a) `dpkg -s openssh-server`
+b) `dpkg -S openssh-server`
+c) `dpkg -L openssh-server`
+d) `apt-file list openssh-server`
 
-Esto mostrara la lista completa de archivos que el paquete instalo en el sistema (binarios, archivos de configuracion, paginas de manual, etc.).
+<details><summary>Respuesta</summary>
 
-Para ver las **dependencias** del paquete:
-```bash
-apt-cache depends openssh-server
-```
+**c) `dpkg -L openssh-server`**
 
-Esto mostrara todos los paquetes de los que depende `openssh-server`.
+`dpkg -L` (listfiles) muestra la lista completa de archivos que un paquete instalo en el sistema. `dpkg -s` muestra el estado e informacion del paquete (version, dependencias, descripcion). `dpkg -S` busca a que paquete pertenece un archivo especifico (operacion inversa). `apt-file list` tambien puede listar archivos de un paquete, pero busca en todos los repositorios y no solo en paquetes instalados, requiriendo ademas tener su base de datos actualizada.
 
-Para ver las **dependencias inversas** (que paquetes dependen de este):
-```bash
-apt-cache rdepends openssh-server
-```
-
-Para ver el **estado completo** del paquete (version, dependencias, descripcion):
-```bash
-dpkg -s openssh-server
-# o
-apt show openssh-server
-```
 </details>
 
 ---
 
-## Ejercicio 7
-**Despues de instalar un paquete, necesitas reconfigurar la zona horaria del sistema. Que comando usarias? Que hace exactamente `dpkg-reconfigure`?**
+### Pregunta 7
 
-<details>
-<summary>Ver respuesta</summary>
+Que hace el comando `dpkg-reconfigure tzdata`?
 
-Para reconfigurar la zona horaria:
-```bash
-sudo dpkg-reconfigure tzdata
-```
+a) Reinstala el paquete `tzdata` desde el repositorio
+b) Elimina y vuelve a crear la configuracion de zona horaria por defecto
+c) Vuelve a ejecutar los scripts de configuracion post-instalacion del paquete `tzdata`
+d) Actualiza el paquete `tzdata` a la ultima version disponible
 
-**`dpkg-reconfigure`** vuelve a ejecutar los **scripts de configuracion post-instalacion** de un paquete que ya esta instalado. Es como si el paquete se estuviera configurando por primera vez despues de la instalacion.
+<details><summary>Respuesta</summary>
 
-Esto es util cuando:
-- Se necesita cambiar la configuracion de un paquete (zona horaria, locales, teclado)
-- La configuracion original se ha corrompido
-- Se quiere volver a los valores por defecto
+**c) Vuelve a ejecutar los scripts de configuracion post-instalacion del paquete `tzdata`**
 
-Otros ejemplos comunes:
-```bash
-sudo dpkg-reconfigure locales           # Reconfigurar idiomas del sistema
-sudo dpkg-reconfigure keyboard-configuration  # Reconfigurar teclado
-sudo dpkg-reconfigure console-setup     # Reconfigurar consola
-```
+`dpkg-reconfigure` re-ejecuta los scripts de configuracion post-instalacion de un paquete ya instalado, como si el paquete se estuviera configurando por primera vez. Es util para cambiar configuraciones interactivas como la zona horaria (`tzdata`), los idiomas del sistema (`locales`) o el teclado (`keyboard-configuration`). No confundir con `dpkg --configure -a`, que intenta completar la configuracion de paquetes que quedaron en estado parcialmente configurado.
 
-No confundir con `dpkg --configure -a`, que intenta **completar la configuracion** de paquetes que quedaron en estado parcialmente configurado (por ejemplo, tras una instalacion interrumpida).
 </details>
 
 ---
 
-## Ejercicio 8
-**En la salida de `dpkg -l`, un paquete aparece con el estado `rc`. Que significa esto y como lo eliminarias completamente del sistema?**
+### Pregunta 8
 
-<details>
-<summary>Ver respuesta</summary>
+En la salida de `dpkg -l`, un paquete aparece con el estado `rc`. Que significa?
 
-El estado **`rc`** significa:
-- **`r`** (desired: Remove) - Se solicito la eliminacion del paquete
-- **`c`** (status: Config-files) - Los archivos de configuracion aun estan en el sistema
+a) El paquete esta instalado correctamente y configurado
+b) El paquete fue eliminado pero sus archivos de configuracion aun permanecen en el sistema
+c) El paquete esta retenido y no se actualizara
+d) El paquete tiene un error de configuracion que necesita reparacion
 
-Es decir, el paquete fue desinstalado con `dpkg -r` o `apt remove`, que eliminaron los archivos del programa pero **dejaron los archivos de configuracion**.
+<details><summary>Respuesta</summary>
 
-Para eliminar completamente el paquete (incluyendo la configuracion residual):
+**b) El paquete fue eliminado pero sus archivos de configuracion aun permanecen en el sistema**
 
-```bash
-# Purgar un paquete especifico
-sudo dpkg -P nombre_paquete
-# o
-sudo apt purge nombre_paquete
-```
+El estado `rc` se compone de dos letras: `r` (desired: Remove) indica que se solicito la eliminacion, y `c` (status: Config-files) indica que los archivos de configuracion siguen presentes. Esto ocurre cuando se usa `dpkg -r` o `apt remove`. Para eliminar completamente el paquete incluyendo la configuracion residual, se debe usar `dpkg -P nombre_paquete` o `apt purge nombre_paquete`.
 
-Para purgar todos los paquetes en estado `rc`:
-```bash
-dpkg -l | grep '^rc' | awk '{print $2}' | xargs sudo dpkg -P
-```
+</details>
 
-Este comando:
-1. Lista todos los paquetes (`dpkg -l`)
-2. Filtra los que estan en estado `rc` (`grep '^rc'`)
-3. Extrae el nombre del paquete (`awk '{print $2}'`)
-4. Los purga (`xargs sudo dpkg -P`)
+---
+
+### Pregunta 9
+
+Donde se almacenan los archivos `.deb` descargados por apt y que comando los elimina todos?
+
+a) En `/tmp/apt/` y se eliminan con `apt remove --cache`
+b) En `/var/cache/apt/archives/` y se eliminan con `apt clean`
+c) En `/var/lib/dpkg/cache/` y se eliminan con `dpkg --clean`
+d) En `/usr/share/apt/downloads/` y se eliminan con `apt autoclean`
+
+<details><summary>Respuesta</summary>
+
+**b) En `/var/cache/apt/archives/` y se eliminan con `apt clean`**
+
+Los paquetes `.deb` descargados se almacenan en `/var/cache/apt/archives/` y pueden ocupar mucho espacio con el tiempo. `apt clean` (o `apt-get clean`) elimina todos los `.deb` descargados. `apt autoclean` (o `apt-get autoclean`) es mas conservador: solo elimina los `.deb` de versiones obsoletas que ya no estan en los repositorios, conservando los de las versiones actuales.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Cual es la diferencia fundamental entre `dpkg` y `apt` como herramientas de gestion de paquetes?
+
+a) `dpkg` trabaja con repositorios remotos y `apt` solo con archivos locales
+b) `apt` es de bajo nivel y `dpkg` de alto nivel
+c) `dpkg` gestiona paquetes individuales sin resolver dependencias, mientras que `apt` resuelve dependencias automaticamente
+d) `dpkg` solo funciona en Debian y `apt` funciona en cualquier distribucion
+
+<details><summary>Respuesta</summary>
+
+**c) `dpkg` gestiona paquetes individuales sin resolver dependencias, mientras que `apt` resuelve dependencias automaticamente**
+
+`dpkg` es la herramienta de bajo nivel del sistema de paquetes Debian: instala y desinstala archivos `.deb` individuales pero no gestiona dependencias. Si un paquete requiere otro que no esta instalado, `dpkg` simplemente reporta el error. `apt` (y `apt-get`) es la herramienta de alto nivel que trabaja con repositorios, descarga paquetes y resuelve dependencias automaticamente. Internamente, `apt` utiliza `dpkg` para la instalacion final de los paquetes.
+
 </details>

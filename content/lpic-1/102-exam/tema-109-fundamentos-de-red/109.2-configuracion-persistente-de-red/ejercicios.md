@@ -14,171 +14,190 @@ subtema: "109.2"
 
 # 109.2 Configuracion persistente de red - Ejercicios
 
-## Ejercicio 1
-¿Cual es la diferencia entre `ip addr` e `ifconfig`? ¿Cual se recomienda usar actualmente?
+### Pregunta 1
+
+Cual de los siguientes comandos es el reemplazo moderno (iproute2) de `ifconfig`?
+
+a) `ip config`
+b) `ip addr`
+c) `netctl`
+d) `ifup`
 
 <details><summary>Respuesta</summary>
 
-Ambos muestran y configuran interfaces de red, pero:
+**b) `ip addr`**
 
-- **`ifconfig`** pertenece al paquete `net-tools` y esta **deprecado**. No soporta todas las funcionalidades modernas.
-- **`ip addr`** pertenece al paquete `iproute2` y es la herramienta **recomendada**. Soporta IPv6 completo, multiples direcciones por interfaz y mas opciones.
-
-Equivalencias:
-- `ifconfig` -> `ip addr show` / `ip link show`
-- `route` -> `ip route`
-- `arp` -> `ip neigh`
+El comando `ip addr` (o `ip addr show`) del paquete iproute2 es el reemplazo moderno de `ifconfig` para mostrar y configurar direcciones IP en interfaces de red. Otras equivalencias son: `route` -> `ip route`, `arp` -> `ip neigh`, `ifconfig` -> `ip link show` / `ip addr show`. El paquete `net-tools` (que incluye ifconfig, route, arp) esta deprecado.
 
 </details>
 
-## Ejercicio 2
-Explica que significa la linea `hosts: files dns myhostname` en `/etc/nsswitch.conf`.
+---
+
+### Pregunta 2
+
+Que significa la linea `hosts: files dns myhostname` en `/etc/nsswitch.conf`?
+
+a) Solo se pueden resolver nombres mediante DNS y archivos locales
+b) Primero se busca en `/etc/hosts`, luego en DNS y finalmente se resuelve el hostname local
+c) Se consulta DNS primero y si no responde se busca en archivos locales
+d) Se utilizan los tres metodos simultaneamente y se devuelve el primer resultado
 
 <details><summary>Respuesta</summary>
 
-Esta linea define el **orden de busqueda** para resolver nombres de host:
+**b) Primero se busca en `/etc/hosts`, luego en DNS y finalmente se resuelve el hostname local**
 
-1. **files**: Primero busca en `/etc/hosts`
-2. **dns**: Si no lo encuentra, consulta los servidores DNS definidos en `/etc/resolv.conf`
-3. **myhostname**: Como ultimo recurso, resuelve el nombre del propio host
-
-Esto significa que las entradas en `/etc/hosts` tienen **prioridad** sobre las respuestas DNS.
+La linea `hosts: files dns myhostname` en `/etc/nsswitch.conf` define el orden de busqueda para resolver nombres de host: 1) `files` busca primero en `/etc/hosts`, 2) `dns` consulta los servidores DNS definidos en `/etc/resolv.conf`, 3) `myhostname` resuelve el nombre del propio host como ultimo recurso. Esto significa que las entradas en `/etc/hosts` tienen prioridad sobre las respuestas DNS.
 
 </details>
 
-## Ejercicio 3
-¿Como configurarias una IP estatica 192.168.1.50/24 con gateway 192.168.1.1 en la interfaz eth0 usando el comando `ip`?
+---
+
+### Pregunta 3
+
+Cuantos servidores DNS se pueden definir como maximo en `/etc/resolv.conf`?
+
+a) 1
+b) 2
+c) 3
+d) Ilimitados
 
 <details><summary>Respuesta</summary>
 
-```bash
-ip addr add 192.168.1.50/24 dev eth0
-ip link set eth0 up
-ip route add default via 192.168.1.1
-```
+**c) 3**
 
-**Importante**: Esta configuracion es **temporal** y se perdera al reiniciar. Para hacerla persistente se debe usar la configuracion de la distribucion (archivos de configuracion, NetworkManager o systemd-networkd).
+El archivo `/etc/resolv.conf` permite definir un maximo de 3 directivas `nameserver`, cada una con la IP de un servidor DNS. Si se necesitan mas, solo se usaran los 3 primeros. Las directivas `domain` y `search` son mutuamente excluyentes; si ambas estan presentes, se usa la ultima definida en el archivo.
 
 </details>
 
-## Ejercicio 4
-Escribe un archivo de configuracion de `/etc/network/interfaces` (Debian) para la interfaz eth0 con IP estatica 10.0.0.5/24, gateway 10.0.0.1 y DNS 8.8.8.8.
+---
+
+### Pregunta 4
+
+Un administrador configura una IP estatica con `ip addr add 192.168.1.50/24 dev eth0`. Que ocurre con esta configuracion al reiniciar el sistema?
+
+a) Se mantiene porque el comando `ip` guarda la configuracion automaticamente
+b) Se pierde porque las configuraciones con `ip` son temporales
+c) Se mantiene si se ejecuto como root
+d) Se mantiene solo si el servicio NetworkManager esta activo
 
 <details><summary>Respuesta</summary>
 
-```
-auto lo
-iface lo inet loopback
+**b) Se pierde porque las configuraciones con `ip` son temporales**
 
-auto eth0
-iface eth0 inet static
-    address 10.0.0.5
-    netmask 255.255.255.0
-    gateway 10.0.0.1
-    dns-nameservers 8.8.8.8
-```
-
-Aplicar cambios:
-```bash
-ifdown eth0 && ifup eth0
-# o bien:
-systemctl restart networking
-```
+Las configuraciones realizadas con el comando `ip` (iproute2) e `ifconfig` (net-tools) son temporales y se pierden al reiniciar el sistema. Para hacer la configuracion persistente se deben usar los archivos de configuracion de la distribucion: `/etc/network/interfaces` (Debian clasico), archivos en `/etc/sysconfig/network-scripts/` (RHEL), archivos `.network` en `/etc/systemd/network/` (systemd-networkd), `nmcli` (NetworkManager) o archivos YAML en `/etc/netplan/` (Ubuntu moderno).
 
 </details>
 
-## Ejercicio 5
-¿Como crearias una conexion de red con NetworkManager usando `nmcli` con IP estatica 192.168.1.100/24 y DNS 1.1.1.1?
+---
+
+### Pregunta 5
+
+Como se crea una conexion de red con IP estatica usando `nmcli` de NetworkManager?
+
+a) `nmcli device add ethernet ip4 192.168.1.100/24`
+b) `nmcli connection add type ethernet con-name mi-red ifname eth0 ip4 192.168.1.100/24 gw4 192.168.1.1`
+c) `nmcli set eth0 address 192.168.1.100/24 gateway 192.168.1.1`
+d) `nmcli interface configure eth0 static 192.168.1.100/24`
 
 <details><summary>Respuesta</summary>
 
-```bash
-nmcli connection add type ethernet con-name mi-red ifname eth0 \
-    ip4 192.168.1.100/24 gw4 192.168.1.1
+**b) `nmcli connection add type ethernet con-name mi-red ifname eth0 ip4 192.168.1.100/24 gw4 192.168.1.1`**
 
-nmcli connection modify mi-red ipv4.dns "1.1.1.1"
-
-nmcli connection up mi-red
-```
-
-Para verificar:
-```bash
-nmcli connection show mi-red
-```
+La sintaxis correcta de `nmcli` para crear una conexion estatica incluye: `connection add` (accion), `type ethernet` (tipo de conexion), `con-name` (nombre de la conexion), `ifname` (interfaz de red), `ip4` (direccion IP con mascara) y `gw4` (gateway). Despues se puede configurar DNS con `nmcli connection modify mi-red ipv4.dns "8.8.8.8"` y activar con `nmcli connection up mi-red`.
 
 </details>
 
-## Ejercicio 6
-¿Que contiene `/etc/resolv.conf`? ¿Cuantos servidores DNS se pueden definir como maximo?
+---
+
+### Pregunta 6
+
+Cual es el archivo de configuracion de red por interfaz en sistemas RHEL/CentOS?
+
+a) `/etc/network/interfaces`
+b) `/etc/sysconfig/network-scripts/ifcfg-eth0`
+c) `/etc/systemd/network/eth0.network`
+d) `/etc/netplan/01-netcfg.yaml`
 
 <details><summary>Respuesta</summary>
 
-`/etc/resolv.conf` define la configuracion DNS del cliente:
+**b) `/etc/sysconfig/network-scripts/ifcfg-eth0`**
 
-```
-nameserver 192.168.1.1      # Servidor DNS primario
-nameserver 8.8.8.8          # Servidor DNS secundario
-nameserver 8.8.4.4          # Servidor DNS terciario
-domain ejemplo.com          # Dominio local
-search ejemplo.com test.com # Dominios de busqueda
-```
-
-Se pueden definir un **maximo de 3** servidores `nameserver`. Las directivas `domain` y `search` son mutuamente excluyentes (se usa la ultima).
+En sistemas RHEL/CentOS, la configuracion de red por interfaz se realiza en archivos con formato `ifcfg-nombre` dentro del directorio `/etc/sysconfig/network-scripts/`. Estos archivos contienen directivas como `BOOTPROTO`, `IPADDR`, `NETMASK`, `GATEWAY`, `DNS1`, `ONBOOT`, etc. La opcion A corresponde a Debian clasico, la C a systemd-networkd y la D a Netplan (Ubuntu moderno).
 
 </details>
 
-## Ejercicio 7
-¿Como escribirias un archivo de configuracion basico de systemd-networkd para que eth0 obtenga su IP por DHCP?
+---
+
+### Pregunta 7
+
+Como se configura systemd-networkd para que la interfaz eth0 obtenga su IP por DHCP?
+
+a) Creando `/etc/systemd/network/eth0.conf` con `DHCP=yes`
+b) Ejecutando `networkctl dhcp eth0`
+c) Creando un archivo `.network` en `/etc/systemd/network/` con secciones `[Match]` y `[Network]` con `DHCP=yes`
+d) Editando `/etc/systemd/networkd.conf` y agregando `Interface=eth0 DHCP=yes`
 
 <details><summary>Respuesta</summary>
 
-Archivo `/etc/systemd/network/20-wired.network`:
-```ini
-[Match]
-Name=eth0
+**c) Creando un archivo `.network` en `/etc/systemd/network/` con secciones `[Match]` y `[Network]` con `DHCP=yes`**
 
-[Network]
-DHCP=yes
-```
-
-Activar el servicio:
-```bash
-systemctl enable systemd-networkd
-systemctl start systemd-networkd
-```
-
-Verificar:
-```bash
-networkctl status eth0
-```
+systemd-networkd usa archivos con extension `.network` en `/etc/systemd/network/`. El archivo debe contener al menos una seccion `[Match]` con `Name=eth0` para identificar la interfaz, y una seccion `[Network]` con `DHCP=yes` para habilitar DHCP. Despues se activa con `systemctl enable systemd-networkd && systemctl start systemd-networkd`. El estado se verifica con `networkctl status eth0`.
 
 </details>
 
-## Ejercicio 8
-¿Cual es el equivalente moderno de `route -n`? ¿Como agregarias una ruta estatica a la red 172.16.0.0/12 via el gateway 192.168.1.1?
+---
+
+### Pregunta 8
+
+Cual es el equivalente moderno de `route -n` para mostrar la tabla de rutas?
+
+a) `ip route show`
+b) `netstat -r`
+c) `routectl list`
+d) `networkctl routes`
 
 <details><summary>Respuesta</summary>
 
-El equivalente moderno de `route -n` es:
-```bash
-ip route show
-# o abreviado:
-ip r
-```
+**a) `ip route show`**
 
-Para agregar la ruta estatica:
-```bash
-ip route add 172.16.0.0/12 via 192.168.1.1
-```
+El comando `ip route show` (o abreviado `ip r`) es el reemplazo moderno de `route -n` para mostrar la tabla de rutas del sistema. `netstat -r` es otra forma legacy de ver la tabla de rutas (equivalente a `route -n`) pero tambien esta deprecada. Para agregar una ruta por defecto se usa `ip route add default via 192.168.1.1`. Los comandos `routectl` y `networkctl routes` no existen.
 
-Con legacy `route`:
-```bash
-route add -net 172.16.0.0 netmask 255.240.0.0 gw 192.168.1.1
-```
+</details>
 
-Para hacerla persistente en RHEL, crear `/etc/sysconfig/network-scripts/route-eth0`:
-```
-172.16.0.0/12 via 192.168.1.1
-```
+---
+
+### Pregunta 9
+
+Que comando de Netplan aplica los cambios de configuracion de red en Ubuntu moderno?
+
+a) `netplan generate`
+b) `netplan apply`
+c) `netplan reload`
+d) `netplan commit`
+
+<details><summary>Respuesta</summary>
+
+**b) `netplan apply`**
+
+El comando `netplan apply` lee los archivos YAML de configuracion en `/etc/netplan/`, genera la configuracion del backend (NetworkManager o systemd-networkd) y la aplica inmediatamente. `netplan generate` solo genera la configuracion sin aplicarla. `netplan try` aplica la configuracion temporalmente y la revierte si no se confirma (util para evitar perder conectividad). Los comandos `netplan reload` y `netplan commit` no existen.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que comando se utiliza para establecer el hostname de forma persistente en un sistema con systemd?
+
+a) `hostname mi-servidor`
+b) `echo "mi-servidor" > /etc/hostname && reboot`
+c) `hostnamectl set-hostname mi-servidor`
+d) `sysctl hostname=mi-servidor`
+
+<details><summary>Respuesta</summary>
+
+**c) `hostnamectl set-hostname mi-servidor`**
+
+`hostnamectl set-hostname` establece el hostname de forma persistente en sistemas con systemd, actualizando el archivo `/etc/hostname`. La opcion A (`hostname mi-servidor`) solo cambia el hostname temporalmente y se pierde al reiniciar. La opcion B funciona pero requiere un reinicio innecesario. `hostnamectl` tambien permite establecer un hostname descriptivo con `--pretty`. Los tipos de hostname son: static (persistente), transient (temporal) y pretty (descriptivo).
 
 </details>

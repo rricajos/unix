@@ -14,193 +14,190 @@ subtema: "109.3"
 
 # 109.3 Resolucion de problemas basicos de red - Ejercicios
 
-## Ejercicio 1
-Describe la metodologia de troubleshooting de red de abajo hacia arriba. ¿Que comandos usarias en cada paso?
+### Pregunta 1
+
+Cual es el orden correcto de la metodologia de troubleshooting de red de abajo hacia arriba?
+
+a) DNS -> Gateway -> IP -> Enlace fisico -> Servicio
+b) Servicio -> DNS -> Gateway -> IP -> Enlace fisico
+c) Enlace fisico -> IP -> Gateway -> DNS -> Servicio
+d) Gateway -> IP -> DNS -> Enlace fisico -> Servicio
 
 <details><summary>Respuesta</summary>
 
-1. **Capa fisica/enlace**: Verificar que la interfaz esta activa
-   ```bash
-   ip link show
-   ```
-2. **Capa IP**: Verificar que tiene IP correcta
-   ```bash
-   ip addr show
-   ping -c 3 MI_IP
-   ```
-3. **Gateway**: Verificar conectividad al gateway
-   ```bash
-   ip route show          # Ver ruta por defecto
-   ping -c 3 GATEWAY
-   ```
-4. **Conectividad externa**: Ping a una IP publica
-   ```bash
-   ping -c 3 8.8.8.8
-   ```
-5. **DNS**: Verificar resolucion de nombres
-   ```bash
-   ping -c 3 google.com
-   ```
-6. **Servicio**: Verificar que el servicio responde
-   ```bash
-   ss -tulnp
-   nc -zv host puerto
-   ```
+**c) Enlace fisico -> IP -> Gateway -> DNS -> Servicio**
+
+La resolucion de problemas de red se realiza de abajo hacia arriba, siguiendo las capas del modelo TCP/IP: 1) Verificar que la interfaz esta activa (enlace fisico), 2) Verificar que tiene IP correcta, 3) Verificar conectividad al gateway, 4) Verificar resolucion DNS, 5) Verificar que el servicio responde. Esto permite identificar sistematicamente en que capa se encuentra el problema.
 
 </details>
 
-## Ejercicio 2
-¿Cual es la diferencia entre `netstat` y `ss`? ¿Que significa la combinacion de flags `-tulnp`?
+---
+
+### Pregunta 2
+
+Que significan las flags `-tulnp` en el comando `ss -tulnp`?
+
+a) TCP, UDP, log, nombres, procesos
+b) TCP, UDP, listening, numerico, process
+c) TCP, upstream, local, network, port
+d) Total, UDP, listening, names, PID
 
 <details><summary>Respuesta</summary>
 
-- **`netstat`** pertenece al paquete `net-tools` y esta **deprecado**
-- **`ss`** (socket statistics) es su reemplazo moderno del paquete `iproute2`, mas rapido y con mas funcionalidades
+**b) TCP, UDP, listening, numerico, process**
 
-Las flags `-tulnp` significan:
-- **t**: TCP
-- **u**: UDP
-- **l**: Listening (solo conexiones en escucha)
-- **n**: Numerico (no resolver nombres)
-- **p**: Process (mostrar PID y nombre del programa)
-
-Ejemplo: `ss -tulnp` muestra todos los puertos TCP y UDP en escucha con el proceso asociado.
+Las flags `-tulnp` son la combinacion mas comun de `ss` (y `netstat`): `-t` filtra solo conexiones TCP, `-u` filtra solo UDP, `-l` muestra solo puertos en escucha (listening), `-n` muestra direcciones y puertos en formato numerico (sin resolver nombres), y `-p` muestra el PID y nombre del proceso asociado. Esta combinacion muestra todos los servicios que estan escuchando en el sistema.
 
 </details>
 
-## Ejercicio 3
-¿Que diferencia hay entre `traceroute`, `tracepath` y `mtr`?
+---
+
+### Pregunta 3
+
+Cual de las siguientes herramientas combina las funcionalidades de `ping` y `traceroute` en una interfaz interactiva en tiempo real?
+
+a) `netcat`
+b) `mtr`
+c) `tcpdump`
+d) `nmap`
 
 <details><summary>Respuesta</summary>
 
-- **`traceroute`**: Muestra la ruta que siguen los paquetes hasta el destino. Usa UDP por defecto. Puede requerir permisos de root.
-- **`tracepath`**: Similar a traceroute pero **no requiere root**. Es mas simple y no tiene tantas opciones.
-- **`mtr`**: Combina `ping` + `traceroute` en una herramienta **interactiva en tiempo real**. Muestra continuamente la ruta, latencia y perdida de paquetes. Muy util para diagnosticar problemas intermitentes.
+**b) `mtr`**
 
-Para un informe puntual usa `traceroute/tracepath`. Para monitoreo continuo usa `mtr`.
+`mtr` (My Traceroute) combina `ping` y `traceroute` en una herramienta interactiva en tiempo real, mostrando continuamente la ruta, latencia y perdida de paquetes en cada salto. Es muy util para diagnosticar problemas intermitentes de red. `mtr -r` genera un reporte puntual. `netcat` es para conexiones de red genericas. `tcpdump` captura trafico de red. `nmap` escanea puertos y hosts.
 
 </details>
 
-## Ejercicio 4
-¿Como verificarias si el puerto 443 (HTTPS) esta abierto en el servidor 192.168.1.50 usando `nc`?
+---
+
+### Pregunta 4
+
+Un usuario puede hacer ping a `8.8.8.8` pero no puede acceder a `www.ejemplo.com`. Cual es la causa mas probable?
+
+a) El gateway esta mal configurado
+b) La interfaz de red esta desactivada
+c) Hay un problema de resolucion DNS
+d) El firewall bloquea todo el trafico saliente
 
 <details><summary>Respuesta</summary>
 
-```bash
-nc -zv 192.168.1.50 443
-```
+**c) Hay un problema de resolucion DNS**
 
-- `-z`: Modo escaneo (no envia datos)
-- `-v`: Modo verbose
-
-Salida exitosa:
-```
-Connection to 192.168.1.50 443 port [tcp/https] succeeded!
-```
-
-Salida fallida:
-```
-nc: connect to 192.168.1.50 port 443 (tcp) failed: Connection refused
-```
+Si el ping a una IP publica (8.8.8.8) funciona, la conectividad de red esta correcta (interfaz activa, IP correcta, gateway funcional, acceso a Internet). El hecho de que no pueda acceder a un nombre de dominio indica un problema de resolucion DNS. Se puede diagnosticar con `cat /etc/resolv.conf`, `dig www.ejemplo.com` o `dig @8.8.8.8 www.ejemplo.com` para probar con un DNS especifico.
 
 </details>
 
-## Ejercicio 5
-Un usuario reporta que no puede acceder a `www.ejemplo.com`. Puede hacer ping a 8.8.8.8 exitosamente. ¿Cual es probablemente el problema y como lo diagnosticarias?
+---
+
+### Pregunta 5
+
+Que comando verifica si el puerto TCP 443 esta abierto en el servidor 192.168.1.50?
+
+a) `ping -p 443 192.168.1.50`
+b) `traceroute -p 443 192.168.1.50`
+c) `nc -zv 192.168.1.50 443`
+d) `ss -tulnp 192.168.1.50:443`
 
 <details><summary>Respuesta</summary>
 
-Si el ping a una IP publica (8.8.8.8) funciona pero no puede acceder a un nombre de dominio, el problema es probablemente de **resolucion DNS**.
+**c) `nc -zv 192.168.1.50 443`**
 
-Diagnostico:
-```bash
-# Verificar configuracion DNS
-cat /etc/resolv.conf
-
-# Intentar resolver el nombre
-dig www.ejemplo.com
-nslookup www.ejemplo.com
-host www.ejemplo.com
-
-# Probar con un DNS especifico
-dig @8.8.8.8 www.ejemplo.com
-
-# Verificar nsswitch.conf
-cat /etc/nsswitch.conf
-```
-
-Posibles causas:
-- `/etc/resolv.conf` sin servidores DNS o con servidores incorrectos
-- Servidor DNS no accesible (firewall bloqueando puerto 53)
-- Error en la configuracion de `/etc/nsswitch.conf`
+El comando `nc` (netcat) con las opciones `-z` (modo escaneo, sin enviar datos) y `-v` (modo verbose) intenta una conexion TCP al puerto especificado y reporta si esta abierto o cerrado. `ping` usa ICMP y no puede verificar puertos especificos. `traceroute -p` cambia el puerto usado para la traza pero no verifica la apertura de un servicio. `ss -tulnp` solo muestra los puertos locales, no de servidores remotos.
 
 </details>
 
-## Ejercicio 6
-¿Como capturarias solo el trafico HTTP (puerto 80) en la interfaz eth0 usando `tcpdump` y lo guardarias en un archivo?
+---
+
+### Pregunta 6
+
+Que significan los asteriscos `* * *` en la salida de `traceroute`?
+
+a) El router de ese salto es el destino final
+b) El router de ese salto no respondio dentro del tiempo limite
+c) Hay perdida total de paquetes en la red
+d) El router esta bloqueando todo el trafico
 
 <details><summary>Respuesta</summary>
 
-```bash
-tcpdump -i eth0 port 80 -w captura_http.pcap
-```
+**b) El router de ese salto no respondio dentro del tiempo limite**
 
-- `-i eth0`: Capturar en la interfaz eth0
-- `port 80`: Solo trafico del puerto 80
-- `-w captura_http.pcap`: Guardar en archivo
-
-Para leer la captura posteriormente:
-```bash
-tcpdump -r captura_http.pcap
-tcpdump -r captura_http.pcap -A    # Con contenido ASCII
-```
-
-Variantes utiles:
-```bash
-tcpdump -i eth0 port 80 -n -c 100      # 100 paquetes, sin DNS
-tcpdump -i eth0 host 192.168.1.1 and port 80   # Filtro combinado
-```
+Los `* * *` en la salida de `traceroute` indican que el router de ese salto no envio una respuesta dentro del tiempo limite. Esto puede deberse a que el router tiene ICMP deshabilitado, el firewall filtra las respuestas, o el paquete fue descartado. No significa necesariamente que haya un problema de conectividad, ya que muchos routers en Internet estan configurados para no responder a estos paquetes.
 
 </details>
 
-## Ejercicio 7
-¿Que comando moderno usarias para ver todas las conexiones TCP establecidas en el sistema?
+---
+
+### Pregunta 7
+
+Cual es la herramienta moderna que reemplaza a `netstat`?
+
+a) `ip`
+b) `nmap`
+c) `ss`
+d) `nc`
 
 <details><summary>Respuesta</summary>
 
-```bash
-ss -tnp state established
-```
+**c) `ss`**
 
-O mas simple:
-```bash
-ss -tnp | grep ESTAB
-```
-
-- `-t`: Solo TCP
-- `-n`: Numerico
-- `-p`: Mostrar proceso
-- `state established`: Solo conexiones establecidas
-
-Con netstat legacy:
-```bash
-netstat -tnp | grep ESTABLISHED
-```
+`ss` (socket statistics) del paquete iproute2 es el reemplazo moderno de `netstat` del paquete net-tools (deprecado). `ss` es mas rapido y ofrece mas funcionalidades, como filtrado por estado de conexion (`ss state established`) y por puerto (`ss sport = :22`). Las opciones comunes son compatibles: `ss -tulnp` muestra la misma informacion que `netstat -tulnp`. `ip` reemplaza a `ifconfig` y `route`, no a `netstat`.
 
 </details>
 
-## Ejercicio 8
-¿Que significan los asteriscos `* * *` en la salida de `traceroute`? ¿Y un valor de TTL bajo en la respuesta de `ping`?
+---
+
+### Pregunta 8
+
+Que comando captura solo el trafico del puerto 80 en la interfaz eth0 y lo guarda en un archivo?
+
+a) `tcpdump -i eth0 -p 80 -o captura.pcap`
+b) `tcpdump -i eth0 port 80 -w captura.pcap`
+c) `ss -i eth0 --capture port 80 > captura.pcap`
+d) `netcat -i eth0 -l 80 > captura.pcap`
 
 <details><summary>Respuesta</summary>
 
-**Asteriscos en traceroute**:
-Los `* * *` indican que el router de ese salto **no respondio** dentro del tiempo limite. Esto puede deberse a:
-- El router tiene ICMP deshabilitado o filtrado por firewall
-- El paquete fue descartado
-- No significa necesariamente que haya un problema de conectividad
+**b) `tcpdump -i eth0 port 80 -w captura.pcap`**
 
-**TTL bajo en ping**:
-El TTL (Time To Live) se decrementa en cada salto (router). Un TTL bajo indica que el paquete ha pasado por **muchos routers** para llegar al destino. Los valores tipicos iniciales son 64 (Linux), 128 (Windows) y 255 (algunos dispositivos de red). Si el TTL llega a 0, el paquete se descarta y se envia un mensaje ICMP "Time Exceeded".
+`tcpdump` captura trafico de red y requiere permisos de root. La opcion `-i eth0` especifica la interfaz, el filtro `port 80` captura solo trafico del puerto 80, y `-w captura.pcap` guarda la captura en un archivo. Para leer la captura posteriormente se usa `tcpdump -r captura.pcap`. Otras opciones utiles: `-n` (no resolver nombres), `-c 100` (capturar solo 100 paquetes), `-A` (mostrar contenido ASCII).
+
+</details>
+
+---
+
+### Pregunta 9
+
+Que diferencia hay entre `traceroute` y `tracepath`?
+
+a) `traceroute` usa TCP y `tracepath` usa UDP
+b) `traceroute` puede requerir root y `tracepath` no requiere root
+c) `tracepath` es mas completo y tiene mas opciones que `traceroute`
+d) No hay diferencia, son nombres alternativos del mismo comando
+
+<details><summary>Respuesta</summary>
+
+**b) `traceroute` puede requerir root y `tracepath` no requiere root**
+
+`traceroute` es la herramienta clasica que puede requerir permisos de root (dependiendo del metodo de sondeo), usa UDP por defecto y tiene muchas opciones (como `-I` para ICMP, `-T` para TCP). `tracepath` es una alternativa mas simple que no requiere permisos de root y tiene menos opciones. Ambos muestran la ruta que siguen los paquetes hasta el destino (saltos/hops). Las versiones IPv6 son `traceroute6` y `tracepath6`.
+
+</details>
+
+---
+
+### Pregunta 10
+
+En la salida de `route -n`, que indican las flags `UG` en una entrada de la tabla de rutas?
+
+a) La ruta esta inactiva y usa un gateway
+b) La ruta esta activa y es una ruta directamente conectada
+c) La ruta esta activa y usa un gateway
+d) La ruta es una ruta de host que esta activa
+
+<details><summary>Respuesta</summary>
+
+**c) La ruta esta activa y usa un gateway**
+
+En la tabla de rutas, la flag `U` indica que la ruta esta activa (Up) y la flag `G` indica que la ruta usa un gateway (no es directamente conectada). La combinacion `UG` es tipica de la ruta por defecto (0.0.0.0 con gateway). Otras flags: `H` indica que el destino es un host especifico (no una red), `!` indica una ruta de rechazo, `D` indica una ruta creada dinamicamente.
 
 </details>

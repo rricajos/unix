@@ -14,251 +14,193 @@ subtema: "107.1"
 
 # 107.1 - Ejercicios: Gestionar cuentas de usuario y grupo
 
-## Ejercicio 1
-Dada la siguiente linea de `/etc/passwd`, identifica cada campo y explica que informacion proporciona:
+### Pregunta 1
+
+Dada la siguiente linea de `/etc/passwd`, que indica el valor `x` en el segundo campo?
 ```
 carlos:x:1001:1001:Carlos Lopez,,,:/home/carlos:/bin/bash
 ```
 
-<details>
-<summary>Respuesta</summary>
+a) Que la cuenta del usuario esta bloqueada
+b) Que la contrasena real se almacena cifrada en `/etc/shadow`
+c) Que el usuario no tiene contrasena asignada
+d) Que el usuario debe cambiar su contrasena en el proximo inicio de sesion
 
-Los 7 campos separados por `:` son:
+<details><summary>Respuesta</summary>
 
-| Campo | Valor | Significado |
-|-------|-------|-------------|
-| 1. usuario | `carlos` | Nombre de login |
-| 2. password | `x` | La contrasena esta en /etc/shadow |
-| 3. UID | `1001` | User ID numerico |
-| 4. GID | `1001` | Group ID del grupo primario |
-| 5. GECOS | `Carlos Lopez,,,` | Informacion del usuario (nombre completo y campos adicionales vacios) |
-| 6. home | `/home/carlos` | Directorio home del usuario |
-| 7. shell | `/bin/bash` | Shell que se ejecuta al iniciar sesion |
+**b) Que la contrasena real se almacena cifrada en `/etc/shadow`**
 
-El UID 1001 indica que es un usuario regular (>= 1000). La `x` en el campo password es estandar y significa que la contrasena real (cifrada) se almacena en `/etc/shadow`.
+La `x` en el campo de password de `/etc/passwd` es el valor estandar que indica que la contrasena cifrada se encuentra en `/etc/shadow`, un archivo que solo es legible por root. Los 7 campos de `/etc/passwd` son: usuario (`carlos`), password (`x`), UID (`1001`), GID (`1001`), GECOS (`Carlos Lopez,,,`), directorio home (`/home/carlos`) y shell (`/bin/bash`). El UID 1001 indica un usuario regular (>= 1000).
+
 </details>
 
 ---
 
-## Ejercicio 2
-Cual es la diferencia critica entre `usermod -G sudo,docker sandra` y `usermod -aG docker sandra`? Que ocurre con los grupos existentes en cada caso?
+### Pregunta 2
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia critica entre `usermod -G sudo,docker sandra` y `usermod -aG docker sandra`?
 
-**`usermod -G sudo,docker sandra`** (sin `-a`):
-- **REEMPLAZA** completamente los grupos secundarios del usuario
-- Si sandra pertenecia a los grupos `sudo, developers, audio`, despues de este comando solo pertenecera a `sudo, docker`
-- Los grupos `developers` y `audio` se pierden
+a) `-G` agrega grupos y `-aG` los reemplaza
+b) `-G` sin `-a` REEMPLAZA todos los grupos secundarios; `-aG` AGREGA el grupo sin perder los existentes
+c) Ambos comandos agregan grupos secundarios de la misma forma
+d) `-G` afecta al grupo primario y `-aG` afecta a los grupos secundarios
 
-**`usermod -aG docker sandra`** (con `-a`):
-- **AGREGA** el grupo `docker` a los grupos secundarios existentes
-- Si sandra pertenecia a `sudo, developers, audio`, despues del comando pertenecera a `sudo, developers, audio, docker`
-- Ningun grupo existente se pierde
+<details><summary>Respuesta</summary>
 
-**Regla:** Siempre usar `-aG` (con la `a` de append) cuando se quiera agregar un grupo sin perder los existentes. Usar `-G` solo cuando se quiera redefinir la lista completa de grupos secundarios.
+**b) `-G` sin `-a` REEMPLAZA todos los grupos secundarios; `-aG` AGREGA el grupo sin perder los existentes**
 
-**NOTA:** Ninguna de estas opciones afecta al grupo primario (el definido en /etc/passwd). Para cambiar el grupo primario se usa `-g`.
+`usermod -G sudo,docker sandra` **reemplaza completamente** los grupos secundarios: si sandra pertenecia a `sudo, developers, audio`, despues solo pertenecera a `sudo, docker`. `usermod -aG docker sandra` **agrega** el grupo `docker` a los existentes: si pertenecia a `sudo, developers, audio`, despues tendra `sudo, developers, audio, docker`. Siempre usar `-aG` (con la `a` de append) cuando se quiera agregar un grupo sin perder los demas. Ninguna opcion afecta al grupo primario (para eso se usa `-g`).
+
 </details>
 
 ---
 
-## Ejercicio 3
-Escribe los comandos necesarios para crear un usuario llamado `webadmin` con las siguientes caracteristicas: home en `/home/webadmin`, shell `/bin/bash`, grupo primario `www-data`, grupos adicionales `sudo` y `developers`, contrasena que expire en 90 dias con aviso 14 dias antes, cuenta que expire el 31 de diciembre de 2026.
+### Pregunta 3
 
-<details>
-<summary>Respuesta</summary>
+Un administrador ejecuta `chage -d 0 sandra`. Que efecto tiene este comando?
 
-```bash
-# 1. Crear el usuario
-useradd -m -d /home/webadmin -s /bin/bash -g www-data -G sudo,developers -c "Web Admin" -e 2026-12-31 webadmin
+a) Elimina la contrasena del usuario sandra
+b) Bloquea la cuenta del usuario sandra permanentemente
+c) Fuerza al usuario sandra a cambiar su contrasena en el proximo inicio de sesion
+d) Establece la fecha de expiracion de la cuenta al dia actual
 
-# 2. Establecer contrasena
-passwd webadmin
+<details><summary>Respuesta</summary>
 
-# 3. Configurar politicas de envejecimiento de contrasena
-chage -M 90 -W 14 webadmin
+**c) Fuerza al usuario sandra a cambiar su contrasena en el proximo inicio de sesion**
 
-# 4. Verificar la configuracion
-id webadmin
-# uid=1002(webadmin) gid=33(www-data) groups=33(www-data),27(sudo),1001(developers)
+`chage -d 0 sandra` establece la fecha del ultimo cambio de contrasena al dia 0 (01/01/1970, epoch). Como la contrasena "caduco" hace decadas segun esta fecha, el sistema obliga al usuario a cambiarla en el proximo login. Es equivalente en efecto a `passwd -e sandra`. Para verificar la politica de envejecimiento se usa `chage -l sandra`. La opcion `-d` establece el campo "lastchg" de `/etc/shadow`.
 
-getent passwd webadmin
-# webadmin:x:1002:33:Web Admin:/home/webadmin:/bin/bash
-
-chage -l webadmin
-# Numero maximo de dias entre cambios: 90
-# Dias de aviso antes de caducidad: 14
-# La cuenta caduca: dic 31, 2026
-```
-
-Opciones usadas:
-- `-m`: Crear directorio home
-- `-d /home/webadmin`: Ruta del home
-- `-s /bin/bash`: Shell
-- `-g www-data`: Grupo primario
-- `-G sudo,developers`: Grupos secundarios
-- `-c "Web Admin"`: Comentario GECOS
-- `-e 2026-12-31`: Expiracion de cuenta
-- `chage -M 90`: Contrasena expira cada 90 dias
-- `chage -W 14`: Aviso 14 dias antes
 </details>
 
 ---
 
-## Ejercicio 4
-Explica los 9 campos de `/etc/shadow` usando esta linea de ejemplo:
-```
-sandra:$6$abc123$xyz789:19503:7:90:14:30:19900:
-```
+### Pregunta 4
 
-<details>
-<summary>Respuesta</summary>
+En el archivo `/etc/shadow`, que indica el prefijo `$6$` en el campo de la contrasena cifrada?
 
-| Campo | Valor | Significado |
-|-------|-------|-------------|
-| 1. usuario | `sandra` | Nombre de login |
-| 2. hash | `$6$abc123$xyz789` | Contrasena cifrada. `$6$` indica SHA-512, `abc123` es el salt |
-| 3. lastchg | `19503` | Ultimo cambio de contrasena: 19503 dias desde 01/01/1970 |
-| 4. min | `7` | Minimo 7 dias entre cambios de contrasena |
-| 5. max | `90` | La contrasena expira cada 90 dias |
-| 6. warn | `14` | Se avisa 14 dias antes de que expire |
-| 7. inactive | `30` | 30 dias de gracia tras expirar la contrasena (cuenta inactiva) |
-| 8. expire | `19900` | La cuenta expira el dia 19900 desde epoch |
-| 9. reserved | (vacio) | Campo reservado para uso futuro |
+a) Que la contrasena fue cifrada con MD5
+b) Que la contrasena fue cifrada con SHA-256
+c) Que la contrasena fue cifrada con SHA-512
+d) Que la contrasena tiene una longitud minima de 6 caracteres
 
-**Calcular fechas:**
-- Ultimo cambio (19503): `date -d "1970-01-01 + 19503 days"` = ~mayo 2023
-- Expiracion cuenta (19900): `date -d "1970-01-01 + 19900 days"` = ~junio 2024
+<details><summary>Respuesta</summary>
 
-El flujo de vida de la contrasena es: tras el ultimo cambio, la contrasena es valida durante 90 dias (max). 14 dias antes de expirar se avisa (warn). Tras expirar, hay 30 dias de gracia (inactive). Si no se cambia, la cuenta se bloquea.
+**c) Que la contrasena fue cifrada con SHA-512**
+
+El prefijo `$6$` indica que se uso el algoritmo **SHA-512** para cifrar la contrasena. Otros prefijos comunes: `$5$` = SHA-256, `$y$` = yescrypt (moderno), `$1$` = MD5 (obsoleto e inseguro). Despues del prefijo viene el **salt** (cadena aleatoria usada en el cifrado) y luego el hash resultante. El formato completo es `$id$salt$hash`. El algoritmo se configura en `/etc/login.defs` con el parametro `ENCRYPT_METHOD`.
+
 </details>
 
 ---
 
-## Ejercicio 5
-Que diferencia hay entre `passwd -l sandra`, `usermod -L sandra` y `chage -E 0 sandra`? Todas "bloquean" la cuenta, pero de formas diferentes. Explica cada una.
+### Pregunta 5
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia entre `passwd -l sandra` y `chage -E 0 sandra` para bloquear una cuenta?
 
-**`passwd -l sandra` y `usermod -L sandra`:**
-- Ambos hacen lo mismo: agregan un `!` delante del hash de la contrasena en `/etc/shadow`
-- Esto impide la autenticacion con contrasena
-- PERO el usuario podria iniciar sesion con clave SSH u otros metodos que no usen contrasena
-- Se desbloquean con `passwd -u sandra` o `usermod -U sandra`
+a) Ambos bloquean la cuenta de forma identica, impidiendo todo acceso
+b) `passwd -l` agrega `!` al hash en shadow (bloquea solo autenticacion por contrasena); `chage -E 0` expira la cuenta completamente (bloquea todo acceso)
+c) `passwd -l` elimina la contrasena; `chage -E 0` la cifra con un algoritmo mas seguro
+d) `passwd -l` bloquea todo acceso; `chage -E 0` solo bloquea la autenticacion por contrasena
 
-**`chage -E 0 sandra`:**
-- Establece la fecha de expiracion de la **cuenta** al dia 0 (01/01/1970), es decir, la cuenta ya ha expirado
-- Bloquea COMPLETAMENTE la cuenta: no se puede iniciar sesion con ningun metodo
-- Se revierte con `chage -E -1 sandra` (elimina la expiracion) o `chage -E YYYY-MM-DD sandra` (nueva fecha futura)
+<details><summary>Respuesta</summary>
 
-**Diferencia critica:**
-- `passwd -l` / `usermod -L`: Solo bloquean la autenticacion por contrasena
-- `chage -E 0`: Bloquea la cuenta completamente, independientemente del metodo de autenticacion
+**b) `passwd -l` agrega `!` al hash en shadow (bloquea solo autenticacion por contrasena); `chage -E 0` expira la cuenta completamente (bloquea todo acceso)**
 
-Para un bloqueo mas seguro y completo, `chage -E 0` es la opcion mas restrictiva.
+`passwd -l` (y `usermod -L`) agregan un `!` delante del hash en `/etc/shadow`, lo que impide la autenticacion con contrasena pero el usuario podria iniciar sesion con clave SSH u otros metodos. Se desbloquea con `passwd -u` o `usermod -U`. `chage -E 0` establece la fecha de expiracion de la cuenta al dia 0 (01/01/1970), bloqueando COMPLETAMENTE la cuenta sin importar el metodo de autenticacion. Se revierte con `chage -E -1` (elimina la expiracion).
+
 </details>
 
 ---
 
-## Ejercicio 6
-Que hacen los comandos `getent`, `id` y `newgrp`? Proporciona un ejemplo practico de cada uno y explica cuando usarias cada herramienta.
+### Pregunta 6
 
-<details>
-<summary>Respuesta</summary>
+Que ventaja tiene `getent passwd sandra` sobre leer directamente `/etc/passwd` con `grep`?
 
-**`getent` - Consultar bases de datos del sistema (NSS):**
-```bash
-getent passwd sandra
-# sandra:x:1000:1000:Sandra Garcia:/home/sandra:/bin/bash
+a) `getent` es mas rapido porque usa cache del kernel
+b) `getent` consulta todas las fuentes NSS (archivos locales, LDAP, NIS), no solo los archivos locales
+c) `getent` muestra la contrasena cifrada, mientras que `grep` no puede acceder a ella
+d) `getent` permite editar la informacion del usuario directamente
 
-getent group sudo
-# sudo:x:27:sandra,carlos
-```
-Se usa para consultar informacion de usuarios y grupos de CUALQUIER fuente (archivos locales, LDAP, NIS). Es mas completo que leer directamente `/etc/passwd` porque incluye fuentes remotas.
+<details><summary>Respuesta</summary>
 
-**`id` - Informacion rapida de UID/GID/grupos:**
-```bash
-id sandra
-# uid=1000(sandra) gid=1000(sandra) groups=1000(sandra),27(sudo),999(docker)
+**b) `getent` consulta todas las fuentes NSS (archivos locales, LDAP, NIS), no solo los archivos locales**
 
-id -Gn sandra
-# sandra sudo docker
-```
-Se usa para ver rapidamente el UID, GID y todos los grupos de un usuario. Util para verificar si un usuario pertenece a un grupo.
+`getent` consulta las bases de datos NSS (Name Service Switch) configuradas en `/etc/nsswitch.conf`, lo que incluye archivos locales (`/etc/passwd`), **LDAP**, **NIS/NIS+** y otras bases de datos remotas. En entornos empresariales donde los usuarios se gestionan centralmente con LDAP, `grep` sobre `/etc/passwd` no mostraria los usuarios remotos, pero `getent` si. Por eso `getent` es la forma recomendada de consultar informacion de usuarios y grupos.
 
-**`newgrp` - Cambiar grupo primario temporalmente:**
-```bash
-newgrp developers
-# Abre un nuevo shell con grupo primario "developers"
-# Los archivos creados tendran grupo "developers"
-touch archivo.txt    # El grupo sera "developers"
-exit                 # Volver al grupo primario original
-```
-Se usa cuando se necesita crear archivos con un grupo diferente al grupo primario. Inicia un nuevo shell; al hacer `exit` se vuelve al shell anterior con el grupo original.
 </details>
 
 ---
 
-## Ejercicio 7
-Un usuario llamado `ana` necesita ser eliminado del sistema. Describe las diferencias entre `userdel ana` y `userdel -r ana`. Que pasos previos recomendarias antes de eliminar un usuario?
+### Pregunta 7
 
-<details>
-<summary>Respuesta</summary>
+Que diferencia hay entre `userdel ana` y `userdel -r ana`?
 
-**`userdel ana`** (sin opciones):
-- Elimina la entrada del usuario de `/etc/passwd`, `/etc/shadow`, `/etc/group`
-- **NO elimina** el directorio home (`/home/ana`) ni el mail spool
-- Los archivos del usuario quedan "huerfanos" (pertenecen a un UID que ya no existe)
+a) `userdel` elimina usuario y home; `userdel -r` solo elimina el usuario
+b) `userdel` elimina solo la entrada del usuario; `userdel -r` elimina tambien el directorio home y el mail spool
+c) `userdel -r` hace una copia de seguridad antes de eliminar
+d) No hay diferencia, ambos eliminan el usuario y todos sus archivos
 
-**`userdel -r ana`** (con `-r`):
-- Elimina la entrada del usuario de todos los archivos
-- **SI elimina** el directorio home y el mail spool (`/var/mail/ana`)
-- Archivos fuera del home (por ejemplo en `/tmp`) no se eliminan
+<details><summary>Respuesta</summary>
 
-**Pasos previos recomendados:**
-1. Verificar si el usuario tiene procesos activos: `ps -u ana`
-2. Terminar los procesos del usuario: `killall -u ana`
-3. Hacer backup del home si es necesario: `tar czf ana_backup.tar.gz /home/ana`
-4. Buscar archivos del usuario fuera del home: `find / -user ana`
-5. Bloquear la cuenta primero si no se va a eliminar inmediatamente: `usermod -L ana`
-6. Eliminar el usuario: `userdel -r ana`
-7. Buscar archivos huerfanos: `find / -nouser`
+**b) `userdel` elimina solo la entrada del usuario; `userdel -r` elimina tambien el directorio home y el mail spool**
+
+`userdel ana` elimina la entrada del usuario de `/etc/passwd`, `/etc/shadow` y `/etc/group`, pero **NO elimina** el directorio home (`/home/ana`) ni el mail spool; los archivos quedan "huerfanos" (pertenecen a un UID que ya no existe). `userdel -r ana` elimina la entrada del usuario Y su directorio home y mail spool (`/var/mail/ana`). Archivos fuera del home (por ejemplo en `/tmp`) no se eliminan en ningun caso. Se recomienda buscar archivos huerfanos con `find / -nouser`.
+
 </details>
 
 ---
 
-## Ejercicio 8
-Describe el papel del archivo `/etc/login.defs` y del directorio `/etc/skel/`. Que parametros importantes se configuran en `login.defs`? Que relacion tiene `/etc/skel/` con el comando `useradd -m`?
+### Pregunta 8
 
-<details>
-<summary>Respuesta</summary>
+Que archivo define los valores por defecto como `UID_MIN`, `PASS_MAX_DAYS` y `ENCRYPT_METHOD` para la creacion de usuarios?
 
-**`/etc/login.defs`:**
-Define los valores por defecto para la creacion de usuarios y politicas de contrasenas. Parametros importantes:
+a) `/etc/passwd`
+b) `/etc/shadow`
+c) `/etc/login.defs`
+d) `/etc/skel/.bashrc`
 
-| Parametro | Descripcion | Valor tipico |
-|-----------|-------------|--------------|
-| `UID_MIN` | UID minimo para usuarios regulares | 1000 |
-| `UID_MAX` | UID maximo para usuarios regulares | 60000 |
-| `GID_MIN` / `GID_MAX` | Rango de GIDs | 1000-60000 |
-| `PASS_MAX_DAYS` | Dias maximos de validez de contrasena | 99999 |
-| `PASS_MIN_DAYS` | Dias minimos entre cambios | 0 |
-| `PASS_WARN_AGE` | Dias de aviso antes de expirar | 7 |
-| `CREATE_HOME` | Crear home automaticamente | yes/no |
-| `ENCRYPT_METHOD` | Algoritmo de cifrado | SHA512 |
-| `USERGROUPS_ENAB` | Crear grupo privado por usuario | yes |
+<details><summary>Respuesta</summary>
 
-**`/etc/skel/`:**
-Es el directorio "esqueleto" que contiene archivos plantilla. Cuando se ejecuta `useradd -m usuario`, los archivos de `/etc/skel/` se copian al nuevo directorio `/home/usuario/`.
+**c) `/etc/login.defs`**
 
-Contenido tipico:
-- `.bashrc` - Configuracion del shell
-- `.profile` - Variables de entorno
-- `.bash_logout` - Acciones al cerrar sesion
+`/etc/login.defs` define los valores por defecto para la creacion de usuarios y politicas de contrasenas. Parametros importantes: `UID_MIN`/`UID_MAX` (rango de UIDs para usuarios regulares, tipicamente 1000-60000), `PASS_MAX_DAYS` (dias maximos de validez de contrasena), `PASS_MIN_DAYS`, `PASS_WARN_AGE`, `UMASK` (mascara de permisos), `CREATE_HOME`, `ENCRYPT_METHOD` (algoritmo de cifrado, tipicamente SHA512) y `USERGROUPS_ENAB` (crear grupo privado por usuario).
 
-**Relacion:** `useradd -m` crea el directorio home y copia el contenido de `/etc/skel/` al nuevo home. Sin la opcion `-m`, no se crea directorio home y `/etc/skel/` no se utiliza.
+</details>
 
-Para personalizar el entorno de nuevos usuarios, se modifican los archivos en `/etc/skel/`.
+---
+
+### Pregunta 9
+
+Que hace el comando `newgrp developers` y como se vuelve al grupo primario original?
+
+a) Cambia permanentemente el grupo primario del usuario a `developers`
+b) Cambia temporalmente el grupo primario abriendo un nuevo shell; se vuelve al original con `exit`
+c) Agrega al usuario al grupo `developers` de forma permanente
+d) Elimina al usuario de todos los grupos excepto `developers`
+
+<details><summary>Respuesta</summary>
+
+**b) Cambia temporalmente el grupo primario abriendo un nuevo shell; se vuelve al original con `exit`**
+
+`newgrp developers` inicia un nuevo shell con el grupo primario cambiado a `developers`. Los archivos creados en ese shell tendran `developers` como grupo propietario. Al ejecutar `exit`, se vuelve al shell anterior con el grupo primario original. El usuario debe pertenecer al grupo o conocer su contrasena. Es util cuando se necesita crear archivos con un grupo diferente al grupo primario habitual, sin cambiar la configuracion permanente.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que comandos se utilizan para cambiar la informacion GECOS y el shell de login de un usuario, respectivamente?
+
+a) `usermod -c` y `usermod -s`
+b) `chfn` y `chsh`
+c) `passwd -c` y `passwd -s`
+d) `chage -c` y `chage -s`
+
+<details><summary>Respuesta</summary>
+
+**b) `chfn` y `chsh`**
+
+**`chfn`** (change finger) permite modificar el campo GECOS (campo 5 de `/etc/passwd`), que contiene informacion personal como nombre completo, oficina y telefonos. Se puede usar interactivamente o con opciones: `chfn -f "Sandra Garcia" sandra`. **`chsh`** (change shell) permite cambiar el shell de login (campo 7 de `/etc/passwd`): `chsh -s /bin/zsh sandra`. Solo se pueden asignar shells listados en `/etc/shells`. `usermod -c` y `usermod -s` tambien funcionan, pero `chfn` y `chsh` son los comandos especificos del examen LPIC-1.
+
 </details>

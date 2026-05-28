@@ -14,250 +14,190 @@ subtema: "102.5"
 
 # 102.5 - Gestion de paquetes RPM y YUM: Ejercicios
 
-## Ejercicio 1
-**Cual es la diferencia entre `rpm -i`, `rpm -U` y `rpm -F`? Cual es la opcion mas recomendada para uso general y por que?**
+### Pregunta 1
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la diferencia entre `rpm -i`, `rpm -U` y `rpm -F`?
 
-| Opcion | Paquete NO instalado | Paquete YA instalado |
-|--------|---------------------|---------------------|
-| `rpm -i` (install) | Lo instala | Da error (ya existe) |
-| `rpm -U` (upgrade) | Lo instala | Lo actualiza |
-| `rpm -F` (freshen) | No hace nada | Lo actualiza |
+a) `-i` instala o actualiza, `-U` solo instala si no existe, `-F` fuerza la instalacion
+b) `-i` solo instala (da error si existe), `-U` instala o actualiza, `-F` solo actualiza si ya esta instalado
+c) Los tres son equivalentes y realizan la misma operacion
+d) `-i` instala desde repositorio, `-U` actualiza desde repositorio, `-F` instala desde archivo local
 
-La opcion **mas recomendada es `rpm -U`** (normalmente con `-Uvh`) porque:
-- Si el paquete no esta instalado, lo instala
-- Si ya esta instalado, lo actualiza a la nueva version
-- Es la opcion mas versatil y segura para ambos escenarios
+<details><summary>Respuesta</summary>
 
-`rpm -F` es util cuando se quiere actualizar **solo** paquetes que ya estan instalados (por ejemplo, al aplicar un conjunto de parches, evitando instalar paquetes nuevos).
+**b) `-i` solo instala (da error si existe), `-U` instala o actualiza, `-F` solo actualiza si ya esta instalado**
+
+`rpm -i` (install) instala un paquete nuevo; si ya esta instalado, da error. `rpm -U` (upgrade) es la opcion mas versatil: instala si no existe y actualiza si ya existe. `rpm -F` (freshen) solo actualiza paquetes que ya estan instalados; si el paquete no existe, no hace nada. Por esto, `rpm -Uvh` es la opcion mas recomendada para uso general, ya que cubre ambos escenarios (instalacion y actualizacion).
+
 </details>
 
 ---
 
-## Ejercicio 2
-**Necesitas saber que paquete RPM instalo el archivo `/etc/httpd/conf/httpd.conf`. Escribe el comando. Tambien escribe el comando para listar todos los archivos de configuracion de ese paquete.**
+### Pregunta 2
 
-<details>
-<summary>Ver respuesta</summary>
+Necesitas saber que paquete RPM instalo el archivo `/etc/httpd/conf/httpd.conf`. Que comando usarias?
 
-Para saber **que paquete instalo el archivo**:
-```bash
-rpm -qf /etc/httpd/conf/httpd.conf
-```
-Resultado probable: `httpd-2.4.37-xx.el8.x86_64`
+a) `rpm -ql /etc/httpd/conf/httpd.conf`
+b) `rpm -qi httpd`
+c) `rpm -qf /etc/httpd/conf/httpd.conf`
+d) `yum search httpd.conf`
 
-Para listar todos los **archivos de configuracion** de ese paquete:
-```bash
-rpm -qc httpd
-```
+<details><summary>Respuesta</summary>
 
-Otros comandos utiles para investigar el paquete:
-```bash
-rpm -qi httpd    # Informacion detallada
-rpm -ql httpd    # Todos los archivos (no solo configuracion)
-rpm -qd httpd    # Solo archivos de documentacion
-rpm -qR httpd    # Dependencias del paquete
-```
+**c) `rpm -qf /etc/httpd/conf/httpd.conf`**
+
+El flag `-qf` (query file) busca a que paquete instalado pertenece un archivo determinado. Es el equivalente en RPM a `dpkg -S` en Debian. `rpm -ql` lista los archivos de un paquete (no busca por archivo). `rpm -qi` muestra informacion detallada de un paquete. `yum search` busca paquetes por nombre o descripcion en los repositorios, no por archivo. Para buscar que paquete proporciona un archivo en los repositorios (no solo instalados), se usa `yum provides`.
+
 </details>
 
 ---
 
-## Ejercicio 3
-**Ejecutas `rpm -V httpd` y obtienes la siguiente salida:**
-```
-S.5....T.  c /etc/httpd/conf/httpd.conf
-..5....T.  c /etc/httpd/conf.d/ssl.conf
-```
-**Que significa cada caracter? Es preocupante este resultado?**
+### Pregunta 3
 
-<details>
-<summary>Ver respuesta</summary>
+Al ejecutar `rpm -V httpd` obtienes la salida `S.5....T.  c /etc/httpd/conf/httpd.conf`. Que significa `S`, `5` y `T`?
 
-Analisis de la primera linea `S.5....T.  c /etc/httpd/conf/httpd.conf`:
+a) `S` = seguridad comprometida, `5` = 5 modificaciones, `T` = tipo de archivo cambiado
+b) `S` = tamano cambiado, `5` = checksum MD5 cambiado, `T` = fecha de modificacion cambiada
+c) `S` = SUID activado, `5` = nivel 5 de alerta, `T` = transferido a otra ubicacion
+d) `S` = symlink roto, `5` = 5 dependencias faltantes, `T` = temporalmente deshabilitado
 
-| Posicion | Caracter | Significado |
-|----------|----------|-------------|
-| 1 | `S` | El **tamano** del archivo ha cambiado |
-| 2 | `.` | Sin cambios (permisos) |
-| 3 | `5` | El **checksum MD5** ha cambiado (contenido modificado) |
-| 4-7 | `....` | Sin cambios (dispositivo, enlace, usuario, grupo) |
-| 8 | `T` | La **fecha de modificacion** ha cambiado |
-| 9 | `.` | Sin cambios |
-| | `c` | Es un archivo de **configuracion** |
+<details><summary>Respuesta</summary>
 
-La segunda linea indica que `ssl.conf` ha sido modificado (checksum y fecha), pero su tamano no cambio.
+**b) `S` = tamano cambiado, `5` = checksum MD5 cambiado, `T` = fecha de modificacion cambiada**
 
-**No es preocupante** en este caso. La marca `c` indica que son archivos de configuracion, y es **normal y esperado** que el administrador los haya modificado. Si estos cambios aparecieran en archivos binarios (sin la marca `c`), entonces si seria preocupante (posible intrusion o corrupcion).
+En la salida de `rpm -V`, cada posicion indica un tipo de verificacion: S (Size/tamano), M (Mode/permisos), 5 (MD5 checksum), D (Device), L (Link), U (User), G (Group), T (Time/fecha). Un punto (`.`) significa sin cambios. La marca `c` indica que es un archivo de configuracion. Es normal que los archivos de configuracion muestren cambios porque el administrador los modifica habitualmente. Seria preocupante si estos cambios aparecieran en archivos binarios.
+
 </details>
 
 ---
 
-## Ejercicio 4
-**Tienes un archivo `nginx-1.20.1-2.el8.x86_64.rpm` y necesitas ver que archivos contiene SIN instalarlo. Escribe dos formas de hacerlo: una con rpm y otra con rpm2cpio.**
+### Pregunta 4
 
-<details>
-<summary>Ver respuesta</summary>
+Como puedes ver los archivos que contiene un paquete `.rpm` SIN instalarlo?
 
-**Metodo 1: con rpm (flag -qp)**
-```bash
-rpm -qpl nginx-1.20.1-2.el8.x86_64.rpm
-```
-El flag `-p` indica que se consulta un archivo .rpm en lugar de un paquete instalado. `-ql` lista los archivos.
+a) `rpm -ql paquete.rpm`
+b) `rpm -qpl paquete.rpm`
+c) `rpm -qa paquete.rpm`
+d) `rpm -qf paquete.rpm`
 
-**Metodo 2: con rpm2cpio**
-```bash
-rpm2cpio nginx-1.20.1-2.el8.x86_64.rpm | cpio -t
-```
-`rpm2cpio` convierte el .rpm a formato cpio, y `cpio -t` lista el contenido sin extraerlo.
+<details><summary>Respuesta</summary>
 
-Para **extraer** los archivos sin instalar (con rpm2cpio):
-```bash
-rpm2cpio nginx-1.20.1-2.el8.x86_64.rpm | cpio -idmv
-```
+**b) `rpm -qpl paquete.rpm`**
 
-Tambien se puede consultar informacion del .rpm sin instalar:
-```bash
-rpm -qpi nginx-1.20.1-2.el8.x86_64.rpm    # Info general
-rpm -qpR nginx-1.20.1-2.el8.x86_64.rpm    # Dependencias
-rpm -qpc nginx-1.20.1-2.el8.x86_64.rpm    # Archivos de configuracion
-```
+El flag `-p` indica que se consulta un archivo `.rpm` en lugar de un paquete instalado en el sistema. Combinado con `-ql` (query list), muestra los archivos contenidos en el paquete sin necesidad de instalarlo. Sin el flag `-p`, `rpm -ql` solo funciona con paquetes ya instalados. Otros flags utiles con `-p` son: `rpm -qpi` (informacion), `rpm -qpR` (dependencias) y `rpm -qpc` (archivos de configuracion). Otra alternativa es usar `rpm2cpio paquete.rpm | cpio -t`.
+
 </details>
 
 ---
 
-## Ejercicio 5
-**Que comando de yum/dnf usarias para buscar que paquete proporciona el archivo `/usr/bin/wget`? Cual es el equivalente en el mundo Debian?**
+### Pregunta 5
 
-<details>
-<summary>Ver respuesta</summary>
+Que comando de yum/dnf busca que paquete proporciona un archivo determinado, incluso si el paquete no esta instalado?
 
-En **yum/dnf** (Red Hat):
-```bash
-yum provides /usr/bin/wget
-# o
-dnf provides /usr/bin/wget
-# tambien se puede buscar con patron:
-yum provides "*/wget"
-```
+a) `yum search /usr/bin/wget`
+b) `yum info /usr/bin/wget`
+c) `yum provides /usr/bin/wget`
+d) `yum list /usr/bin/wget`
 
-En el mundo **Debian**:
-- Si el paquete esta instalado: `dpkg -S /usr/bin/wget`
-- Si el paquete NO esta instalado: `apt-file search /usr/bin/wget`
+<details><summary>Respuesta</summary>
 
-Equivalencia directa: `rpm -qf` y `yum provides` corresponden a `dpkg -S` y `apt-file search` respectivamente.
+**c) `yum provides /usr/bin/wget`**
 
-| Situacion | RPM/YUM | Debian |
-|-----------|---------|--------|
-| Paquete instalado | `rpm -qf /usr/bin/wget` | `dpkg -S /usr/bin/wget` |
-| Cualquier paquete | `yum provides /usr/bin/wget` | `apt-file search /usr/bin/wget` |
+`yum provides` (o `dnf provides`) busca en todos los repositorios configurados que paquete proporciona un archivo determinado, sin necesidad de tenerlo instalado. Tambien acepta patrones con comodines: `yum provides "*/wget"`. Para paquetes ya instalados se puede usar `rpm -qf`. El equivalente en el mundo Debian es `apt-file search` para repositorios y `dpkg -S` para paquetes instalados.
+
 </details>
 
 ---
 
-## Ejercicio 6
-**Describe la estructura de un archivo de repositorio en `/etc/yum.repos.d/` y explica que significa cada campo. Escribe un ejemplo para el repositorio EPEL.**
+### Pregunta 6
 
-<details>
-<summary>Ver respuesta</summary>
+En un archivo de repositorio de `/etc/yum.repos.d/`, que significa el campo `gpgcheck=1`?
 
-Un archivo `.repo` tiene formato INI con los siguientes campos:
+a) El repositorio esta habilitado y activo
+b) Se verificaran las firmas GPG de los paquetes descargados
+c) La clave GPG se generara automaticamente
+d) El repositorio usa conexion cifrada HTTPS
 
-```ini
-[epel]
-name=Extra Packages for Enterprise Linux 8 - $basearch
-baseurl=https://dl.fedoraproject.org/pub/epel/8/$basearch/
-enabled=1
-gpgcheck=1
-gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-EPEL-8
-```
+<details><summary>Respuesta</summary>
 
-Explicacion de cada campo:
+**b) Se verificaran las firmas GPG de los paquetes descargados**
 
-| Campo | Valor | Descripcion |
-|-------|-------|-------------|
-| `[epel]` | Identificador | Nombre unico del repositorio (usado internamente) |
-| `name` | Texto descriptivo | Nombre legible. `$basearch` se sustituye por la arquitectura |
-| `baseurl` | URL | Direccion del repositorio. Alternativa: `mirrorlist` |
-| `enabled` | `1` | 1 = repositorio activo; 0 = desactivado |
-| `gpgcheck` | `1` | 1 = verificar firmas GPG; 0 = no verificar |
-| `gpgkey` | Ruta/URL | Ubicacion de la clave GPG publica para verificacion |
+El campo `gpgcheck=1` indica que yum/dnf verificara la firma GPG de cada paquete descargado de ese repositorio para garantizar su autenticidad e integridad. La clave GPG publica para la verificacion se especifica en el campo `gpgkey`. Si se establece `gpgcheck=0`, no se verifican firmas (no recomendado en produccion). El campo `enabled=1/0` controla si el repositorio esta activo o no, que es una configuracion independiente de la verificacion GPG.
 
-Variables especiales:
-- `$releasever` - version del sistema (7, 8, 9...)
-- `$basearch` - arquitectura (x86_64, aarch64...)
-
-Para gestionar repositorios:
-```bash
-yum repolist                    # Ver repos activos
-yum repolist all                # Ver todos (activos e inactivos)
-yum-config-manager --enable epel   # Activar repo
-yum-config-manager --disable epel  # Desactivar repo
-```
 </details>
 
 ---
 
-## Ejercicio 7
-**Compara los comandos equivalentes entre `rpm`/`yum` y `dpkg`/`apt` para las siguientes operaciones: instalar un paquete local, listar todos los paquetes instalados, buscar a que paquete pertenece un archivo.**
+### Pregunta 7
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es el equivalente en el mundo Debian de `rpm -qa` (listar todos los paquetes instalados)?
 
-| Operacion | RPM/YUM | Debian |
-|-----------|---------|--------|
-| **Instalar paquete local** | `rpm -ivh paquete.rpm` (sin deps) | `dpkg -i paquete.deb` (sin deps) |
-| | `yum localinstall paquete.rpm` (con deps) | `apt install ./paquete.deb` (con deps) |
-| **Listar todos los instalados** | `rpm -qa` | `dpkg -l` |
-| | `yum list installed` | `apt list --installed` |
-| **Buscar paquete por archivo** | `rpm -qf /ruta/archivo` (instalados) | `dpkg -S /ruta/archivo` (instalados) |
-| | `yum provides /ruta/archivo` (todos) | `apt-file search /ruta/archivo` (todos) |
+a) `apt list`
+b) `dpkg -l`
+c) `dpkg -S`
+d) `apt-cache search`
 
-Diferencias importantes:
-- `rpm` y `dpkg` son de **bajo nivel**: no resuelven dependencias
-- `yum`/`dnf` y `apt` son de **alto nivel**: resuelven dependencias automaticamente
-- `yum` actualiza su lista de paquetes automaticamente, mientras que `apt` requiere `apt update`
-- `rpm -e` no tiene concepto de "purge" vs "remove" como `dpkg`
+<details><summary>Respuesta</summary>
+
+**b) `dpkg -l`**
+
+`rpm -qa` lista todos los paquetes RPM instalados en el sistema. Su equivalente directo en Debian es `dpkg -l`, que lista todos los paquetes con su estado, version y descripcion breve. Tambien se puede usar `apt list --installed` para una salida similar. `dpkg -S` busca a que paquete pertenece un archivo (equivalente a `rpm -qf`). `apt-cache search` busca paquetes por nombre o descripcion en los repositorios.
+
 </details>
 
 ---
 
-## Ejercicio 8
-**Un sistema CentOS tiene un paquete parcialmente instalado y corrupto. Describe como usarias `rpm2cpio` para extraer un archivo de configuracion del paquete original `.rpm` sin reinstalar todo el paquete. Da los comandos paso a paso.**
+### Pregunta 8
 
-<details>
-<summary>Ver respuesta</summary>
+Que herramienta permite extraer archivos de un paquete `.rpm` sin instalarlo?
 
-Escenario: El archivo `/etc/nginx/nginx.conf` se ha corrompido y necesitas restaurar la version original del paquete RPM.
+a) `rpm --extract paquete.rpm`
+b) `rpm2cpio paquete.rpm | cpio -idmv`
+c) `yum extract paquete.rpm`
+d) `tar xvf paquete.rpm`
 
-```bash
-# 1. Identificar que paquete proporciona el archivo
-rpm -qf /etc/nginx/nginx.conf
-# Resultado: nginx-1.20.1-2.el8.x86_64
+<details><summary>Respuesta</summary>
 
-# 2. Descargar el RPM sin instalarlo (si no lo tienes)
-yumdownloader nginx
-# o
-dnf download nginx
+**b) `rpm2cpio paquete.rpm | cpio -idmv`**
 
-# 3. Ver el contenido del RPM para confirmar la ruta
-rpm2cpio nginx-1.20.1-2.el8.x86_64.rpm | cpio -t | grep nginx.conf
+`rpm2cpio` convierte un paquete `.rpm` al formato cpio, que luego se extrae con el comando `cpio`. Los flags de cpio son: `i` (extraer), `d` (crear directorios), `m` (mantener fechas de modificacion), `v` (verbose). Para solo listar el contenido sin extraer se usa `cpio -t`. Esta herramienta es muy util para recuperar archivos de configuracion originales de un paquete sin tener que reinstalarlo completamente. Tambien se puede descargar el RPM con `yumdownloader` o `dnf download` si no se tiene el archivo.
 
-# 4. Extraer solo el archivo necesario en un directorio temporal
-mkdir /tmp/recuperacion
-cd /tmp/recuperacion
-rpm2cpio /ruta/nginx-1.20.1-2.el8.x86_64.rpm | cpio -idmv ./etc/nginx/nginx.conf
+</details>
 
-# 5. Copiar el archivo restaurado a su ubicacion original
-cp /tmp/recuperacion/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+---
 
-# 6. Verificar que el paquete ahora esta correcto
-rpm -V nginx
-```
+### Pregunta 9
 
-**Notas**:
-- `cpio -idmv`: `i` = extraer, `d` = crear directorios, `m` = mantener fechas, `v` = verbose
-- Las rutas dentro del cpio son relativas, por eso se usa `./etc/...`
-- Alternativa: `rpm -Uvh --force nginx.rpm` reinstalaria todo el paquete
+Cual es la principal diferencia entre `yum` y `dnf`?
+
+a) `yum` resuelve dependencias y `dnf` no
+b) `dnf` usa el resolvedor de dependencias `libsolv` y tiene mejor rendimiento que `yum`
+c) `yum` funciona en Fedora y `dnf` solo en CentOS
+d) `dnf` no soporta grupos de paquetes a diferencia de `yum`
+
+<details><summary>Respuesta</summary>
+
+**b) `dnf` usa el resolvedor de dependencias `libsolv` y tiene mejor rendimiento que `yum`**
+
+DNF (Dandified YUM) es el sucesor de YUM, usado en Fedora y RHEL/CentOS 8+. La sintaxis es practicamente identica, pero DNF utiliza `libsolv` para la resolucion de dependencias (mas rapido y preciso), tiene mejor rendimiento general y usa Python 3. La configuracion principal de DNF esta en `/etc/dnf/dnf.conf` aunque comparte el directorio `/etc/yum.repos.d/` para los repositorios. En muchas distribuciones modernas, `yum` es simplemente un enlace simbolico a `dnf`.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que gestor de paquetes de alto nivel se utiliza en distribuciones openSUSE/SLES?
+
+a) `apt`
+b) `dnf`
+c) `zypper`
+d) `pacman`
+
+<details><summary>Respuesta</summary>
+
+**c) `zypper`**
+
+`zypper` es el gestor de paquetes de alto nivel para distribuciones SUSE (openSUSE y SLES). Utiliza RPM como formato de paquetes de bajo nivel, al igual que yum/dnf. Los comandos principales de zypper son: `zypper install` (o `zypper in`) para instalar, `zypper remove` (o `zypper rm`) para desinstalar, `zypper search` (o `zypper se`) para buscar, `zypper update` (o `zypper up`) para actualizar, y `zypper refresh` (o `zypper ref`) para actualizar la lista de repositorios.
+
 </details>

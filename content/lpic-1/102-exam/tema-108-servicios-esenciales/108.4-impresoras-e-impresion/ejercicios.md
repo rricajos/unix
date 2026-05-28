@@ -14,124 +14,190 @@ subtema: "108.4"
 
 # 108.4 Gestionar impresoras e impresion - Ejercicios
 
-## Ejercicio 1
-¿En que puerto escucha la interfaz web de CUPS? ¿Como se accede a ella?
+### Pregunta 1
+
+En que puerto escucha la interfaz web de administracion de CUPS?
+
+a) Puerto 80
+b) Puerto 443
+c) Puerto 515
+d) Puerto 631
 
 <details><summary>Respuesta</summary>
 
-CUPS escucha en el **puerto 631**. Se accede mediante un navegador web en la URL:
+**d) Puerto 631**
 
-```
-http://localhost:631
-```
-
-Desde ahi se pueden administrar impresoras, ver trabajos y modificar la configuracion. Las operaciones administrativas requieren autenticacion.
+CUPS (Common UNIX Printing System) proporciona una interfaz web de administracion accesible en `http://localhost:631`. El puerto 631 es tambien el puerto del protocolo IPP (Internet Printing Protocol), que es la base de CUPS. El puerto 80 es HTTP, el 443 es HTTPS y el 515 es LPD (Line Printer Daemon), el protocolo legacy de impresion BSD.
 
 </details>
 
-## Ejercicio 2
-¿Cual es la diferencia entre `lp -d Impresora archivo` y `lpr -P Impresora archivo`?
+---
+
+### Pregunta 2
+
+Cual es la diferencia entre los comandos `lp -d Impresora archivo` y `lpr -P Impresora archivo`?
+
+a) `lp` imprime en color y `lpr` en blanco y negro
+b) `lp` es estilo System V y usa `-d`, mientras que `lpr` es estilo BSD y usa `-P` para seleccionar impresora
+c) `lpr` permite multiples copias y `lp` no
+d) `lp` envia a impresoras de red y `lpr` solo a impresoras locales
 
 <details><summary>Respuesta</summary>
 
-Ambos imprimen un archivo en una impresora especifica, pero provienen de tradiciones diferentes:
+**b) `lp` es estilo System V y usa `-d`, mientras que `lpr` es estilo BSD y usa `-P` para seleccionar impresora**
 
-- **`lp -d`**: Estilo **System V**. Usa `-d` para especificar destino y `-n` para copias.
-- **`lpr -P`**: Estilo **BSD**. Usa `-P` para especificar impresora y `-#` para copias.
-
-En CUPS, ambos son funcionales y producen el mismo resultado.
+Ambos comandos envian un archivo a imprimir, pero provienen de tradiciones Unix diferentes. `lp` es estilo System V y usa `-d` para especificar el destino y `-n` para el numero de copias. `lpr` es estilo BSD y usa `-P` para seleccionar la impresora y `-#` para el numero de copias. En CUPS, ambos son funcionales y producen el mismo resultado.
 
 </details>
 
-## Ejercicio 3
-¿Como agregarias una impresora de red llamada "Oficina" con URI `ipp://192.168.1.50/ipp/print` y la establecerias como predeterminada?
+---
+
+### Pregunta 3
+
+Que comando se utiliza para agregar una impresora y establecerla como predeterminada en CUPS?
+
+a) `cupsctl -p Oficina -d`
+b) `lpadmin -p Oficina -E -v ipp://host/ipp/print` seguido de `lpadmin -d Oficina`
+c) `cups-add -name Oficina -default`
+d) `lpstat -p Oficina --set-default`
 
 <details><summary>Respuesta</summary>
 
-```bash
-lpadmin -p Oficina -E -v ipp://192.168.1.50/ipp/print -m everywhere
-lpadmin -d Oficina
-```
+**b) `lpadmin -p Oficina -E -v ipp://host/ipp/print` seguido de `lpadmin -d Oficina`**
 
-- `-p Oficina`: nombre de la impresora
-- `-E`: habilitar e aceptar trabajos
-- `-v`: URI del dispositivo
-- `-m everywhere`: usar IPP Everywhere (driver generico)
-- `-d Oficina`: establecer como predeterminada
+El comando `lpadmin` es la herramienta de administracion de impresoras en CUPS. La opcion `-p` define el nombre, `-E` habilita la impresora y la configura para aceptar trabajos, `-v` especifica el URI del dispositivo. Para establecerla como predeterminada se usa `lpadmin -d nombre`. La opcion `-x` eliminaria una impresora. Los comandos en las opciones A, C y D no existen con esa sintaxis.
 
 </details>
 
-## Ejercicio 4
-¿Que comando muestra el estado completo del sistema de impresion? ¿Y cual muestra solo la impresora predeterminada?
+---
+
+### Pregunta 4
+
+Que comando muestra el estado completo del sistema de impresion, incluyendo impresoras, trabajos en cola y dispositivos?
+
+a) `lpq -a`
+b) `lpstat -t`
+c) `cupsctl status`
+d) `lpadmin --list`
 
 <details><summary>Respuesta</summary>
 
-```bash
-lpstat -t     # Estado completo del sistema de impresion
-lpstat -d     # Solo la impresora predeterminada
-```
+**b) `lpstat -t`**
 
-`lpstat -t` incluye: estado del planificador, impresoras predeterminadas, dispositivos, impresoras que aceptan trabajos y trabajos en cola.
+El comando `lpstat -t` muestra el estado completo del sistema de impresion, incluyendo: estado del planificador, impresora predeterminada, dispositivos, impresoras que aceptan trabajos y trabajos en cola. `lpstat -d` muestra solo la impresora predeterminada, `lpstat -p` el estado de las impresoras y `lpstat -a` cuales aceptan trabajos. `lpq -a` muestra las colas de impresion en estilo BSD.
 
 </details>
 
-## Ejercicio 5
-¿Como cancelarias un trabajo de impresion con ID "Oficina-42"? Indica al menos dos formas.
+---
+
+### Pregunta 5
+
+Cual es la diferencia entre `cupsdisable` y `cupsreject`?
+
+a) `cupsdisable` rechaza nuevos trabajos y `cupsreject` detiene la impresion
+b) `cupsdisable` detiene la impresion de trabajos existentes y `cupsreject` impide que la cola acepte nuevos trabajos
+c) Son equivalentes, ambos detienen la impresora completamente
+d) `cupsdisable` elimina la impresora y `cupsreject` la pausa temporalmente
 
 <details><summary>Respuesta</summary>
 
-```bash
-cancel Oficina-42          # System V style
-lprm 42                    # BSD style (por numero)
-```
+**b) `cupsdisable` detiene la impresion de trabajos existentes y `cupsreject` impide que la cola acepte nuevos trabajos**
 
-Para cancelar todos los trabajos:
-```bash
-cancel -a                  # System V - todos los trabajos
-lprm -                     # BSD - todos los trabajos del usuario
-```
+`cupsenable`/`cupsdisable` controlan si la impresora procesa los trabajos de su cola. `cupsaccept`/`cupsreject` controlan si la cola acepta nuevos trabajos. Una impresora deshabilitada (disable) pero que acepta trabajos (accept) acumulara trabajos en la cola sin imprimirlos. Una impresora habilitada (enable) que rechaza trabajos (reject) procesara los existentes pero no aceptara nuevos.
 
 </details>
 
-## Ejercicio 6
-¿Cual es la diferencia entre `/etc/cups/cupsd.conf` y `/etc/cups/printers.conf`? ¿Que son los archivos PPD?
+---
+
+### Pregunta 6
+
+Que comando lista los URIs de dispositivos de impresion disponibles en el sistema?
+
+a) `lpstat -v`
+b) `lpinfo -v`
+c) `lpadmin -l`
+d) `cupsctl --list-devices`
 
 <details><summary>Respuesta</summary>
 
-- **`/etc/cups/cupsd.conf`**: Configuracion del **demonio CUPS** (puertos, permisos de acceso, comparticion en red, nivel de log).
-- **`/etc/cups/printers.conf`**: Contiene la **definicion de las impresoras** configuradas (nombre, URI, estado, opciones). No debe editarse manualmente con CUPS en ejecucion.
-- **Archivos PPD** (PostScript Printer Description): Describen las **capacidades de cada impresora** (resoluciones, tamanos de papel, bandejas, opciones de acabado). Se almacenan en `/etc/cups/ppd/`.
+**b) `lpinfo -v`**
+
+El comando `lpinfo -v` lista los URIs de dispositivos de impresion disponibles (impresoras detectadas), como USB, IPP, Socket y LPD. `lpinfo -m` lista los modelos y drivers disponibles. `lpstat -v` muestra los URIs de las impresoras ya configuradas (no las disponibles para configurar). `lpadmin -l` y `cupsctl --list-devices` no son opciones validas.
 
 </details>
 
-## Ejercicio 7
-¿Como descubririas los dispositivos de impresion disponibles en el sistema y los drivers instalados?
+---
+
+### Pregunta 7
+
+Cual de los siguientes es el archivo de configuracion del demonio CUPS que no debe editarse manualmente mientras el servicio esta en ejecucion?
+
+a) `/etc/cups/cupsd.conf`
+b) `/etc/cups/printers.conf`
+c) `/etc/cups/ppd/impresora.ppd`
+d) `/etc/cups/client.conf`
 
 <details><summary>Respuesta</summary>
 
-```bash
-lpinfo -v     # Listar URIs de dispositivos disponibles (impresoras detectadas)
-lpinfo -m     # Listar modelos/drivers disponibles
-```
+**b) `/etc/cups/printers.conf`**
 
-Para buscar un driver especifico:
-```bash
-lpinfo -m | grep -i "hp laserjet"
-```
+El archivo `/etc/cups/printers.conf` contiene la definicion de las impresoras configuradas (nombre, URI, estado, opciones) y no debe editarse manualmente mientras CUPS esta en ejecucion, ya que el demonio lo sobrescribe. `/etc/cups/cupsd.conf` es la configuracion del demonio (puertos, permisos, comparticion) y se puede editar con precaucion. Los archivos PPD describen las capacidades de cada impresora y se almacenan en `/etc/cups/ppd/`.
 
 </details>
 
-## Ejercicio 8
-¿Que protocolos de red soporta CUPS para conectarse a impresoras remotas? Indica el formato URI de cada uno.
+---
+
+### Pregunta 8
+
+Que comando cancela un trabajo de impresion especifico con ID "Oficina-42" usando el estilo System V?
+
+a) `lprm Oficina-42`
+b) `cancel Oficina-42`
+c) `lprm -P Oficina 42`
+d) `cupsdisable Oficina-42`
 
 <details><summary>Respuesta</summary>
 
-| Protocolo | URI | Puerto |
-|-----------|-----|--------|
-| **IPP** (Internet Printing Protocol) | `ipp://host/ipp/print` | 631 |
-| **Socket/JetDirect** | `socket://host:9100` | 9100 |
-| **LPD** (Line Printer Daemon) | `lpd://host/cola` | 515 |
+**b) `cancel Oficina-42`**
 
-IPP es el protocolo preferido en CUPS, ya que es su protocolo nativo. Socket/JetDirect es comun en impresoras HP. LPD es el protocolo legacy de BSD.
+El comando `cancel` es el comando estilo System V para cancelar trabajos de impresion, y acepta el ID completo del trabajo (nombre-numero). `lprm` es el equivalente BSD, que acepta el numero del trabajo (`lprm 42`) o `-P impresora numero` para especificar la impresora. `cancel -a` cancela todos los trabajos y `lprm -` cancela todos los trabajos del usuario actual. `cupsdisable` deshabilita la impresora, no cancela trabajos.
+
+</details>
+
+---
+
+### Pregunta 9
+
+Cual es el protocolo nativo de CUPS para la comunicacion con impresoras en red?
+
+a) LPD (Line Printer Daemon)
+b) SMB (Server Message Block)
+c) IPP (Internet Printing Protocol)
+d) JetDirect (Socket)
+
+<details><summary>Respuesta</summary>
+
+**c) IPP (Internet Printing Protocol)**
+
+IPP (Internet Printing Protocol) es el protocolo nativo y base del sistema CUPS, usando el puerto 631/TCP. IPP Everywhere es el estandar moderno que permite imprimir sin necesidad de drivers especificos. LPD (puerto 515) es el protocolo legacy de BSD. Socket/JetDirect (puerto 9100) es comun en impresoras HP. SMB se usa para compartir impresoras en redes Windows.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Como se mueve un trabajo de impresion de la cola "Oficina" a la cola "OtraImpresora"?
+
+a) `lpmove Oficina-123 OtraImpresora`
+b) `cancel Oficina-123 && lp -d OtraImpresora archivo`
+c) `lpr -P OtraImpresora --from Oficina-123`
+d) `cupsmove Oficina-123 OtraImpresora`
+
+<details><summary>Respuesta</summary>
+
+**a) `lpmove Oficina-123 OtraImpresora`**
+
+El comando `lpmove` permite mover trabajos de impresion de una cola a otra. Se puede mover un trabajo especifico (`lpmove Oficina-123 OtraImpresora`) o todos los trabajos de una impresora (`lpmove Oficina OtraImpresora`). Esto es util cuando una impresora se averia y se necesitan redirigir los trabajos pendientes a otra impresora disponible. El comando `cupsmove` no existe.
 
 </details>

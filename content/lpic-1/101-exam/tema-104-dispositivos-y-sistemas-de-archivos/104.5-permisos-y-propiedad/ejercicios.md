@@ -14,211 +14,208 @@ subtema: "104.5"
 
 # 104.5 Gestionar permisos y propiedad de archivos - Ejercicios
 
-## Ejercicio 1
-**Convierte los siguientes permisos entre notacion simbolica y octal:**
-- a) `rwxr-x---` -> octal
-- b) `rw-rw-r--` -> octal
-- c) `755` -> simbolica
-- d) `640` -> simbolica
+### Pregunta 1
+
+Cual es el valor octal de los permisos `rwxr-x---`?
+
+a) `740`
+b) `750`
+c) `751`
+d) `760`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-| Simbolico | Calculo | Octal |
-|-----------|---------|-------|
-| a) `rwxr-x---` | (4+2+1)(4+0+1)(0+0+0) | **750** |
-| b) `rw-rw-r--` | (4+2+0)(4+2+0)(4+0+0) | **664** |
+**b) `750`**
 
-| Octal | Calculo | Simbolico |
-|-------|---------|-----------|
-| c) `755` | 7=rwx, 5=r-x, 5=r-x | **rwxr-xr-x** |
-| d) `640` | 6=rw-, 4=r--, 0=--- | **rw-r-----** |
+Para convertir permisos simbolicos a octales se suma el valor de cada permiso: `r=4`, `w=2`, `x=1`. Para el propietario: `rwx` = 4+2+1 = **7**. Para el grupo: `r-x` = 4+0+1 = **5**. Para otros: `---` = 0+0+0 = **0**. El resultado es `750`. La opcion `a` (740) corresponderia a `rwxr-----`. La opcion `c` (751) corresponderia a `rwxr-x--x`. La opcion `d` (760) corresponderia a `rwxrw----`.
 
 </details>
 
 ---
 
-## Ejercicio 2
-**Si la umask es `027`, ¿que permisos tendran los archivos y directorios recien creados? Muestra el calculo.**
+### Pregunta 2
+
+Si la umask es `027`, que permisos tendran los archivos recien creados?
+
+a) `750` (rwxr-x---)
+b) `640` (rw-r-----)
+c) `644` (rw-r--r--)
+d) `600` (rw-------)
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-**Archivos nuevos:**
-```
-Base archivos:  666  (rw-rw-rw-)
-umask:         -027
-Resultado:      640  (rw-r-----)
-```
+**b) `640` (rw-r-----)**
 
-**Directorios nuevos:**
-```
-Base directorios: 777  (rwxrwxrwx)
-umask:           -027
-Resultado:        750  (rwxr-x---)
-```
-
-Con umask `027`:
-- Los archivos se crean con permisos `640`: el propietario puede leer y escribir, el grupo solo leer, otros sin acceso.
-- Los directorios se crean con permisos `750`: el propietario tiene acceso total, el grupo puede leer y acceder, otros sin acceso.
+La umask define que permisos se quitan al crear archivos y directorios. Los archivos tienen permisos base `666` (rw-rw-rw-) y los directorios `777` (rwxrwxrwx). Para archivos: `666 - 027 = 640` (rw-r-----). Para directorios seria: `777 - 027 = 750` (rwxr-x---). Con umask `027`, el propietario puede leer y escribir, el grupo solo leer, y otros no tienen ningun acceso. La opcion `a` (750) seria el resultado para directorios, no para archivos.
 
 </details>
 
 ---
 
-## Ejercicio 3
-**El archivo `/usr/bin/passwd` tiene los siguientes permisos: `-rwsr-xr-x 1 root root`. Explica:**
-- a) ¿Que significa la `s` en la posicion del propietario?
-- b) ¿Por que es necesario que este archivo tenga SUID?
-- c) ¿Cual seria el valor octal completo de estos permisos?
+### Pregunta 3
+
+El archivo `/usr/bin/passwd` tiene permisos `-rwsr-xr-x` y es propiedad de root. Que significa la `s` en la posicion de ejecucion del propietario?
+
+a) El archivo solo puede ser ejecutado por root
+b) El archivo tiene permisos de escritura especiales para el grupo
+c) El archivo se ejecuta con los permisos del propietario (root) independientemente de quien lo ejecute
+d) El archivo tiene el sticky bit activado
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-**a)** La `s` en la posicion de ejecucion del propietario indica que tiene activado el bit **SUID (Set User ID)**. Cuando un usuario normal ejecuta este programa, se ejecuta con los permisos del propietario del archivo (en este caso, **root**).
+**c) El archivo se ejecuta con los permisos del propietario (root) independientemente de quien lo ejecute**
 
-**b)** Es necesario porque `passwd` necesita modificar el archivo `/etc/shadow` para cambiar contrasenas. `/etc/shadow` es propiedad de root y solo root puede escribir en el. Sin SUID, los usuarios normales no podrian cambiar sus propias contrasenas.
-
-**c)** El valor octal completo es **`4755`**:
-- `4` = SUID
-- `7` = rwx (propietario, la `s` reemplaza a `x` pero el permiso de ejecucion sigue activo)
-- `5` = r-x (grupo)
-- `5` = r-x (otros)
+La `s` en la posicion de ejecucion del propietario indica el bit **SUID (Set User ID)**. Cuando un usuario normal ejecuta `/usr/bin/passwd`, el proceso se ejecuta con los permisos de root (propietario del archivo), permitiendole modificar `/etc/shadow` que solo root puede escribir. Sin SUID, los usuarios normales no podrian cambiar sus contrasenas. El valor octal completo de estos permisos es `4755` (4=SUID, 7=rwx, 5=r-x, 5=r-x). El sticky bit se muestra como `t` en la posicion de otros, no como `s` en la del propietario.
 
 </details>
 
 ---
 
-## Ejercicio 4
-**Necesitas configurar un directorio `/proyecto` para trabajo en equipo del grupo `developers`. Los requisitos son:**
-- Todos los miembros del grupo pueden crear y editar archivos
-- Los archivos nuevos deben pertenecer automaticamente al grupo `developers`
-- Los usuarios no pueden borrar archivos de otros miembros
+### Pregunta 4
 
-**¿Que comandos ejecutarias?**
+Un administrador necesita configurar el directorio `/proyecto` para trabajo en equipo. Los archivos nuevos deben heredar el grupo `developers` y los usuarios no deben poder borrar archivos de otros. Cual es el valor octal correcto?
+
+a) `2770`
+b) `1770`
+c) `3770`
+d) `4770`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
+**c) `3770`**
+
+El valor `3770` combina SGID (2) + Sticky bit (1) = 3, mas los permisos `rwxrwx---` (770). El SGID en un directorio hace que los archivos creados dentro hereden automaticamente el grupo del directorio (`developers`), en lugar del grupo primario del usuario. El Sticky bit impide que un usuario pueda borrar archivos de otros miembros, aunque tenga permiso de escritura en el directorio. Solo el propietario del archivo, el propietario del directorio o root pueden eliminar archivos. `2770` solo tiene SGID sin sticky bit. `1770` solo tiene sticky bit sin SGID. `4770` tiene SUID que no tiene efecto en directorios en Linux.
+
+</details>
+
+---
+
+### Pregunta 5
+
+Cual es la diferencia entre SGID aplicado a un archivo ejecutable y SGID aplicado a un directorio?
+
+a) En archivos ejecuta como grupo del archivo; en directorios no tiene efecto
+b) En archivos permite borrado restringido; en directorios hereda el grupo
+c) En archivos ejecuta como grupo del archivo; en directorios los archivos nuevos heredan el grupo del directorio
+d) No hay diferencia, el comportamiento es identico en ambos casos
+
+<details>
+<summary>Respuesta</summary>
+
+**c) En archivos ejecuta como grupo del archivo; en directorios los archivos nuevos heredan el grupo del directorio**
+
+SGID (Set Group ID) tiene comportamientos distintos segun donde se aplique. En un archivo ejecutable, hace que el proceso se ejecute con los permisos del grupo del archivo, no del grupo del usuario que lo ejecuta. En un directorio, hace que los archivos y subdirectorios creados dentro hereden el grupo del directorio padre, en lugar del grupo primario del usuario que los crea. SGID en directorios es fundamental para el trabajo colaborativo en equipo y es mucho mas frecuente en el examen LPIC-1. Sin SGID, los archivos creados tendrian el grupo primario del usuario, complicando el trabajo colaborativo.
+
+</details>
+
+---
+
+### Pregunta 6
+
+Un usuario ejecuta los siguientes comandos con umask `022`:
 ```bash
-# 1. Crear el directorio
-mkdir /proyecto
-
-# 2. Asignar propietario root y grupo developers
-chown root:developers /proyecto
-
-# 3. Establecer permisos: SGID (2) + Sticky (1) + rwxrwx--- (770)
-#    SGID: archivos nuevos heredan grupo "developers"
-#    Sticky: solo el propietario del archivo puede borrarlo
-chmod 3770 /proyecto
-```
-
-Desglose de `3770`:
-- `3` = SGID (2) + Sticky bit (1)
-- `7` = rwx para propietario (root)
-- `7` = rwx para grupo (developers)
-- `0` = --- para otros
-
-Verificacion:
-```bash
-ls -ld /proyecto
-drwxrws--T 2 root developers ... /proyecto
-```
-
-Nota: La `T` mayuscula aparece porque otros no tienen permiso `x`. Si quisieras `t` minuscula, usarias `3771` o `3773`.
-
-</details>
-
----
-
-## Ejercicio 5
-**¿Cual es la diferencia entre SGID aplicado a un archivo ejecutable y SGID aplicado a un directorio?**
-
-<details>
-<summary>Ver respuesta</summary>
-
-| Aspecto | SGID en archivo ejecutable | SGID en directorio |
-|---------|---------------------------|-------------------|
-| **Efecto** | El proceso se ejecuta con los permisos del **grupo del archivo** | Los archivos y subdirectorios creados dentro **heredan el grupo del directorio** |
-| **Proposito** | Permitir que un programa acceda a recursos del grupo | Facilitar trabajo en equipo manteniendo grupo consistente |
-| **Ejemplo** | Un programa que necesita acceso a archivos de un grupo especifico | Directorio compartido `/proyecto` donde todo debe ser del grupo `devs` |
-| **Indicador ls -l** | `s` o `S` en posicion `x` del grupo | `s` o `S` en posicion `x` del grupo |
-
-**SGID en directorios** es mucho mas frecuente en el examen y en la practica real.
-
-Sin SGID en un directorio, los archivos creados tendrian el grupo primario del usuario que los crea, lo que complica el trabajo colaborativo.
-
-</details>
-
----
-
-## Ejercicio 6
-**Ejecuta mentalmente los siguientes comandos y determina los permisos resultantes:**
-
-```bash
-touch archivo.txt          # umask = 022
+touch archivo.txt
 chmod 644 archivo.txt
 chmod u+x archivo.txt
 chmod g+w archivo.txt
 chmod o= archivo.txt
 ```
+Cuales son los permisos finales en formato octal?
 
-**¿Cuales son los permisos finales en formato simbolico y octal?**
+a) `644`
+b) `764`
+c) `760`
+d) `740`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-Paso a paso:
-```
-1. touch archivo.txt (umask 022) -> rw-r--r-- (644)
-2. chmod 644                      -> rw-r--r-- (644)  [sin cambio]
-3. chmod u+x                      -> rwxr--r-- (744)  [+x al propietario]
-4. chmod g+w                      -> rwxrw-r-- (764)  [+w al grupo]
-5. chmod o=                       -> rwxrw---- (760)  [quitar todo a otros]
-```
+**c) `760`**
 
-**Permisos finales:** `rwxrw----` = **`760`**
+Paso a paso: (1) `touch` con umask 022 crea el archivo con permisos `644` (rw-r--r--). (2) `chmod 644` no cambia nada, sigue en `644` (rw-r--r--). (3) `chmod u+x` anade ejecucion al propietario: `744` (rwxr--r--). (4) `chmod g+w` anade escritura al grupo: `764` (rwxrw-r--). (5) `chmod o=` quita todos los permisos a otros: `760` (rwxrw----). El operador `=` sin permisos despues establece exactamente cero permisos. Los permisos finales son `760`.
 
 </details>
 
 ---
 
-## Ejercicio 7
-**¿Que significan las `s`, `S`, `t` y `T` cuando aparecen en la salida de `ls -l`? Da un ejemplo de cada caso.**
+### Pregunta 7
+
+En la salida de `ls -l`, que indica una `T` mayuscula en la posicion de ejecucion de otros?
+
+a) El archivo tiene permisos de ejecucion para todos los usuarios
+b) El sticky bit esta activo y el permiso de ejecucion para otros esta activo
+c) El SUID esta activo pero sin permiso de ejecucion
+d) El sticky bit esta activo pero el permiso de ejecucion para otros NO esta activo
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-| Caracter | Posicion | Significado | Ejemplo |
-|----------|----------|-------------|---------|
-| **`s`** (minuscula) | Posicion `x` del usuario | SUID activo **Y** permiso de ejecucion activo | `-rwsr-xr-x` (SUID + x) |
-| **`S`** (mayuscula) | Posicion `x` del usuario | SUID activo **PERO** sin permiso de ejecucion | `-rwSr-xr-x` (SUID sin x) |
-| **`s`** (minuscula) | Posicion `x` del grupo | SGID activo **Y** permiso de ejecucion activo | `-rwxr-sr-x` (SGID + x) |
-| **`S`** (mayuscula) | Posicion `x` del grupo | SGID activo **PERO** sin permiso de ejecucion | `-rwxr-Sr-x` (SGID sin x) |
-| **`t`** (minuscula) | Posicion `x` de otros | Sticky bit activo **Y** ejecucion activa | `drwxrwxrwt` (sticky + x) |
-| **`T`** (mayuscula) | Posicion `x` de otros | Sticky bit activo **PERO** sin ejecucion | `drwxrwx--T` (sticky sin x) |
+**d) El sticky bit esta activo pero el permiso de ejecucion para otros NO esta activo**
 
-La mayuscula indica que el permiso especial esta activo pero **no tiene sentido real** porque falta el permiso de ejecucion subyacente.
+En `ls -l`, la mayuscula/minuscula de los indicadores de permisos especiales indica si el permiso de ejecucion subyacente esta presente. `t` minuscula = sticky bit activo + ejecucion activa para otros. `T` mayuscula = sticky bit activo pero SIN ejecucion para otros. El mismo principio aplica a SUID (`s`/`S` en posicion del propietario) y SGID (`s`/`S` en posicion del grupo). La mayuscula indica que el permiso especial esta configurado pero no tiene sentido practico completo porque falta el permiso de ejecucion subyacente.
 
 </details>
 
 ---
 
-## Ejercicio 8
-**Un administrador ejecuta `umask 077`. Luego otro usuario del sistema crea un archivo y un directorio. ¿Afecta el umask del administrador al otro usuario? ¿Por que?**
+### Pregunta 8
+
+Un administrador ejecuta `umask 077` en su sesion de shell. Afecta esto a los archivos creados por otros usuarios del sistema?
+
+a) Si, la umask se aplica globalmente a todos los usuarios del sistema
+b) Si, pero solo a los usuarios del mismo grupo que el administrador
+c) No, la umask es un valor por proceso/sesion y solo afecta a esa sesion
+d) No, porque solo root puede establecer la umask
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-**No, no afecta al otro usuario.**
+**c) No, la umask es un valor por proceso/sesion y solo afecta a esa sesion**
 
-La umask es un valor **por proceso/sesion**. Cada usuario tiene su propia umask en su sesion de shell. Cambiar la umask en una sesion solo afecta a los archivos creados en ESA sesion.
+La umask es un atributo que pertenece a cada proceso y sesion de shell de forma independiente. Cambiar la umask en una sesion solo afecta a los archivos creados en ESA sesion especifica. Para que un cambio de umask afecte a un usuario especifico de forma persistente, se configura en `~/.bashrc` o `~/.profile`. Para afectar a todos los usuarios, se configura en `/etc/profile`, `/etc/bash.bashrc` o en `/etc/login.defs` (variable `UMASK`). Cualquier usuario puede establecer su propia umask, no solo root.
 
-Para que el cambio de umask afecte a:
-- **Un usuario especifico:** Configurar en su `~/.bashrc` o `~/.profile`
-- **Todos los usuarios:** Configurar en `/etc/profile`, `/etc/bash.bashrc` o `/etc/login.defs` (variable `UMASK`)
-- **Servicios PAM:** `/etc/pam.d/common-session` con `pam_umask.so`
+</details>
 
-Ademas, la umask se hereda de proceso padre a hijo, pero cada sesion de login tiene su propia umask definida por los archivos de perfil.
+---
+
+### Pregunta 9
+
+Cual de los siguientes comandos cambia el propietario a `sandra` y el grupo a `developers` del directorio `/var/www` y todo su contenido de forma recursiva?
+
+a) `chgrp -R sandra:developers /var/www`
+b) `chown sandra:developers /var/www`
+c) `chown -R sandra:developers /var/www`
+d) `chmod -R sandra:developers /var/www`
+
+<details>
+<summary>Respuesta</summary>
+
+**c) `chown -R sandra:developers /var/www`**
+
+El comando `chown` cambia el propietario y el grupo de un archivo o directorio. La sintaxis `chown usuario:grupo` establece ambos en un solo comando. La opcion `-R` (recursivo) aplica el cambio a todo el contenido del directorio, incluyendo subdirectorios y archivos. La opcion `b` es correcta en sintaxis pero no es recursiva (falta `-R`). `chgrp` solo cambia el grupo, no acepta la sintaxis `usuario:grupo`. `chmod` cambia permisos, no propietarios ni grupos.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que permiso necesita un usuario en un directorio para poder acceder a los archivos que contiene y entrar con `cd`?
+
+a) `r` (lectura)
+b) `w` (escritura)
+c) `x` (ejecucion)
+d) `rw` (lectura y escritura)
+
+<details>
+<summary>Respuesta</summary>
+
+**c) `x` (ejecucion)**
+
+En directorios, el permiso `x` (ejecucion) permite acceder al directorio con `cd` y acceder a los archivos contenidos dentro. Sin `x`, no se puede entrar al directorio ni acceder a nada en su interior, aunque se tenga `r`. El permiso `r` en un directorio permite listar su contenido (con `ls`), pero sin `x` no se puede acceder a los archivos listados. El permiso `w` permite crear, eliminar y renombrar archivos dentro del directorio. Para acceder a un archivo, se necesita permiso `x` en TODOS los directorios de la ruta completa. Esta distincion de permisos en directorios es un tema frecuente en el examen LPIC-1.
 
 </details>

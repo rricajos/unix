@@ -14,314 +14,190 @@ subtema: "107.2"
 
 # 107.2 - Ejercicios: Automatizacion de tareas
 
-## Ejercicio 1
-Escribe las entradas de crontab para las siguientes tareas:
-1. Ejecutar `/opt/backup.sh` todos los dias a las 3:30 AM
-2. Ejecutar `/opt/informe.sh` de lunes a viernes a las 8:00 AM
-3. Ejecutar `/opt/limpieza.sh` el dia 1 y 15 de cada mes a medianoche
-4. Ejecutar `/opt/monitor.sh` cada 10 minutos
+### Pregunta 1
 
-<details>
-<summary>Respuesta</summary>
+Cual de las siguientes entradas de crontab ejecuta un script todos los dias a las 3:30 AM?
 
-```bash
-# 1. Todos los dias a las 3:30 AM
-30 3 * * * /opt/backup.sh
+a) `3 30 * * * /opt/backup.sh`
+b) `30 3 * * * /opt/backup.sh`
+c) `* * 3 30 * /opt/backup.sh`
+d) `30 3 * * 1-7 /opt/backup.sh`
 
-# 2. Lunes a viernes a las 8:00 AM
-0 8 * * 1-5 /opt/informe.sh
+<details><summary>Respuesta</summary>
 
-# 3. Dia 1 y 15 de cada mes a medianoche
-0 0 1,15 * * /opt/limpieza.sh
+**b) `30 3 * * * /opt/backup.sh`**
 
-# 4. Cada 10 minutos
-*/10 * * * * /opt/monitor.sh
-```
+El formato del crontab es: `minuto hora dia_mes mes dia_semana comando`. En `30 3 * * *`: minuto 30, hora 3, cualquier dia del mes (`*`), cualquier mes (`*`), cualquier dia de la semana (`*`). La opcion (a) tiene los campos de minuto y hora invertidos (ejecutaria a las 30:03, que es invalido). La opcion (d) usa `1-7` para el dia de semana, que aunque tambien incluye todos los dias, es redundante respecto a `*`.
 
-**Explicacion de cada campo:**
-1. `30 3 * * *`: minuto 30, hora 3, cualquier dia, cualquier mes, cualquier dia de semana
-2. `0 8 * * 1-5`: minuto 0, hora 8, cualquier dia del mes, cualquier mes, lunes(1) a viernes(5)
-3. `0 0 1,15 * *`: minuto 0, hora 0, dias 1 y 15, cualquier mes, cualquier dia de semana
-4. `*/10 * * * *`: cada 10 minutos (0, 10, 20, 30, 40, 50), cualquier hora, dia, mes, dia de semana
 </details>
 
 ---
 
-## Ejercicio 2
-Cual es la diferencia entre el crontab de un usuario (`crontab -e`) y el archivo `/etc/crontab`? Muestra el formato de una linea en cada caso.
+### Pregunta 2
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia principal entre el formato del crontab de usuario (`crontab -e`) y el archivo `/etc/crontab`?
 
-**Crontab de usuario** (`crontab -e`):
-- Tiene **5 campos de tiempo + comando** (6 elementos en total)
-- Se ejecuta como el usuario que lo creo
-- Se edita con `crontab -e`
-- Se almacena en `/var/spool/cron/crontabs/usuario`
+a) El crontab del sistema usa 4 campos de tiempo y el de usuario usa 5
+b) El crontab del sistema incluye un campo extra que especifica el usuario que ejecuta el comando
+c) El crontab de usuario permite variables de entorno y el del sistema no
+d) El crontab de usuario acepta la cadena `@reboot` y el del sistema no
 
-Formato:
-```
-min hora dia mes dia_sem comando
-30  2    *   *   *       /home/sandra/backup.sh
-```
+<details><summary>Respuesta</summary>
 
-**Crontab del sistema** (`/etc/crontab`):
-- Tiene **5 campos de tiempo + campo USUARIO + comando** (7 elementos)
-- Incluye un campo adicional que especifica QUE USUARIO ejecuta el comando
-- Se edita directamente con un editor de texto (no con `crontab -e`)
-- Puede definir variables de entorno (SHELL, PATH, MAILTO)
+**b) El crontab del sistema incluye un campo extra que especifica el usuario que ejecuta el comando**
 
-Formato:
-```
-min hora dia mes dia_sem usuario  comando
-30  2    *   *   *       root     /usr/local/bin/backup.sh
-```
+El crontab de usuario tiene 5 campos de tiempo + comando (6 elementos): `min hora dia mes dia_sem comando`. El crontab del sistema (`/etc/crontab` y archivos en `/etc/cron.d/`) tiene 5 campos de tiempo + campo USUARIO + comando (7 elementos): `min hora dia mes dia_sem usuario comando`. El campo de usuario extra especifica con que cuenta se ejecuta el comando. Los crontabs de usuario se ejecutan como el usuario que los creo; los del sistema pueden especificar cualquier usuario.
 
-**El campo usuario extra** es la diferencia fundamental. Los archivos en `/etc/cron.d/` tambien usan el formato del sistema (con campo usuario).
 </details>
 
 ---
 
-## Ejercicio 3
-Explica la logica de control de acceso de `/etc/cron.allow` y `/etc/cron.deny`. Un servidor tiene solo el archivo `/etc/cron.deny` con el contenido `ana`. Quien puede usar cron? Que pasaria si se crea `/etc/cron.allow` con el contenido `sandra`?
+### Pregunta 3
 
-<details>
-<summary>Respuesta</summary>
+Un servidor tiene solo el archivo `/etc/cron.deny` con el contenido `ana`. Que ocurre si se crea `/etc/cron.allow` con el contenido `sandra`?
 
-**Logica de control de acceso:**
-1. Si `/etc/cron.allow` existe: SOLO los usuarios listados en el pueden usar cron (cron.deny se ignora)
-2. Si solo `/etc/cron.deny` existe: TODOS los usuarios pueden usar cron EXCEPTO los listados en deny
-3. Si ninguno existe: depende de la distribucion (normalmente solo root)
+a) `ana` es la unica bloqueada y `sandra` tiene acceso prioritario
+b) Solo `sandra` podra usar cron; todos los demas (incluida `ana`) seran bloqueados
+c) Tanto `sandra` como `ana` podran usar cron
+d) Se produce un error porque ambos archivos no pueden coexistir
 
-**Escenario actual** (solo `/etc/cron.deny` con `ana`):
-- **Todos los usuarios** del sistema pueden usar cron **excepto** `ana`
-- sandra, carlos, root y cualquier otro usuario pueden ejecutar `crontab -e`
-- ana recibira un error "You (ana) are not allowed to use this program"
+<details><summary>Respuesta</summary>
 
-**Si se crea `/etc/cron.allow` con `sandra`:**
-- **Solo sandra** podra usar cron
-- `/etc/cron.deny` es completamente ignorado
-- ana, carlos y todos los demas (incluido root en algunos sistemas) NO podran usar cron
-- Solo sandra podra ejecutar `crontab -e` exitosamente
+**b) Solo `sandra` podra usar cron; todos los demas (incluida `ana`) seran bloqueados**
 
-**CLAVE:** `cron.allow` siempre tiene prioridad absoluta sobre `cron.deny`.
+La logica de control de acceso de cron es: si `/etc/cron.allow` existe, SOLO los usuarios listados pueden usar cron (cron.deny se ignora completamente). Si solo existe `cron.deny`, todos pueden usar cron excepto los listados. Al crear `cron.allow` con solo `sandra`, se activa la regla mas restrictiva: unicamente `sandra` tendra acceso a cron, y `cron.deny` dejara de tener efecto. `cron.allow` siempre tiene prioridad absoluta sobre `cron.deny`.
+
 </details>
 
 ---
 
-## Ejercicio 4
-Que es anacron y por que es necesario? Explica el formato de `/etc/anacrontab` con un ejemplo. En que se diferencia de cron?
+### Pregunta 4
 
-<details>
-<summary>Respuesta</summary>
+Que es anacron y cual es su principal ventaja sobre cron?
 
-**Que es anacron:**
-Anacron es un complemento de cron disenado para sistemas que NO estan encendidos 24/7 (laptops, estaciones de trabajo). Si una tarea programada no se ejecuto porque el sistema estaba apagado, anacron la ejecutara la proxima vez que el sistema se encienda.
+a) Es una version mas rapida de cron con precision de segundos
+b) Es un complemento de cron que ejecuta tareas perdidas cuando el sistema estaba apagado
+c) Es un reemplazo completo de cron que permite programar tareas por cualquier usuario
+d) Es una herramienta grafica para gestionar las entradas de crontab
 
-**Diferencias con cron:**
+<details><summary>Respuesta</summary>
 
-| Aspecto | cron | anacron |
-|---------|------|---------|
-| Precision | Minutos | Dias (minimo) |
-| Sistema apagado | Tarea perdida | Tarea recuperada al encender |
-| Ejecucion | Daemon permanente | Invocado periodicamente |
-| Usuarios | Cualquier usuario | Solo root |
+**b) Es un complemento de cron que ejecuta tareas perdidas cuando el sistema estaba apagado**
 
-**Formato de `/etc/anacrontab`:**
-```
-# periodo  retardo  identificador  comando
-1          5        cron.daily     nice run-parts /etc/cron.daily
-7          25       cron.weekly    nice run-parts /etc/cron.weekly
-@monthly   45       cron.monthly   nice run-parts /etc/cron.monthly
-```
+**Anacron** esta disenado para sistemas que NO estan encendidos 24/7 (laptops, estaciones de trabajo). Si una tarea programada no se ejecuto porque el sistema estaba apagado, anacron la ejecuta cuando el sistema se encienda. Registra la ultima ejecucion en `/var/spool/anacron/`. A diferencia de cron, su precision minima es en dias (no minutos), solo puede ser ejecutado por root, y no es un daemon permanente sino que es invocado periodicamente. Su configuracion esta en `/etc/anacrontab`.
 
-- **periodo (1):** Ejecutar cada 1 dia
-- **retardo (5):** Esperar 5 minutos antes de ejecutar (para no sobrecargar al arrancar)
-- **identificador (cron.daily):** Nombre unico para registrar la ultima ejecucion en `/var/spool/anacron/`
-- **comando:** Lo que se ejecuta
-
-Anacron registra el timestamp de la ultima ejecucion. Al iniciarse, compara la fecha actual con el ultimo registro. Si han pasado mas dias que el periodo, ejecuta la tarea (tras el retardo especificado).
 </details>
 
 ---
 
-## Ejercicio 5
-Programa las siguientes tareas usando el comando `at`:
-1. Ejecutar un backup dentro de 2 horas
-2. Apagar el sistema manana a las 23:00
-3. Listar todas las tareas pendientes de at
-4. Eliminar la tarea con ID 3
+### Pregunta 5
 
-<details>
-<summary>Respuesta</summary>
+Que comando de `at` se utiliza para listar las tareas pendientes y cual para eliminar una tarea con ID 3?
 
-```bash
-# 1. Ejecutar backup dentro de 2 horas
-at now + 2 hours
-at> /usr/local/bin/backup.sh
-at> <Ctrl+D>
-# Alternativa con -f:
-at now + 2 hours -f /usr/local/bin/backup.sh
+a) `at -list` y `at -remove 3`
+b) `atq` (o `at -l`) y `atrm 3` (o `at -d 3`)
+c) `at --pending` y `at --delete 3`
+d) `crontab -l` y `crontab -r 3`
 
-# 2. Apagar el sistema manana a las 23:00
-at 23:00 tomorrow
-at> /sbin/shutdown -h now
-at> <Ctrl+D>
+<details><summary>Respuesta</summary>
 
-# 3. Listar todas las tareas pendientes
-atq
-# O equivalente:
-at -l
+**b) `atq` (o `at -l`) y `atrm 3` (o `at -d 3`)**
 
-# 4. Eliminar la tarea con ID 3
-atrm 3
-# O equivalente:
-at -d 3
-```
+`atq` (equivalente a `at -l`) lista todas las tareas pendientes mostrando el ID, fecha/hora programada y usuario. `atrm 3` (equivalente a `at -d 3`) elimina la tarea con ID 3. `at` se usa para tareas **unicas** (se ejecutan una vez y se eliminan automaticamente). Se puede programar con formatos como `at 15:00`, `at now + 2 hours`, `at noon tomorrow`. `batch` es similar pero ejecuta cuando la carga del sistema es baja (por defecto < 0.8).
 
-**Notas importantes:**
-- `at` se usa para tareas **unicas** (se ejecutan una vez y se eliminan)
-- Se introduce el comando interactivamente y se finaliza con Ctrl+D
-- `atq` muestra el ID, fecha/hora programada y usuario
-- `batch` es similar a `at` pero ejecuta cuando la carga del sistema es baja (< 0.8)
-- El control de acceso usa `/etc/at.allow` y `/etc/at.deny` con la misma logica que cron
 </details>
 
 ---
 
-## Ejercicio 6
-Explica que son los timers de systemd y como se diferencian de cron. Que archivos se necesitan para crear un timer que ejecute un script de backup diariamente a las 2:30 AM?
+### Pregunta 6
 
-<details>
-<summary>Respuesta</summary>
+Cual de los siguientes es el formato correcto de una linea en `/etc/anacrontab`?
 
-**Los timers de systemd** son una alternativa a cron integrada en systemd. Usan dos archivos: un `.timer` (cuando ejecutar) y un `.service` (que ejecutar).
+a) `min hora dia mes dia_sem comando`
+b) `periodo retardo identificador comando`
+c) `hora dia_sem usuario comando`
+d) `OnCalendar=daily ExecStart=/ruta/script.sh`
 
-**Diferencias con cron:**
-| Aspecto | cron | systemd timers |
-|---------|------|----------------|
-| Logs | Email | journal (journalctl) |
-| Dependencias | No | Si (After=, Requires=) |
-| Recuperacion | Necesita anacron | `Persistent=true` |
-| Gestion | crontab | systemctl |
-| Precision | 1 minuto | Microsegundos |
+<details><summary>Respuesta</summary>
 
-**Archivos necesarios:**
+**b) `periodo retardo identificador comando`**
 
-**1. `/etc/systemd/system/backup.timer`:**
-```ini
-[Unit]
-Description=Timer de backup diario
+El formato de `/etc/anacrontab` tiene 4 campos: **periodo** (frecuencia en dias, por ejemplo 1 = diario, 7 = semanal, `@monthly`), **retardo** (minutos de espera antes de ejecutar, para no sobrecargar al arrancar), **identificador** (nombre unico usado para registrar la ultima ejecucion en `/var/spool/anacron/`) y **comando** (lo que se ejecuta). Ejemplo: `1 5 cron.daily nice run-parts /etc/cron.daily` ejecuta las tareas diarias con 5 minutos de retardo.
 
-[Timer]
-OnCalendar=*-*-* 02:30:00
-Persistent=true
-
-[Install]
-WantedBy=timers.target
-```
-
-**2. `/etc/systemd/system/backup.service`:**
-```ini
-[Unit]
-Description=Servicio de backup
-
-[Service]
-Type=oneshot
-ExecStart=/usr/local/bin/backup.sh
-```
-
-**Activar el timer:**
-```bash
-systemctl daemon-reload          # Recargar configuracion
-systemctl enable backup.timer    # Habilitar al arranque
-systemctl start backup.timer     # Iniciar ahora
-
-# Verificar
-systemctl list-timers
-systemctl status backup.timer
-```
-
-`OnCalendar=*-*-* 02:30:00` significa "cualquier ano, cualquier mes, cualquier dia, a las 02:30:00". `Persistent=true` asegura que si se perdio una ejecucion (sistema apagado), se ejecute al encender.
 </details>
 
 ---
 
-## Ejercicio 7
-Que diferencia hay entre los directorios `/etc/cron.daily/` y `/etc/cron.d/`? Que tipo de archivos contiene cada uno?
+### Pregunta 7
 
-<details>
-<summary>Respuesta</summary>
+Que diferencia hay entre los directorios `/etc/cron.daily/` y `/etc/cron.d/`?
 
-**`/etc/cron.daily/`** (y hourly, weekly, monthly):
-- Contiene **scripts ejecutables** (no archivos crontab)
-- Los scripts se ejecutan con `run-parts` a la frecuencia indicada por el nombre del directorio
-- Los scripts deben tener **permiso de ejecucion** (`chmod +x`)
-- NO tienen formato crontab; son scripts normales con shebang
-- Ejemplo de contenido: scripts de logrotate, actualizaciones, limpieza
+a) `/etc/cron.daily/` contiene archivos crontab y `/etc/cron.d/` contiene scripts ejecutables
+b) `/etc/cron.daily/` contiene scripts ejecutables (sin formato crontab); `/etc/cron.d/` contiene archivos en formato crontab (con campo de usuario)
+c) Ambos contienen scripts ejecutables que se ejecutan diariamente
+d) Ambos contienen archivos en formato crontab con precision de minutos
 
-```bash
-# Ejemplo de script en /etc/cron.daily/
-ls /etc/cron.daily/
-  logrotate
-  apt-compat
-  dpkg
-```
+<details><summary>Respuesta</summary>
 
-**`/etc/cron.d/`**:
-- Contiene **archivos en formato crontab** (igual que /etc/crontab)
-- Incluyen el **campo de usuario** (como el crontab del sistema)
-- No necesitan permiso de ejecucion
-- Son instalados tipicamente por paquetes de software
-- Permiten programacion con precision de minutos
+**b) `/etc/cron.daily/` contiene scripts ejecutables (sin formato crontab); `/etc/cron.d/` contiene archivos en formato crontab (con campo de usuario)**
 
-```bash
-# Ejemplo de archivo en /etc/cron.d/
-cat /etc/cron.d/php
-SHELL=/bin/sh
-09,39 * * * * root [ -x /usr/lib/php/sessionclean ] && /usr/lib/php/sessionclean
-```
+`/etc/cron.daily/` (y hourly, weekly, monthly) contiene **scripts ejecutables** que se ejecutan con `run-parts` a la frecuencia indicada por el nombre del directorio. Los scripts deben tener permiso de ejecucion y son scripts normales con shebang (no tienen formato crontab). `/etc/cron.d/` contiene **archivos en formato crontab** (igual que `/etc/crontab`) con el campo de usuario incluido, y permiten programacion con precision de minutos. Son instalados tipicamente por paquetes de software.
 
-**Resumen:**
-- `/etc/cron.d/` = Archivos crontab (con campo usuario y programacion temporal)
-- `/etc/cron.daily/` = Scripts ejecutables (sin programacion, se ejecutan una vez al dia)
 </details>
 
 ---
 
-## Ejercicio 8
-Un administrador quiere que la usuaria `ana` no pueda usar `at` pero que si pueda usar `cron`. Actualmente no existen los archivos allow/deny. Que archivos debe crear y con que contenido?
+### Pregunta 8
 
-<details>
-<summary>Respuesta</summary>
+Que dos archivos se necesitan para crear un timer de systemd y que opcion asegura que se ejecuten tareas perdidas si el sistema estaba apagado?
 
-**Para bloquear a `ana` en `at`:**
-Crear `/etc/at.deny` con el nombre `ana`:
-```bash
-echo "ana" > /etc/at.deny
-```
-Esto permite que todos los usuarios usen `at` excepto `ana`.
+a) Un archivo `.timer` y un `.service`; la opcion `Persistent=true`
+b) Un archivo `.cron` y un `.target`; la opcion `Recover=yes`
+c) Un archivo `.schedule` y un `.service`; la opcion `OnMissed=retry`
+d) Un archivo `.timer` y un `.conf`; la opcion `AutoRestart=true`
 
-**Para permitir a `ana` en `cron`:**
-No es necesario crear ningun archivo. Si no existen `/etc/cron.allow` ni `/etc/cron.deny`, el comportamiento depende de la distribucion:
-- En Debian/Ubuntu: normalmente todos los usuarios pueden usar cron por defecto
-- Si se quiere ser explicito, crear un `/etc/cron.deny` vacio:
-```bash
-touch /etc/cron.deny
-```
-Un `cron.deny` vacio significa que todos pueden usar cron y nadie esta bloqueado.
+<details><summary>Respuesta</summary>
 
-**IMPORTANTE:** NO crear `/etc/cron.allow` porque entonces SOLO los listados podrian usar cron, bloqueando a todos los demas.
+**a) Un archivo `.timer` y un `.service`; la opcion `Persistent=true`**
 
-**Alternativa mas restrictiva para at:**
-Si se quisiera que solo ciertos usuarios usen `at`, se crearia `/etc/at.allow`:
-```bash
-echo "sandra" > /etc/at.allow
-echo "carlos" >> /etc/at.allow
-```
-Esto solo permitiria a `sandra` y `carlos` usar `at` (ignorando at.deny).
+Los timers de systemd requieren dos archivos: un `.timer` (define cuando se ejecuta, con opciones como `OnCalendar`) y un `.service` (define que se ejecuta, con `ExecStart`). La opcion `Persistent=true` en la seccion `[Timer]` asegura que si se perdio una ejecucion porque el sistema estaba apagado, se ejecute al encender (similar a anacron). Se gestionan con `systemctl enable/start nombre.timer` y se listan con `systemctl list-timers`.
 
-**Resumen de archivos creados:**
-- `/etc/at.deny` con contenido: `ana`
-- `/etc/cron.deny` vacio (o no crear nada si la distribucion permite cron por defecto)
+</details>
+
+---
+
+### Pregunta 9
+
+Que significa la expresion `*/15 * * * *` en un crontab?
+
+a) Ejecutar a las 15:00 de cada dia
+b) Ejecutar cada 15 minutos (en los minutos 0, 15, 30 y 45 de cada hora)
+c) Ejecutar el dia 15 de cada mes
+d) Ejecutar 15 veces por hora
+
+<details><summary>Respuesta</summary>
+
+**b) Ejecutar cada 15 minutos (en los minutos 0, 15, 30 y 45 de cada hora)**
+
+El operador `/` indica incremento: `*/15` en el campo de minutos significa "cada 15 minutos", ejecutandose en los minutos 0, 15, 30 y 45 de cada hora. Los simbolos especiales en crontab son: `*` (cualquier valor), `,` (lista de valores, ej: `1,15,30`), `-` (rango, ej: `1-5`), `/` (incremento, ej: `*/10`). Tambien existen cadenas especiales como `@daily` (equivalente a `0 0 * * *`), `@hourly` (`0 * * * *`) y `@reboot`.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que comando de systemd permite ejecutar una tarea unica programada para dentro de 5 minutos, como alternativa a `at`?
+
+a) `systemctl schedule --in 5m /ruta/script.sh`
+b) `systemd-run --on-active=5m /ruta/script.sh`
+c) `systemd-timer create --delay=5m /ruta/script.sh`
+d) `timedatectl run --after=5m /ruta/script.sh`
+
+<details><summary>Respuesta</summary>
+
+**b) `systemd-run --on-active=5m /ruta/script.sh`**
+
+`systemd-run` permite ejecutar un comando como una unidad transitoria de systemd. Con `--on-active=5m`, el comando se ejecutara dentro de 5 minutos. Es una alternativa moderna a `at` integrada en systemd. Otras opciones incluyen `--on-calendar` para programar en un momento especifico y `--on-boot` para ejecutar despues del arranque. Las ventajas sobre `at` son: los logs se registran en el journal (consultables con `journalctl`), soporta dependencias de unidades y no requiere archivos allow/deny.
+
 </details>

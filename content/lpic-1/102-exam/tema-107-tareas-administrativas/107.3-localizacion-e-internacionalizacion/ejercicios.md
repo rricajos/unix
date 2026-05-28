@@ -14,321 +14,195 @@ subtema: "107.3"
 
 # 107.3 - Ejercicios: Localizacion e internacionalizacion
 
-## Ejercicio 1
-Explica el orden de prioridad de las variables de locale. Si un sistema tiene configuradas las siguientes variables, que idioma se usara para los mensajes del sistema y que formato para las fechas?
+### Pregunta 1
+
+Un sistema tiene las siguientes variables configuradas. Que idioma se usara para los mensajes del sistema?
 ```bash
 LANG=es_ES.UTF-8
 LC_MESSAGES=en_US.UTF-8
-LC_TIME=de_DE.UTF-8
 LC_ALL=
 ```
 
-<details>
-<summary>Respuesta</summary>
+a) Espanol, porque `LANG` tiene prioridad sobre `LC_MESSAGES`
+b) Ingles, porque `LC_MESSAGES` sobreescribe a `LANG` para los mensajes
+c) Frances, porque `LC_ALL` esta vacia y se usa el valor por defecto del sistema
+d) No se mostraran mensajes porque `LC_ALL` no esta definida
 
-**Orden de prioridad:** `LC_ALL` > `LC_*` individuales > `LANG`
+<details><summary>Respuesta</summary>
 
-Con la configuracion dada:
-- **`LC_ALL`** esta vacia (no definida), por lo que NO sobreescribe nada
-- **`LC_MESSAGES=en_US.UTF-8`** esta definida explicitamente, asi que los mensajes del sistema estaran en **ingles**
-- **`LC_TIME=de_DE.UTF-8`** esta definida explicitamente, asi que las fechas estaran en formato **aleman**
-- Todas las demas categorias (LC_NUMERIC, LC_COLLATE, LC_MONETARY, etc.) NO estan definidas explicitamente, asi que heredan el valor de **`LANG=es_ES.UTF-8`** (espanol)
+**b) Ingles, porque `LC_MESSAGES` sobreescribe a `LANG` para los mensajes**
 
-**Resultado:**
-- Mensajes del sistema: Ingles (LC_MESSAGES)
-- Formato de fecha: Aleman (LC_TIME)
-- Formato de numeros: Espanol (heredado de LANG)
-- Formato de moneda: Espanol (heredado de LANG)
-- Orden de clasificacion: Espanol (heredado de LANG)
+El orden de prioridad de las variables de locale es: `LC_ALL` > `LC_*` individuales > `LANG`. Como `LC_ALL` esta vacia, no sobreescribe nada. `LC_MESSAGES=en_US.UTF-8` esta definida explicitamente, asi que los mensajes del sistema estaran en ingles. Las demas categorias (LC_NUMERIC, LC_TIME, LC_COLLATE, etc.) que NO estan definidas explicitamente heredan el valor de `LANG=es_ES.UTF-8` (espanol). Esta configuracion es comun en servidores donde se quiere el sistema en espanol pero los mensajes de error en ingles para facilitar su busqueda.
 
-Si se definiera `LC_ALL=fr_FR.UTF-8`, TODO estaria en frances, ignorando LANG y todas las LC_* individuales.
 </details>
 
 ---
 
-## Ejercicio 2
-Cual es la diferencia entre ASCII, ISO-8859-1 y UTF-8? Por que UTF-8 es el estandar actual? Que herramienta se usa para convertir entre codificaciones?
+### Pregunta 2
 
-<details>
-<summary>Respuesta</summary>
+Cual es la principal ventaja de UTF-8 sobre ISO-8859-1 (Latin-1)?
 
-**ASCII:**
-- 7 bits, 128 caracteres (0-127)
-- Solo caracteres ingleses basicos (a-z, A-Z, 0-9, puntuacion)
-- NO soporta caracteres acentuados, n, ni otros idiomas
+a) UTF-8 ocupa siempre menos espacio que ISO-8859-1
+b) UTF-8 soporta todos los idiomas del mundo simultaneamente y es compatible con ASCII
+c) UTF-8 es mas rapido de procesar que ISO-8859-1
+d) UTF-8 solo necesita 1 byte por caracter, igual que ASCII
 
-**ISO-8859-1 (Latin-1):**
-- 8 bits, 256 caracteres
-- Los primeros 128 son ASCII
-- Los otros 128 incluyen caracteres de Europa Occidental (a, e, n, u, etc.)
-- Solo soporta un subconjunto de idiomas. No se pueden mezclar latin con cirilico o chino
+<details><summary>Respuesta</summary>
 
-**UTF-8:**
-- Longitud variable: 1 a 4 bytes por caracter
-- Compatible con ASCII (los primeros 128 caracteres son identicos)
-- Soporta mas de 1 millon de caracteres de TODOS los idiomas
-- Es el estandar actual porque resuelve el problema de las codificaciones incompatibles
+**b) UTF-8 soporta todos los idiomas del mundo simultaneamente y es compatible con ASCII**
 
-**Por que UTF-8 es el estandar:**
-- Compatible hacia atras con ASCII
-- Soporta todos los idiomas simultaneamente
-- No hay conflictos entre codificaciones regionales
+UTF-8 es una codificacion de longitud variable (1 a 4 bytes por caracter) que soporta mas de un millon de caracteres de todos los idiomas. Los primeros 128 caracteres son identicos a ASCII (compatibilidad hacia atras). ISO-8859-1 solo soporta 256 caracteres (8 bits), cubriendo unicamente idiomas de Europa Occidental. Con ISO-8859-1 no se pueden mezclar idiomas como espanol y ruso en el mismo texto. UTF-8 no siempre ocupa menos espacio: un caracter acentuado ocupa 2 bytes en UTF-8 pero solo 1 en ISO-8859-1.
 
-**Herramienta de conversion: `iconv`**
-```bash
-iconv -f ISO-8859-1 -t UTF-8 archivo.txt -o archivo_utf8.txt
-iconv -l    # Listar codificaciones disponibles
-```
 </details>
 
 ---
 
-## Ejercicio 3
-Un servidor tiene archivos de datos en codificacion ISO-8859-1 que necesitan ser convertidos a UTF-8. Escribe el comando para: a) convertir un archivo, b) convertir con transliteracion, c) listar las codificaciones disponibles.
+### Pregunta 3
 
-<details>
-<summary>Respuesta</summary>
+Que comando convierte un archivo de codificacion ISO-8859-1 a UTF-8?
 
-```bash
-# a) Convertir un archivo de ISO-8859-1 a UTF-8
-iconv -f ISO-8859-1 -t UTF-8 datos_latin.txt -o datos_utf8.txt
-# O con redireccion:
-iconv -f ISO-8859-1 -t UTF-8 datos_latin.txt > datos_utf8.txt
+a) `convert -f ISO-8859-1 -t UTF-8 archivo.txt`
+b) `iconv -f ISO-8859-1 -t UTF-8 archivo.txt -o archivo_utf8.txt`
+c) `recode ISO-8859-1..UTF-8 archivo.txt`
+d) `charset -from ISO-8859-1 -to UTF-8 archivo.txt`
 
-# b) Convertir con transliteracion (intenta aproximar caracteres no disponibles)
-iconv -f UTF-8 -t ASCII//TRANSLIT datos_utf8.txt -o datos_ascii.txt
-# Ejemplo: "cafe" se convierte a "cafe" (la e acentuada se aproxima a e)
-# Con //IGNORE en lugar de //TRANSLIT: simplemente omite los caracteres no convertibles
+<details><summary>Respuesta</summary>
 
-# c) Listar todas las codificaciones soportadas
-iconv -l
-# O equivalente:
-iconv --list
-```
+**b) `iconv -f ISO-8859-1 -t UTF-8 archivo.txt -o archivo_utf8.txt`**
 
-**Opciones clave de iconv:**
-- `-f` (from): codificacion de origen
-- `-t` (to): codificacion de destino
-- `-o`: archivo de salida
-- `//TRANSLIT`: transliterar caracteres no disponibles en el destino
-- `//IGNORE`: ignorar caracteres que no pueden convertirse
+`iconv` es la herramienta estandar para convertir entre codificaciones. Las opciones son: `-f` (from, codificacion de origen), `-t` (to, codificacion de destino), `-o` (archivo de salida). Tambien se puede usar redireccion: `iconv -f ISO-8859-1 -t UTF-8 archivo.txt > archivo_utf8.txt`. Para listar todas las codificaciones soportadas se usa `iconv -l`. Opciones adicionales: `//TRANSLIT` intenta transliterar caracteres no disponibles y `//IGNORE` los omite.
+
 </details>
 
 ---
 
-## Ejercicio 4
-Describe tres formas de cambiar la zona horaria del sistema a `America/Mexico_City`. Que diferencia hay entre `tzselect` y `timedatectl set-timezone`?
+### Pregunta 4
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia entre `tzselect` y `timedatectl set-timezone`?
 
-**Tres formas de cambiar la zona horaria:**
+a) `tzselect` cambia la zona horaria permanentemente y `timedatectl` solo la muestra
+b) `tzselect` solo ayuda a elegir una zona horaria (no cambia la configuracion); `timedatectl set-timezone` si cambia la zona horaria del sistema
+c) Ambos cambian la zona horaria del sistema, pero `tzselect` es para Debian y `timedatectl` para Red Hat
+d) `tzselect` configura la zona para un usuario y `timedatectl` para todo el sistema
 
-**1. Con timedatectl (sistemas systemd):**
-```bash
-timedatectl set-timezone America/Mexico_City
-```
-Modifica `/etc/localtime` y es la forma recomendada en sistemas modernos.
+<details><summary>Respuesta</summary>
 
-**2. Manualmente (cualquier sistema):**
-```bash
-ln -sf /usr/share/zoneinfo/America/Mexico_City /etc/localtime
-echo "America/Mexico_City" > /etc/timezone    # Solo en Debian/Ubuntu
-```
-Crea un enlace simbolico desde `/etc/localtime` al archivo de zona correspondiente.
+**b) `tzselect` solo ayuda a elegir una zona horaria (no cambia la configuracion); `timedatectl set-timezone` si cambia la zona horaria del sistema**
 
-**3. Con dpkg-reconfigure (Debian/Ubuntu):**
-```bash
-dpkg-reconfigure tzdata
-```
-Presenta un menu interactivo para seleccionar la zona. Modifica `/etc/localtime` y `/etc/timezone`.
+`tzselect` es una herramienta interactiva que presenta un menu con continentes y ciudades para ayudar al usuario a elegir una zona horaria, pero **NO modifica la configuracion del sistema**. Solo muestra el nombre de la zona seleccionada (por ejemplo, `Europe/Madrid`). `timedatectl set-timezone Europe/Madrid` **si cambia** la configuracion del sistema, modificando `/etc/localtime` y actualizando la zona horaria de forma efectiva e inmediata.
 
-**Diferencia entre `tzselect` y `timedatectl set-timezone`:**
-- **`tzselect`:** Es una herramienta interactiva que **solo ayuda a elegir** una zona horaria. Muestra un menu con continentes y ciudades, y al final muestra el nombre de la zona seleccionada. **NO modifica la configuracion del sistema.** Solo informa.
-- **`timedatectl set-timezone`:** **SI cambia** la configuracion del sistema. Modifica `/etc/localtime` y actualiza la zona horaria de forma efectiva e inmediata.
 </details>
 
 ---
 
-## Ejercicio 5
-Que contienen los archivos `/etc/localtime`, `/etc/timezone` y el directorio `/usr/share/zoneinfo/`? Como se relacionan entre si? Que es la variable `TZ` y como se usa?
+### Pregunta 5
 
-<details>
-<summary>Respuesta</summary>
+Que archivo es un enlace simbolico que apunta a la zona horaria activa del sistema?
 
-**`/usr/share/zoneinfo/`:**
-Directorio que contiene **archivos binarios** con la informacion de todas las zonas horarias del mundo, organizados por region:
-```
-/usr/share/zoneinfo/Europe/Madrid
-/usr/share/zoneinfo/America/Mexico_City
-/usr/share/zoneinfo/Asia/Tokyo
-/usr/share/zoneinfo/UTC
-```
+a) `/etc/timezone`
+b) `/etc/localtime`
+c) `/usr/share/zoneinfo/UTC`
+d) `/etc/default/timezone`
 
-**`/etc/localtime`:**
-Es un **enlace simbolico** (o copia) que apunta al archivo de zona horaria activa dentro de `/usr/share/zoneinfo/`:
-```bash
-ls -la /etc/localtime
-# /etc/localtime -> /usr/share/zoneinfo/Europe/Madrid
-```
-Este archivo es leido por las aplicaciones del sistema para determinar la zona horaria.
+<details><summary>Respuesta</summary>
 
-**`/etc/timezone`:**
-Es un archivo de **texto plano** que contiene el nombre de la zona horaria (solo en Debian/Ubuntu):
-```bash
-cat /etc/timezone
-# Europe/Madrid
-```
+**b) `/etc/localtime`**
 
-**Relacion:** `/etc/localtime` apunta a un archivo dentro de `/usr/share/zoneinfo/`, y `/etc/timezone` contiene el nombre legible de esa zona.
+`/etc/localtime` es un enlace simbolico (o copia) que apunta al archivo de zona horaria activa dentro de `/usr/share/zoneinfo/`. Por ejemplo: `/etc/localtime -> /usr/share/zoneinfo/Europe/Madrid`. Es leido por las aplicaciones del sistema para determinar la zona horaria. `/etc/timezone` es un archivo de texto plano (solo en Debian/Ubuntu) que contiene el nombre de la zona horaria (por ejemplo, `Europe/Madrid`). `/usr/share/zoneinfo/` es el directorio con todos los archivos binarios de zonas horarias.
 
-**Variable `TZ`:**
-Permite a un usuario o proceso usar una zona horaria **diferente** a la del sistema, sin modificar la configuracion global:
-```bash
-# Ver hora en diferentes zonas (temporal)
-TZ="America/New_York" date
-TZ="Asia/Tokyo" date
-
-# Establecer para toda la sesion
-export TZ="America/Mexico_City"
-```
-`TZ` tiene prioridad sobre `/etc/localtime` para el proceso que la define.
 </details>
 
 ---
 
-## Ejercicio 6
-Un administrador quiere que su servidor tenga las siguientes configuraciones: sistema en espanol de Espana con UTF-8, pero los logs y mensajes del sistema en ingles para facilitar la busqueda de errores. Que variables debe configurar y en que archivo?
+### Pregunta 6
 
-<details>
-<summary>Respuesta</summary>
+Que variable de entorno permite a un usuario usar una zona horaria diferente a la del sistema sin modificar la configuracion global?
 
-**Configuracion necesaria:**
-```bash
-LANG=es_ES.UTF-8
-LC_MESSAGES=en_US.UTF-8
-```
+a) `LANG`
+b) `LC_TIME`
+c) `TZ`
+d) `TIMEZONE`
 
-**Explicacion:**
-- `LANG=es_ES.UTF-8`: Establece espanol como idioma por defecto para todas las categorias (fecha, numeros, moneda, clasificacion, etc.)
-- `LC_MESSAGES=en_US.UTF-8`: Sobreescribe solo los mensajes del sistema/aplicaciones a ingles. Esto facilita buscar errores en Google o documentacion (los mensajes de error en ingles son mas faciles de encontrar)
-- NO se debe usar `LC_ALL` porque sobreescriria todo
+<details><summary>Respuesta</summary>
 
-**Donde configurarlo:**
+**c) `TZ`**
 
-En sistemas systemd (Red Hat, Fedora, Arch) - `/etc/locale.conf`:
-```
-LANG=es_ES.UTF-8
-LC_MESSAGES=en_US.UTF-8
-```
+La variable `TZ` permite a un usuario o proceso usar una zona horaria diferente a la configurada en el sistema (que se define en `/etc/localtime`). Por ejemplo: `TZ="America/New_York" date` muestra la hora en Nueva York, y `export TZ="Asia/Tokyo"` establece la zona para toda la sesion. `TZ` tiene prioridad sobre `/etc/localtime` para el proceso que la define. `LC_TIME` controla el formato de presentacion de fechas (idioma) pero no la zona horaria en si.
 
-En Debian/Ubuntu - `/etc/default/locale`:
-```
-LANG="es_ES.UTF-8"
-LC_MESSAGES="en_US.UTF-8"
-```
-
-O usando `localectl`:
-```bash
-localectl set-locale LANG=es_ES.UTF-8 LC_MESSAGES=en_US.UTF-8
-```
-
-**Resultado:**
-- Formato de fecha: espanol (26/05/2026, lunes, mayo)
-- Formato de numeros: espanol (1.234,56)
-- Formato de moneda: espanol (EUR)
-- Mensajes del sistema: ingles ("Permission denied" en vez de "Permiso denegado")
 </details>
 
 ---
 
-## Ejercicio 7
-Que muestra el comando `timedatectl`? Escribe los comandos para: listar zonas horarias disponibles, cambiar la zona a UTC, activar la sincronizacion NTP y verificar el cambio.
+### Pregunta 7
 
-<details>
-<summary>Respuesta</summary>
+Que es el locale `C` (o `POSIX`) y que efecto tiene en el ordenamiento de texto?
 
-**`timedatectl` muestra:**
-- Hora local
-- Hora UTC (Universal)
-- Hora del reloj RTC (hardware)
-- Zona horaria actual
-- Si el reloj esta sincronizado con NTP
-- Si el servicio NTP esta activo
+a) Es el locale por defecto de China que usa caracteres chinos simplificados
+b) Es el locale minimo estandar que usa ASCII y ordena por valor numerico del byte (mayusculas antes que minusculas)
+c) Es un locale que desactiva toda salida de texto para optimizar el rendimiento
+d) Es el locale para programacion en C que solo muestra numeros sin texto
 
-**Comandos solicitados:**
-```bash
-# Listar zonas horarias disponibles
-timedatectl list-timezones
-# O filtrar:
-timedatectl list-timezones | grep Europe
-timedatectl list-timezones | grep America
+<details><summary>Respuesta</summary>
 
-# Cambiar zona horaria a UTC
-timedatectl set-timezone UTC
+**b) Es el locale minimo estandar que usa ASCII y ordena por valor numerico del byte (mayusculas antes que minusculas)**
 
-# Activar sincronizacion NTP
-timedatectl set-ntp true
+El locale `C` (equivalente a `POSIX`) es el locale minimo estandar definido por POSIX. Usa codificacion ASCII (128 caracteres), idioma ingles basico, y un orden de clasificacion basado en el valor numerico del byte (A-Z [65-90] antes que a-z [97-122]). Es predecible y consistente en cualquier sistema. Se usa en scripts para comportamiento determinista: `LC_ALL=C sort archivo.txt` ordena por valor ASCII. En contraste, `es_ES.UTF-8` usa reglas linguisticas espanolas que pueden ignorar mayusculas y tratar acentos de forma especial.
 
-# Verificar el cambio
-timedatectl status
-# O simplemente:
-timedatectl
-```
-
-**Salida tipica de `timedatectl`:**
-```
-               Local time: mar 2026-05-26 12:30:00 UTC
-           Universal time: mar 2026-05-26 12:30:00 UTC
-                 RTC time: mar 2026-05-26 12:30:00
-                Time zone: UTC (UTC, +0000)
-System clock synchronized: yes
-              NTP service: active
-          RTC in local TZ: no
-```
-
-Nota: `timedatectl set-ntp true` activa el servicio de sincronizacion de tiempo (generalmente `systemd-timesyncd` o `chrony`).
 </details>
 
 ---
 
-## Ejercicio 8
-Que es el locale `C` (o `POSIX`)? En que situaciones se utilizaria? Que efecto tiene ejecutar `LC_ALL=C sort archivo.txt` en comparacion con `sort archivo.txt` en un sistema con locale `es_ES.UTF-8`?
+### Pregunta 8
 
-<details>
-<summary>Respuesta</summary>
+Que comando de systemd se usa para configurar el locale y el layout del teclado del sistema?
 
-**Locale `C` (o `POSIX`):**
-Es el locale minimo estandar definido por POSIX. Sus caracteristicas:
-- Usa codificacion **ASCII** (solo 128 caracteres)
-- Idioma: ingles basico
-- Orden de clasificacion: basado en el **valor numerico del byte** (A-Z antes que a-z, segun codigo ASCII)
-- Es predecible y consistente en cualquier sistema
+a) `timedatectl`
+b) `systemctl set-locale`
+c) `localectl`
+d) `hostnamectl`
 
-**Situaciones de uso:**
-- **Scripts** que necesitan comportamiento predecible independientemente del sistema
-- **Procesamiento de datos** donde el locale podria interferir con el resultado
-- **Comparaciones y ordenamiento** que deben ser consistentes
-- **Depuracion** de problemas relacionados con locale
+<details><summary>Respuesta</summary>
 
-**Diferencia en el ordenamiento:**
+**c) `localectl`**
 
-Con `es_ES.UTF-8` (locale espanol):
-```bash
-sort archivo.txt
-# El sort usa reglas de clasificacion espanolas:
-# ignora mayusculas/minusculas
-# trata acentos de forma especial
-# Resultado: Ana, arbol, Banana, cafe
-```
+`localectl` es la herramienta de systemd para configurar el locale y el layout del teclado del sistema. `localectl status` muestra la configuracion actual. `localectl set-locale LANG=es_ES.UTF-8` establece el locale. `localectl set-keymap es` establece el layout del teclado de la consola virtual. `localectl set-x11-keymap es` establece el layout para X11. `localectl list-locales` lista los locales disponibles. El archivo de configuracion resultante es `/etc/locale.conf` en sistemas con systemd.
 
-Con `LC_ALL=C sort archivo.txt`:
-```bash
-LC_ALL=C sort archivo.txt
-# El sort usa el valor ASCII de cada caracter:
-# Mayusculas (65-90) van antes que minusculas (97-122)
-# Resultado: Ana, Banana, arbol, cafe
-```
+</details>
 
-El locale `C` ordena por valor de byte (ASCII), mientras que `es_ES.UTF-8` ordena segun las reglas linguisticas del espanol. Para scripts y procesamiento de datos, `LC_ALL=C` es mas predecible y tambien mas rapido.
+---
+
+### Pregunta 9
+
+Un administrador quiere un servidor con formato de fechas y numeros en espanol pero mensajes del sistema en ingles. Que configuracion debe usar?
+
+a) `LC_ALL=es_ES.UTF-8` y `LANG=en_US.UTF-8`
+b) `LANG=es_ES.UTF-8` y `LC_MESSAGES=en_US.UTF-8`
+c) `LANG=en_US.UTF-8` y `LC_ALL=es_ES.UTF-8`
+d) `LC_MESSAGES=es_ES.UTF-8` y `LC_TIME=en_US.UTF-8`
+
+<details><summary>Respuesta</summary>
+
+**b) `LANG=es_ES.UTF-8` y `LC_MESSAGES=en_US.UTF-8`**
+
+`LANG=es_ES.UTF-8` establece espanol como valor por defecto para todas las categorias (fecha, numeros, moneda, clasificacion, etc.). `LC_MESSAGES=en_US.UTF-8` sobreescribe solo los mensajes del sistema a ingles, ya que las variables `LC_*` individuales tienen prioridad sobre `LANG`. NO se debe usar `LC_ALL` porque sobreescriria TODAS las categorias. Esta configuracion es comun en servidores porque los mensajes de error en ingles son mas faciles de buscar en documentacion. Se configura en `/etc/locale.conf` o `/etc/default/locale`.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que muestra el comando `timedatectl` y que subcomando activa la sincronizacion NTP?
+
+a) Muestra la configuracion de locale; `timedatectl set-locale ntp=true`
+b) Muestra la fecha, hora, zona horaria y estado de sincronizacion; `timedatectl set-ntp true`
+c) Muestra los timers de systemd activos; `timedatectl enable ntp`
+d) Muestra la configuracion del kernel; `timedatectl sync`
+
+<details><summary>Respuesta</summary>
+
+**b) Muestra la fecha, hora, zona horaria y estado de sincronizacion; `timedatectl set-ntp true`**
+
+`timedatectl` (o `timedatectl status`) muestra: hora local, hora UTC, hora del reloj RTC (hardware), zona horaria actual, si el reloj esta sincronizado con NTP y si el servicio NTP esta activo. `timedatectl set-ntp true` activa la sincronizacion de tiempo con NTP (generalmente `systemd-timesyncd` o `chrony`). Otros subcomandos utiles: `timedatectl set-timezone Europe/Madrid` (cambiar zona horaria), `timedatectl list-timezones` (listar zonas disponibles), `timedatectl set-time "2026-05-28 14:00:00"` (establecer fecha/hora manualmente).
+
 </details>

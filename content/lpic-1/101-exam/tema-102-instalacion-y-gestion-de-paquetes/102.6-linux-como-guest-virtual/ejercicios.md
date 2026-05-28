@@ -14,262 +14,190 @@ subtema: "102.6"
 
 # 102.6 - Linux como sistema guest de virtualizacion: Ejercicios
 
-## Ejercicio 1
-**Explica la diferencia entre un hipervisor Tipo 1 y un hipervisor Tipo 2. Da dos ejemplos de cada tipo.**
+### Pregunta 1
 
-<details>
-<summary>Ver respuesta</summary>
+Cual de las siguientes afirmaciones describe correctamente un hipervisor Tipo 1 (Bare Metal)?
 
-**Hipervisor Tipo 1 (Bare Metal)**:
-- Se ejecuta **directamente sobre el hardware**, sin un sistema operativo intermedio.
-- Ofrece mejor rendimiento y menor sobrecarga.
-- Usado en servidores y centros de datos.
-- Ejemplos: **KVM** (integrado en el kernel Linux), **Xen**, VMware ESXi, Microsoft Hyper-V.
+a) Se ejecuta como una aplicacion sobre un sistema operativo anfitrion ya instalado
+b) Se ejecuta directamente sobre el hardware sin un sistema operativo intermedio
+c) Solo puede ejecutar contenedores, no maquinas virtuales completas
+d) Requiere un sistema operativo Windows como base
 
-**Hipervisor Tipo 2 (Hosted)**:
-- Se ejecuta **como una aplicacion** sobre un sistema operativo anfitrion ya instalado.
-- Mayor sobrecarga porque debe pasar a traves del SO host.
-- Usado en desarrollo, pruebas y escritorios.
-- Ejemplos: **VirtualBox** (Oracle), **VMware Workstation**, VMware Player, Parallels.
+<details><summary>Respuesta</summary>
 
-**Nota sobre KVM**: Aunque KVM convierte al kernel Linux en un hipervisor, se considera Tipo 1 porque el hipervisor es parte del propio kernel que se ejecuta directamente sobre el hardware.
+**b) Se ejecuta directamente sobre el hardware sin un sistema operativo intermedio**
+
+Un hipervisor Tipo 1 (Bare Metal) se ejecuta directamente sobre el hardware fisico, ofreciendo mejor rendimiento y menor sobrecarga. Ejemplos incluyen KVM (integrado en el kernel Linux), Xen, VMware ESXi y Microsoft Hyper-V. Un hipervisor Tipo 2 (Hosted), como VirtualBox o VMware Workstation, se ejecuta como una aplicacion sobre un sistema operativo ya instalado, con mayor sobrecarga. KVM se considera Tipo 1 porque convierte al kernel Linux en un hipervisor que opera directamente sobre el hardware.
+
 </details>
 
 ---
 
-## Ejercicio 2
-**Cual es la diferencia entre virtualizacion completa, paravirtualizacion y contenedores? Que tecnologia representa cada tipo?**
+### Pregunta 2
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la diferencia fundamental entre una maquina virtual y un contenedor?
 
-| Tipo | Descripcion | Tecnologias |
-|------|-------------|-------------|
-| **Virtualizacion completa** | El hardware se emula completamente. El guest OS no necesita modificaciones y cree que esta en hardware real. | KVM, VirtualBox, VMware |
-| **Paravirtualizacion** | El guest OS esta **modificado** para saber que esta virtualizado. Se comunica directamente con el hipervisor mediante "hypercalls". Mejor rendimiento. | Xen (modo paravirtualizado) |
-| **Contenedores** | No virtualizan hardware. Los contenedores **comparten el kernel del host** y solo aislan el espacio de usuario. Arranque rapido y menor consumo de recursos. | Docker, LXC, Podman |
+a) Las maquinas virtuales son mas ligeras y rapidas que los contenedores
+b) Los contenedores comparten el kernel del host mientras que cada VM tiene su propio kernel
+c) Los contenedores proporcionan mayor aislamiento que las maquinas virtuales
+d) Las maquinas virtuales solo funcionan en la nube y los contenedores solo en local
 
-Diferencias clave:
-- VM (completa/para): cada guest tiene su **propio kernel**
-- Contenedor: todos comparten el **mismo kernel** del host
-- Virtualizacion completa: guest **sin modificar**
-- Paravirtualizacion: guest **modificado** para mejor rendimiento
+<details><summary>Respuesta</summary>
+
+**b) Los contenedores comparten el kernel del host mientras que cada VM tiene su propio kernel**
+
+La diferencia fundamental es que los contenedores (Docker, LXC, Podman) comparten el kernel del sistema host y solo aislan el espacio de usuario, mientras que cada maquina virtual tiene su propio kernel completo. Esto hace que los contenedores sean mas ligeros (megabytes vs gigabytes), arranquen mas rapido (segundos vs minutos) y permitan mayor densidad (cientos/miles vs decenas por host). Sin embargo, las VMs ofrecen un aislamiento mas fuerte al tener hardware virtualizado independiente.
+
 </details>
 
 ---
 
-## Ejercicio 3
-**Explica las diferencias entre IaaS, PaaS y SaaS. Da un ejemplo practico de cada uno.**
+### Pregunta 3
 
-<details>
-<summary>Ver respuesta</summary>
+En el modelo de servicios en la nube, cual es la definicion correcta de IaaS (Infrastructure as a Service)?
 
-| Modelo | Que gestiona el proveedor | Que gestiona el usuario | Ejemplo |
-|--------|--------------------------|------------------------|---------|
-| **IaaS** (Infrastructure as a Service) | Hardware, red, almacenamiento, virtualizacion | Sistema operativo, aplicaciones, datos | **AWS EC2**: el proveedor da una VM; tu instalas el SO, configuras todo e instalas tus aplicaciones |
-| **PaaS** (Platform as a Service) | Todo lo de IaaS + SO + middleware + runtime | Solo la aplicacion y los datos | **Heroku**: subes tu codigo y la plataforma lo ejecuta; no te preocupas del servidor ni del SO |
-| **SaaS** (Software as a Service) | Todo (infraestructura + aplicacion) | Solo usar la aplicacion | **Gmail**: usas el correo electronico sin gestionar nada de la infraestructura |
+a) El proveedor gestiona toda la infraestructura y la aplicacion; el usuario solo usa el software
+b) El proveedor proporciona hardware, red, almacenamiento y virtualizacion; el usuario gestiona el SO y las aplicaciones
+c) El proveedor gestiona la plataforma completa incluyendo el SO; el usuario solo sube su codigo
+d) El usuario gestiona todo, incluyendo el hardware fisico
 
-**Analogia**:
-- IaaS = te dan el terreno y los materiales; tu construyes la casa
-- PaaS = te dan la casa; tu pones los muebles (tu aplicacion)
-- SaaS = te dan la casa amueblada; solo entras y la usas
+<details><summary>Respuesta</summary>
+
+**b) El proveedor proporciona hardware, red, almacenamiento y virtualizacion; el usuario gestiona el SO y las aplicaciones**
+
+En IaaS (Infrastructure as a Service), el proveedor ofrece la infraestructura basica (servidores virtuales, red, almacenamiento) y el usuario es responsable de instalar y administrar el sistema operativo, middleware, aplicaciones y datos. Ejemplos: AWS EC2, Google Compute Engine, Azure VMs. En PaaS el proveedor tambien gestiona el SO y middleware (ej: Heroku). En SaaS el proveedor gestiona todo y el usuario solo usa la aplicacion (ej: Gmail).
+
 </details>
 
 ---
 
-## Ejercicio 4
-**Has clonado una maquina virtual Linux. Que elementos debes cambiar o regenerar en el clon para evitar conflictos? Escribe los comandos necesarios.**
+### Pregunta 4
 
-<details>
-<summary>Ver respuesta</summary>
+Despues de clonar una maquina virtual Linux, cual de los siguientes elementos es imprescindible regenerar para evitar conflictos?
 
-Al clonar una VM, los siguientes elementos son identicos al original y deben cambiarse:
+a) Los archivos de log en `/var/log/`
+b) El archivo `/etc/machine-id` y las claves SSH del host
+c) El sistema de archivos completo con `mkfs`
+d) La tabla de particiones con `fdisk`
 
-**1. Machine ID:**
-```bash
-rm /etc/machine-id
-systemd-machine-id-setup
-```
+<details><summary>Respuesta</summary>
 
-**2. Hostname:**
-```bash
-hostnamectl set-hostname nuevo-nombre
-# O editar /etc/hostname y /etc/hosts
-```
+**b) El archivo `/etc/machine-id` y las claves SSH del host**
 
-**3. Claves SSH del host:**
-```bash
-rm /etc/ssh/ssh_host_*
-ssh-keygen -A
-# O: dpkg-reconfigure openssh-server (Debian)
-systemctl restart sshd
-```
+Al clonar una VM, el clon es una copia exacta del original. Es imprescindible regenerar: el machine-id (`rm /etc/machine-id && systemd-machine-id-setup`), las claves SSH del host (`rm /etc/ssh/ssh_host_* && ssh-keygen -A`), y cambiar el hostname (`hostnamectl set-hostname nuevo-nombre`). Si no se regeneran las claves SSH, los clientes recibiran advertencias de "host key changed". El machine-id duplicado causa conflictos en D-Bus, DHCP y otros servicios. La herramienta `virt-sysprep` automatiza estas tareas.
 
-**4. Direccion MAC:** Generalmente el hipervisor asigna una nueva MAC automaticamente al clonar. Si no, se debe cambiar manualmente en la configuracion de la VM.
-
-**5. IP estatica:** Si la VM tenia IP estatica, cambiarla para evitar conflictos en la red.
-
-**6. UUIDs del sistema de archivos** (si es necesario):
-```bash
-tune2fs -U random /dev/sda1
-```
-
-La herramienta `virt-sysprep` puede automatizar todas estas tareas.
 </details>
 
 ---
 
-## Ejercicio 5
-**Que son las guest additions (o guest tools)? Nombra las equivalentes para VirtualBox, VMware y KVM, y describe al menos tres funcionalidades que proporcionan.**
+### Pregunta 5
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la funcion principal de las guest additions / guest tools en una maquina virtual?
 
-Las **guest additions/tools** son paquetes de software que se instalan dentro del sistema guest para mejorar la integracion y el rendimiento con el hipervisor.
+a) Cifrar la comunicacion entre el host y el guest
+b) Permitir que la VM acceda a Internet
+c) Mejorar la integracion y el rendimiento entre el hipervisor y el sistema guest
+d) Convertir una VM de un formato a otro
 
-| Hipervisor | Herramienta |
-|-----------|-------------|
-| VirtualBox | **VirtualBox Guest Additions** |
-| VMware | **VMware Tools** / **open-vm-tools** (version de codigo abierto) |
-| KVM/QEMU | **QEMU Guest Agent** (`qemu-guest-agent`) |
+<details><summary>Respuesta</summary>
 
-Funcionalidades que proporcionan:
+**c) Mejorar la integracion y el rendimiento entre el hipervisor y el sistema guest**
 
-1. **Mejora del rendimiento grafico**: Controladores de video optimizados que permiten aceleracion grafica y resoluciones altas.
+Las guest additions/tools son paquetes de software que se instalan dentro del guest para mejorar la integracion con el hipervisor. Proporcionan: controladores graficos optimizados, carpetas compartidas entre host y guest, portapapeles compartido, sincronizacion del reloj, redimensionado automatico de ventana y apagado limpio. En VirtualBox se llaman Guest Additions, en VMware son VMware Tools (o open-vm-tools en su version libre), y en KVM/QEMU se usa el qemu-guest-agent.
 
-2. **Carpetas compartidas**: Permiten compartir directorios entre el sistema host y el guest, facilitando la transferencia de archivos.
-
-3. **Portapapeles compartido**: Copiar y pegar texto e imagenes entre host y guest.
-
-4. **Sincronizacion del reloj**: Mantienen el reloj del guest sincronizado con el host.
-
-5. **Redimensionado automatico**: La resolucion del guest se ajusta al tamano de la ventana.
-
-6. **Apagado limpio**: El hipervisor puede solicitar un apagado ordenado del guest.
-
-7. **Informacion del guest**: El hipervisor puede consultar IP, memoria y estado del guest.
 </details>
 
 ---
 
-## Ejercicio 6
-**Que comando usarias para verificar si un sistema Linux se esta ejecutando en una maquina virtual? Que resultado esperarias en un sistema fisico?**
+### Pregunta 6
 
-<details>
-<summary>Ver respuesta</summary>
+Que comando permite detectar si un sistema Linux se esta ejecutando dentro de una maquina virtual?
 
-El comando principal es:
-```bash
-systemd-detect-virt
-```
+a) `uname -a`
+b) `systemd-detect-virt`
+c) `lsblk --virt`
+d) `cat /proc/version`
 
-Resultados posibles:
+<details><summary>Respuesta</summary>
 
-| Salida | Significado |
-|--------|-------------|
-| `kvm` | Se ejecuta en KVM/QEMU |
-| `vmware` | Se ejecuta en VMware |
-| `oracle` | Se ejecuta en VirtualBox |
-| `xen` | Se ejecuta en Xen |
-| `microsoft` | Se ejecuta en Hyper-V |
-| `docker` | Se ejecuta en un contenedor Docker |
-| `lxc` | Se ejecuta en un contenedor LXC |
-| **`none`** | Sistema fisico (no virtualizado) |
+**b) `systemd-detect-virt`**
 
-En un **sistema fisico**, la salida seria **`none`** y el codigo de retorno seria 1 (error, lo que indica "no virtualizado").
+El comando `systemd-detect-virt` detecta si el sistema esta virtualizado y muestra el tipo de hipervisor: `kvm` para KVM/QEMU, `vmware` para VMware, `oracle` para VirtualBox, `xen` para Xen, `microsoft` para Hyper-V, `docker` para contenedores Docker. En un sistema fisico, la salida es `none` con codigo de retorno 1. Otros metodos incluyen `hostnamectl` (que muestra "Virtualization: tipo"), `lscpu | grep "Hypervisor vendor"` y `dmidecode -s system-product-name`.
 
-Otros comandos utiles:
-```bash
-hostnamectl                              # Muestra "Virtualization: kvm" si aplica
-lscpu | grep "Hypervisor vendor"         # Muestra el tipo de hipervisor
-cat /sys/class/dmi/id/product_name       # Nombre del producto
-dmidecode -s system-product-name         # Requiere root
-```
 </details>
 
 ---
 
-## Ejercicio 7
-**Que es D-Bus y que papel juega en el contexto de la virtualizacion? Describe los dos tipos de buses D-Bus.**
+### Pregunta 7
 
-<details>
-<summary>Ver respuesta</summary>
+Que es D-Bus en el contexto de un sistema Linux?
 
-**D-Bus** (Desktop Bus) es un sistema de **comunicacion entre procesos (IPC)** en Linux. Permite que diferentes aplicaciones y servicios del sistema intercambien mensajes de forma estandarizada.
+a) Un bus de hardware que conecta dispositivos USB al sistema
+b) Un sistema de comunicacion entre procesos (IPC) que permite a aplicaciones y servicios intercambiar mensajes
+c) Un controlador de disco virtual para maquinas virtuales
+d) Un protocolo de red para la transferencia de datos entre host y guest
 
-**Papel en la virtualizacion:**
-- Los **guest agents** (como qemu-guest-agent, open-vm-tools) utilizan D-Bus para comunicarse con el hipervisor.
-- Permite al hipervisor: solicitar apagados limpios, congelar el sistema de archivos para backups, obtener informacion del guest (IP, uso de memoria), y coordinar eventos como redimensionado de discos.
+<details><summary>Respuesta</summary>
 
-**Dos tipos de buses D-Bus:**
+**b) Un sistema de comunicacion entre procesos (IPC) que permite a aplicaciones y servicios intercambiar mensajes**
 
-1. **System Bus** (bus del sistema):
-   - Unico para todo el sistema
-   - Comunicacion entre servicios del sistema y del kernel
-   - Usado por systemd, guest agents, NetworkManager
-   - Accesible por todos los usuarios (con restricciones de permisos)
+D-Bus (Desktop Bus) es un sistema de comunicacion entre procesos en Linux. Tiene dos tipos de buses: el System Bus (unico para todo el sistema, usado por servicios como systemd y guest agents) y el Session Bus (uno por cada sesion de usuario, usado por aplicaciones de escritorio). En el contexto de virtualizacion, los guest agents (qemu-guest-agent, open-vm-tools) utilizan D-Bus para comunicarse con el hipervisor, permitiendo solicitar apagados limpios, congelar el sistema de archivos para backups y reportar informacion del guest.
 
-2. **Session Bus** (bus de sesion):
-   - Uno por cada sesion de usuario
-   - Comunicacion entre aplicaciones del escritorio del usuario
-   - Usado por aplicaciones graficas, notificaciones
-   - Solo accesible dentro de la sesion del usuario
-
-Comandos para inspeccionar D-Bus:
-```bash
-busctl list                    # Listar servicios
-dbus-monitor --system          # Monitorizar bus del sistema
-dbus-monitor --session         # Monitorizar bus de sesion
-```
 </details>
 
 ---
 
-## Ejercicio 8
-**Describe que es cloud-init y para que se utiliza. Escribe un ejemplo basico de archivo de configuracion cloud-config que establezca el hostname, cree un usuario con acceso sudo y instale dos paquetes.**
+### Pregunta 8
 
-<details>
-<summary>Ver respuesta</summary>
+Que es cloud-init y cuando se ejecuta?
 
-**cloud-init** es una herramienta estandar en la industria para la **configuracion automatica de instancias en la nube** durante el primer arranque. Es compatible con los principales proveedores de IaaS (AWS, Azure, Google Cloud, OpenStack).
+a) Una herramienta para crear imagenes de disco de maquinas virtuales, se ejecuta manualmente
+b) Un servicio de monitorizacion de instancias en la nube, se ejecuta continuamente
+c) Una herramienta de configuracion automatica de instancias en la nube que se ejecuta durante el primer arranque
+d) Un gestor de paquetes especifico para entornos cloud, se ejecuta al instalar software
 
-Funciones principales:
-- Establecer el hostname
-- Crear usuarios y configurar claves SSH
-- Instalar paquetes
-- Ejecutar scripts
-- Configurar la red
-- Montar sistemas de archivos
+<details><summary>Respuesta</summary>
 
-Ejemplo de archivo `cloud-config`:
+**c) Una herramienta de configuracion automatica de instancias en la nube que se ejecuta durante el primer arranque**
 
-```yaml
-#cloud-config
-hostname: servidor-web-01
+cloud-init es la herramienta estandar de la industria para la configuracion automatica de instancias en la nube durante el primer arranque. Es compatible con AWS, Azure, Google Cloud, OpenStack y otros. Permite configurar el hostname, crear usuarios con claves SSH, instalar paquetes, ejecutar scripts y configurar la red. La configuracion se escribe en formato YAML y debe comenzar con la linea `#cloud-config`. La configuracion principal se encuentra en `/etc/cloud/cloud.cfg`.
 
-users:
-  - name: admin
-    groups: sudo
-    shell: /bin/bash
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    ssh_authorized_keys:
-      - ssh-rsa AAAAB3NzaC1yc2EAAAA... usuario@equipo
+</details>
 
-packages:
-  - nginx
-  - git
+---
 
-runcmd:
-  - systemctl enable --now nginx
-```
+### Pregunta 9
 
-Este archivo:
-1. Establece el hostname como `servidor-web-01`
-2. Crea un usuario `admin` con acceso sudo sin contrasena
-3. Configura una clave SSH publica para acceso remoto
-4. Instala los paquetes `nginx` y `git`
-5. Habilita e inicia el servicio nginx
+Cual es la diferencia entre una imagen de disco en formato RAW y una en formato qcow2?
 
-La primera linea `#cloud-config` es obligatoria e indica el formato del archivo.
+a) RAW solo funciona en VMware y qcow2 solo en VirtualBox
+b) RAW tiene tamano fijo y mejor rendimiento, qcow2 tiene tamano dinamico y soporta snapshots
+c) qcow2 tiene mejor rendimiento que RAW en todos los casos
+d) RAW soporta snapshots y cifrado, qcow2 no
+
+<details><summary>Respuesta</summary>
+
+**b) RAW tiene tamano fijo y mejor rendimiento, qcow2 tiene tamano dinamico y soporta snapshots**
+
+El formato RAW ocupa el tamano completo del disco virtual desde el inicio (un disco de 20 GB ocupa 20 GB en el host), ofrece mejor rendimiento por acceso directo pero no soporta snapshots ni cifrado. El formato qcow2 (Copy-On-Write) solo ocupa el espacio de los datos realmente escritos (thin provisioning), soporta snapshots, compresion y cifrado, pero tiene un rendimiento ligeramente menor. qcow2 es el formato nativo de QEMU/KVM y el mas utilizado en entornos de virtualizacion Linux.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que extensiones de hardware del procesador son necesarias para que KVM funcione?
+
+a) SSE4 y AVX2
+b) Intel VT-x o AMD-V (AMD SVM)
+c) Intel Turbo Boost o AMD Precision Boost
+d) HyperThreading o SMT
+
+<details><summary>Respuesta</summary>
+
+**b) Intel VT-x o AMD-V (AMD SVM)**
+
+KVM (Kernel-based Virtual Machine) requiere extensiones de virtualizacion por hardware: Intel VT-x (en procesadores Intel) o AMD-V / AMD SVM (en procesadores AMD). Estas extensiones deben estar habilitadas en la configuracion del BIOS/UEFI. Se puede verificar su disponibilidad con `grep -E '(vmx|svm)' /proc/cpuinfo`, donde `vmx` indica Intel VT-x y `svm` indica AMD-V. Sin estas extensiones habilitadas, KVM no podra crear maquinas virtuales.
+
 </details>

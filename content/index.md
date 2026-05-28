@@ -61,10 +61,10 @@ Base de conocimientos de seguridad ofensiva y defensiva.
 
 | Metrica | Valor |
 |---------|-------|
-| Paginas totales | 807 |
+| Paginas totales | 821 |
 | Subtemas LPIC | 143 (42 + 41 + 60) |
-| Flashcards | 1.976 |
-| Preguntas de practica | 1.430+ |
+| Flashcards | 2.100 |
+| Preguntas de practica | 1.910+ |
 | Simulacros de examen | 8 |
 | Laboratorios practicos | 4 |
 

@@ -14,152 +14,190 @@ subtema: "106.3"
 
 # 106.3 - Ejercicios: Accesibilidad
 
-## Ejercicio 1
-Que es Orca y para que se utiliza? Que tecnologias subyacentes utiliza para funcionar?
+### Pregunta 1
 
-<details>
-<summary>Respuesta</summary>
+Que es Orca y que tecnologia subyacente utiliza para acceder a la informacion de las aplicaciones graficas?
 
-**Orca** es el lector de pantalla principal para el escritorio Linux, especialmente integrado con GNOME. Se utiliza para que personas ciegas o con baja vision puedan interactuar con el sistema operativo.
+a) Es un navegador web accesible que usa WebKit para renderizar paginas
+b) Es el lector de pantalla principal de GNOME que usa AT-SPI para acceder a la informacion de las aplicaciones
+c) Es un gestor de ventanas accesible que usa GTK+ para dibujar interfaces
+d) Es un sintetizador de voz que usa ALSA para generar audio
 
-Tecnologias subyacentes:
-- **AT-SPI** (Assistive Technology Service Provider Interface): Framework que permite a Orca acceder a la informacion de las aplicaciones (que boton esta enfocado, que texto hay en pantalla, etc.)
-- **Speech Dispatcher** (spd-say): Sistema de sintesis de voz que convierte el texto a voz audible
-- Soporte para **salida Braille** (integrable con brltty)
+<details><summary>Respuesta</summary>
 
-Se inicia con el comando `orca` o con el atajo `Super + Alt + S` en muchas distribuciones. Se configura con `orca --setup`.
+**b) Es el lector de pantalla principal de GNOME que usa AT-SPI para acceder a la informacion de las aplicaciones**
+
+**Orca** es el lector de pantalla principal para el escritorio Linux, especialmente integrado con GNOME. Utiliza **AT-SPI** (Assistive Technology Service Provider Interface) como framework para acceder a la informacion de las aplicaciones (que boton esta enfocado, que texto hay en pantalla, etc.). Tambien usa **Speech Dispatcher** (spd-say) para la sintesis de voz y puede integrarse con brltty para salida Braille. Se inicia con el comando `orca` o con el atajo `Super + Alt + S` en muchas distribuciones.
+
 </details>
 
 ---
 
-## Ejercicio 2
-Cual es la diferencia entre brltty y Orca? En que contextos se usa cada uno?
+### Pregunta 2
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia principal entre brltty y Orca?
 
-**brltty:**
-- Es un **daemon** que proporciona soporte para pantallas Braille
-- Funciona en la **consola de texto** (tty), sin necesidad de entorno grafico (X11 o Wayland)
-- Traduce el contenido de la consola a una pantalla Braille fisica conectada al equipo
-- Se configura en `/etc/brltty.conf`
-- Soporta mas de 50 modelos de pantallas Braille (conexion USB, serial, Bluetooth)
+a) brltty funciona en el escritorio grafico y Orca en la consola de texto
+b) brltty proporciona soporte Braille en la consola de texto (sin graficos) y Orca es un lector de pantalla para el entorno grafico
+c) brltty es un sintetizador de voz y Orca es un controlador de pantallas Braille
+d) brltty funciona solo en KDE y Orca solo en GNOME
 
-**Orca:**
-- Es un **lector de pantalla** para el entorno grafico (GNOME principalmente)
-- Lee en voz alta el contenido de las aplicaciones graficas
-- Requiere un entorno de escritorio grafico para funcionar
-- Puede integrarse con brltty para salida Braille en el escritorio grafico
+<details><summary>Respuesta</summary>
 
-**En resumen:** brltty funciona en la consola de texto (sin graficos), y Orca funciona en el escritorio grafico. Pueden complementarse: brltty para la consola y Orca para el escritorio, y ambos pueden trabajar juntos para proporcionar salida Braille en el escritorio.
+**b) brltty proporciona soporte Braille en la consola de texto (sin graficos) y Orca es un lector de pantalla para el entorno grafico**
+
+**brltty** es un daemon que proporciona soporte para pantallas Braille en la consola de texto (tty), sin necesidad de entorno grafico. Traduce el contenido de la consola a una pantalla Braille fisica y se configura en `/etc/brltty.conf`. **Orca** es un lector de pantalla para el entorno grafico (GNOME principalmente) que lee en voz alta el contenido de las aplicaciones graficas. Ambos pueden complementarse: brltty para la consola y Orca para el escritorio, y pueden trabajar juntos para salida Braille en el escritorio grafico.
+
 </details>
 
 ---
 
-## Ejercicio 3
-Explica las cuatro funciones de accesibilidad del teclado (AccessX). Para cada una, describe el problema que resuelve y como funciona.
+### Pregunta 3
 
-<details>
-<summary>Respuesta</summary>
+Un usuario no puede pulsar varias teclas simultaneamente (por ejemplo, Ctrl+C). Que funcion de accesibilidad del teclado le ayudaria?
 
-**1. Sticky Keys (Teclas pegajosas):**
-- **Problema:** Usuarios que no pueden pulsar varias teclas simultaneamente (por ejemplo, Ctrl+C)
-- **Solucion:** Al pulsar una tecla modificadora (Ctrl, Alt, Shift), esta se "pega" y espera la siguiente tecla. Se puede pulsar Ctrl, soltarlo, y luego pulsar C para obtener Ctrl+C
+a) Slow Keys
+b) Bounce Keys
+c) Sticky Keys
+d) Mouse Keys
 
-**2. Slow Keys (Teclas lentas):**
-- **Problema:** Pulsaciones accidentales por temblores o falta de control motor fino
-- **Solucion:** Una tecla solo se registra si se mantiene pulsada durante un tiempo minimo configurable (por ejemplo, 300ms). Las pulsaciones breves accidentales se ignoran
+<details><summary>Respuesta</summary>
 
-**3. Bounce Keys (Teclas de rebote):**
-- **Problema:** Repeticiones involuntarias al soltar una tecla (el dedo "rebota" y la pulsa de nuevo)
-- **Solucion:** Despues de pulsar una tecla, se establece un periodo de tiempo durante el cual una segunda pulsacion de la misma tecla se ignora. Evita las repeticiones no deseadas
+**c) Sticky Keys**
 
-**4. Mouse Keys (Teclas de raton):**
-- **Problema:** Incapacidad de usar un raton fisico
-- **Solucion:** Permite controlar el cursor del raton usando el teclado numerico. Las teclas 2, 4, 6, 8 mueven en las 4 direcciones principales; 1, 3, 7, 9 en diagonales; y 5 hace clic
+**Sticky Keys** (teclas pegajosas) permite pulsar combinaciones de teclas una a la vez en lugar de simultaneamente. Al pulsar una tecla modificadora (Ctrl, Alt, Shift), esta se "pega" y espera a la siguiente tecla. El usuario puede pulsar Ctrl, soltarlo, y luego pulsar C para obtener Ctrl+C. Es ideal para personas que solo pueden pulsar una tecla a la vez. Se activa con `xkbset sticky -twokey` o desde la configuracion de accesibilidad del entorno de escritorio.
+
 </details>
 
 ---
 
-## Ejercicio 4
-Un usuario tiene temblores en las manos que le causan dos problemas: a veces pulsa teclas sin querer (pulsaciones muy breves) y a veces la misma tecla se registra dos veces cuando la suelta. Que funciones de accesibilidad le ayudarian con cada problema?
+### Pregunta 4
 
-<details>
-<summary>Respuesta</summary>
+Un usuario tiene temblores en las manos que causan pulsaciones accidentales muy breves en el teclado. Que funcion de accesibilidad resuelve este problema?
 
-**Para las pulsaciones accidentales breves:** Se debe activar **Slow Keys** (teclas lentas). Esta funcion requiere que la tecla se mantenga pulsada durante un tiempo minimo (configurable, por ejemplo 300ms) antes de ser aceptada. Las pulsaciones breves involuntarias se filtran.
+a) Sticky Keys
+b) Slow Keys
+c) Bounce Keys
+d) Toggle Keys
 
-**Para las repeticiones al soltar la tecla:** Se debe activar **Bounce Keys** (teclas de rebote). Esta funcion establece un retardo entre pulsaciones de la misma tecla. Si la misma tecla se pulsa de nuevo dentro del periodo de retardo, la segunda pulsacion se ignora. Esto previene el efecto "rebote".
+<details><summary>Respuesta</summary>
 
-**Combinacion:** Ambas funciones pueden activarse simultaneamente para abordar ambos problemas. En GNOME se configuran desde Configuracion > Accesibilidad > Escritura, o desde la linea de comandos:
-```bash
-xkbset slowkeys 300    # Requiere 300ms de pulsacion minima
-xkbset bouncekeys 300  # 300ms de retardo entre pulsaciones repetidas
-```
+**b) Slow Keys**
+
+**Slow Keys** (teclas lentas) requiere que una tecla sea mantenida pulsada durante un tiempo minimo configurable (por ejemplo, 300ms) antes de ser aceptada por el sistema. Las pulsaciones breves accidentales se filtran e ignoran. Es util para usuarios con temblores u otras condiciones que causan pulsaciones no intencionadas. Se activa con `xkbset slowkeys 300`. **Bounce Keys** resuelve un problema diferente: repeticiones involuntarias al soltar una tecla (el dedo "rebota").
+
 </details>
 
 ---
 
-## Ejercicio 5
-Que es AccessX? Enumera todas las funciones que incluye y describe como se pueden activar desde la linea de comandos.
+### Pregunta 5
 
-<details>
-<summary>Respuesta</summary>
+Que funcion de accesibilidad ignora las repeticiones rapidas de la misma tecla causadas por el "rebote" del dedo al soltar una tecla?
 
-**AccessX** es el nombre del conjunto de funciones de accesibilidad del teclado implementadas en el servidor X11 (X Window System). Estas funciones estan disenadas para ayudar a usuarios con dificultades motoras.
+a) Sticky Keys
+b) Slow Keys
+c) Bounce Keys
+d) Mouse Keys
 
-**Funciones de AccessX:**
-1. **Sticky Keys:** Teclas modificadoras se "pegan"
-2. **Slow Keys:** Requiere pulsacion minima prolongada
-3. **Bounce Keys:** Ignora repeticiones rapidas
-4. **Mouse Keys:** Control del raton con teclado numerico
+<details><summary>Respuesta</summary>
 
-**Activacion desde la linea de comandos:**
-```bash
-# Activar sticky keys
-xkbset sticky -twokey
+**c) Bounce Keys**
 
-# Activar slow keys con retardo de 300ms
-xkbset slowkeys 300
+**Bounce Keys** (teclas de rebote) establece un retardo entre pulsaciones de la misma tecla. Si la misma tecla se pulsa de nuevo antes de que pase el retardo configurado, la segunda pulsacion se ignora. Esto previene las repeticiones involuntarias causadas cuando el dedo "rebota" accidentalmente al soltar una tecla. Se activa con `xkbset bouncekeys 300` (300ms de retardo). **Slow Keys** resuelve un problema diferente: pulsaciones accidentales breves. Ambas funciones pueden activarse simultaneamente.
 
-# Activar bounce keys con retardo de 300ms
-xkbset bouncekeys 300
-
-# Activar mouse keys
-xkbset mousekeys
-
-# Consultar el estado de todas las funciones
-xkbset q
-
-# Desactivar una funcion (prefijo -)
-xkbset -sticky
-xkbset -slowkeys
-```
-
-Tambien se pueden configurar desde la interfaz grafica en GNOME (Configuracion > Accesibilidad) o KDE (Preferencias del sistema > Accesibilidad).
 </details>
 
 ---
 
-## Ejercicio 6
-Que opciones de accesibilidad visual estan disponibles en Linux para usuarios con baja vision (no ciegos, pero con dificultad para ver)? Menciona al menos cuatro opciones diferentes.
+### Pregunta 6
 
-<details>
-<summary>Respuesta</summary>
+Que permite hacer la funcion Mouse Keys y como se controla el cursor?
 
-Opciones de accesibilidad visual para baja vision:
+a) Permite controlar el brillo del monitor con el teclado numerico
+b) Permite controlar el cursor del raton usando el teclado numerico, donde las teclas 2/4/6/8 mueven en las 4 direcciones y la tecla 5 hace clic
+c) Permite configurar los botones del raton desde la linea de comandos
+d) Permite usar gestos del trackpad como alternativa al teclado
 
-1. **Temas de alto contraste:** Esquemas de colores con alto contraste entre texto y fondo (tipicamente texto claro sobre fondo oscuro o viceversa). Facilitan la lectura. Se activan desde la configuracion del entorno de escritorio.
+<details><summary>Respuesta</summary>
 
-2. **Fuentes de tamano grande:** Aumento del tamano base de todas las fuentes del sistema. Se puede configurar un factor de escala (1.25x, 1.5x, 2x). En GNOME: `gsettings set org.gnome.desktop.interface text-scaling-factor 1.5`.
+**b) Permite controlar el cursor del raton usando el teclado numerico, donde las teclas 2/4/6/8 mueven en las 4 direcciones y la tecla 5 hace clic**
 
-3. **Lupa de pantalla (Screen Magnifier / Zoom):** Amplia una porcion de la pantalla. Puede seguir al cursor del raton o al foco del teclado. En GNOME esta integrada en la configuracion de accesibilidad. KMag es la alternativa de KDE.
+**Mouse Keys** permite controlar el cursor del raton usando el teclado numerico cuando no se puede usar un raton fisico. Las teclas 2, 4, 6 y 8 mueven el cursor en las 4 direcciones principales (abajo, izquierda, derecha, arriba), las teclas 1, 3, 7 y 9 mueven en diagonales, y la tecla 5 funciona como clic. Se activa con `xkbset mousekeys` o desde la configuracion de accesibilidad del entorno de escritorio.
 
-4. **Cursor grande:** Aumento del tamano del cursor del raton para que sea mas visible. Configurable en las opciones de accesibilidad del entorno.
+</details>
 
-5. **Inversion de colores:** Invierte los colores de la pantalla (util para reducir el brillo).
+---
 
-6. **Orca en modo lupa:** Orca puede combinarse con la lupa para proporcionar ampliacion y lectura de voz simultaneamente.
+### Pregunta 7
 
-Estas opciones pueden combinarse segun las necesidades del usuario. No requieren un lector de pantalla completo, a diferencia de los usuarios totalmente ciegos.
+Que es AccessX en el contexto de X11?
+
+a) Una extension de X11 para acelerar el renderizado grafico
+b) El nombre del conjunto de funciones de accesibilidad del teclado implementadas en X11
+c) Un protocolo para compartir pantalla entre usuarios
+d) Un driver de video para tarjetas graficas accesibles
+
+<details><summary>Respuesta</summary>
+
+**b) El nombre del conjunto de funciones de accesibilidad del teclado implementadas en X11**
+
+**AccessX** es el nombre del conjunto de funciones de accesibilidad del teclado implementadas en el servidor X11. Incluye: Sticky Keys (teclas pegajosas), Slow Keys (teclas lentas), Bounce Keys (teclas de rebote), Mouse Keys (teclas de raton) y Toggle Keys (retroalimentacion audible). Estas funciones estan disenadas para ayudar a usuarios con dificultades motoras. Se pueden gestionar desde la linea de comandos con `xkbset` y consultar su estado con `xkbset q`.
+
+</details>
+
+---
+
+### Pregunta 8
+
+Que funcion de accesibilidad proporciona retroalimentacion audible al activar o desactivar Caps Lock, Num Lock o Scroll Lock?
+
+a) Sticky Keys
+b) Bounce Keys
+c) Toggle Keys
+d) Mouse Keys
+
+<details><summary>Respuesta</summary>
+
+**c) Toggle Keys**
+
+**Toggle Keys** (teclas de alternancia) proporciona retroalimentacion audible (un pitido o sonido) al pulsar teclas de alternancia como Caps Lock, Num Lock y Scroll Lock. Emite un sonido al activar y otro diferente al desactivar. Es especialmente util para usuarios con discapacidad visual que no pueden ver los indicadores LED del teclado, evitando escribir accidentalmente texto con mayusculas sin darse cuenta. Se activa desde la configuracion de accesibilidad del entorno de escritorio.
+
+</details>
+
+---
+
+### Pregunta 9
+
+Que es eSpeak-NG y como se relaciona con Orca?
+
+a) Es un gestor de ventanas accesible que reemplaza a Orca
+b) Es un motor de sintesis de voz (TTS) compacto que puede ser usado como backend por Orca y Speech Dispatcher
+c) Es un driver de pantalla Braille que compite con brltty
+d) Es un teclado en pantalla que complementa a Orca
+
+<details><summary>Respuesta</summary>
+
+**b) Es un motor de sintesis de voz (TTS) compacto que puede ser usado como backend por Orca y Speech Dispatcher**
+
+**eSpeak-NG** (Next Generation) es un motor de sintesis de voz (Text-to-Speech) compacto y de codigo abierto, sucesor de eSpeak. Genera voz a partir de texto, soporta multiples idiomas (incluido espanol) y tiene un tamano muy reducido comparado con otros motores TTS. Puede ser usado como backend por **Orca** y **Speech Dispatcher** para la lectura en voz alta del contenido de la pantalla. Se puede usar directamente con `espeak-ng "texto"` o especificar idioma con `-v es`.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que opciones de accesibilidad visual estan disponibles para usuarios con baja vision (no ciegos) en Linux?
+
+a) Solo el lector de pantalla Orca, que funciona en modo reducido
+b) Temas de alto contraste, fuentes de tamano grande, lupa de pantalla (zoom) y cursor grande
+c) Unicamente la inversion de colores mediante la linea de comandos
+d) Solo brltty configurado en modo visual
+
+<details><summary>Respuesta</summary>
+
+**b) Temas de alto contraste, fuentes de tamano grande, lupa de pantalla (zoom) y cursor grande**
+
+Linux ofrece varias opciones de accesibilidad visual para usuarios con baja vision: **temas de alto contraste** (esquemas de colores con alto contraste entre texto y fondo), **fuentes de tamano grande** (configurables con factor de escala, por ejemplo `gsettings set org.gnome.desktop.interface text-scaling-factor 1.5`), **lupa de pantalla** (zoom integrado en GNOME o KMag en KDE), **cursor grande** y **inversion de colores**. Estas opciones no requieren un lector de pantalla completo y pueden combinarse segun las necesidades del usuario.
+
 </details>

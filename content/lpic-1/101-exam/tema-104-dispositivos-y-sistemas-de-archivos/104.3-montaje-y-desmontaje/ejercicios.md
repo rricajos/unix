@@ -14,219 +14,200 @@ subtema: "104.3"
 
 # 104.3 Controlar el montaje y desmontaje - Ejercicios
 
-## Ejercicio 1
-**Escribe la linea de `/etc/fstab` para montar una particion ext4 con UUID `a1b2c3d4-e5f6-7890-abcd-ef1234567890` en `/home`, con opciones por defecto, sin backup con dump, y que se verifique con fsck despues de la raiz.**
+### Pregunta 1
+
+Cual es la linea correcta de `/etc/fstab` para montar una particion ext4 identificada por UUID en `/home`, con opciones por defecto, sin backup con dump, y que se verifique con fsck despues de la particion raiz?
+
+a) `UUID=a1b2c3d4 /home ext4 defaults 1 1`
+b) `UUID=a1b2c3d4 /home ext4 defaults 0 2`
+c) `/dev/sda2 /home ext4 defaults 0 0`
+d) `UUID=a1b2c3d4 /home ext4 defaults 1 0`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-```
-UUID=a1b2c3d4-e5f6-7890-abcd-ef1234567890  /home  ext4  defaults  0  2
-```
+**b) `UUID=a1b2c3d4 /home ext4 defaults 0 2`**
 
-Explicacion de cada campo:
-1. `UUID=a1b2c3d4...` - Dispositivo identificado por UUID
-2. `/home` - Punto de montaje
-3. `ext4` - Tipo de sistema de archivos
-4. `defaults` - Opciones (equivale a rw,suid,dev,exec,auto,nouser,async)
-5. `0` - No hacer backup con dump
-6. `2` - Verificar con fsck despues de la raiz (que tiene pass=1)
+Los 6 campos de `/etc/fstab` son: dispositivo, punto de montaje, tipo, opciones, dump y pass. El campo dump con valor `0` indica que no se hace backup con dump. El campo pass con valor `2` indica que se verifica con fsck despues de la particion raiz (que debe tener pass=1). La opcion `a` tiene dump=1 y pass=1 (solo la raiz deberia tener pass=1). La opcion `c` usa nombre de dispositivo en vez de UUID (no recomendado) y no verifica con fsck (pass=0). La opcion `d` tiene dump=1 y pass=0.
 
 </details>
 
 ---
 
-## Ejercicio 2
-**¿Que opciones estan implicitas cuando se usa `defaults` en /etc/fstab? ¿Y cuando se usa `user`?**
+### Pregunta 2
+
+Que opciones estan implicitas cuando se usa `defaults` en `/etc/fstab`?
+
+a) `ro,nosuid,nodev,noexec,auto,nouser,sync`
+b) `rw,suid,dev,exec,auto,nouser,async`
+c) `rw,suid,dev,exec,noauto,user,async`
+d) `rw,nosuid,dev,exec,auto,nouser,sync`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-**`defaults`** equivale a:
-- `rw` - Lectura-escritura
-- `suid` - Respetar bits SUID/SGID
-- `dev` - Interpretar dispositivos especiales
-- `exec` - Permitir ejecucion de binarios
-- `auto` - Montar con `mount -a`
-- `nouser` - Solo root puede montar
-- `async` - Escrituras asincronas
+**b) `rw,suid,dev,exec,auto,nouser,async`**
 
-**`user`** implica automaticamente:
-- `noexec` - No permitir ejecucion
-- `nosuid` - Ignorar SUID/SGID
-- `nodev` - No interpretar dispositivos
-
-Esto es por seguridad: si un usuario normal puede montar un FS, se restringen estas opciones para evitar escalada de privilegios.
+La opcion `defaults` en `/etc/fstab` equivale a la combinacion de: `rw` (lectura-escritura), `suid` (respetar bits SUID/SGID), `dev` (interpretar dispositivos especiales), `exec` (permitir ejecucion de binarios), `auto` (montar con `mount -a`), `nouser` (solo root puede montar) y `async` (escrituras asincronas). Es importante recordar que `defaults` NO incluye `sync` ni opciones restrictivas como `nosuid` o `noexec`. Cuando se usa `user`, automaticamente se aplican `noexec`, `nosuid` y `nodev` por seguridad.
 
 </details>
 
 ---
 
-## Ejercicio 3
-**¿Como montarias una imagen ISO llamada `/home/user/ubuntu.iso` en `/mnt/iso` como solo lectura?**
+### Pregunta 3
+
+Como se monta una imagen ISO llamada `/home/user/ubuntu.iso` en `/mnt/iso` como solo lectura?
+
+a) `mount /home/user/ubuntu.iso /mnt/iso`
+b) `mount -o loop,ro /home/user/ubuntu.iso /mnt/iso`
+c) `mount -t iso9660 /home/user/ubuntu.iso /mnt/iso --readonly`
+d) `cp /home/user/ubuntu.iso /mnt/iso`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-```bash
-# Crear el punto de montaje si no existe
-mkdir -p /mnt/iso
+**b) `mount -o loop,ro /home/user/ubuntu.iso /mnt/iso`**
 
-# Montar la imagen ISO
-mount -o loop,ro /home/user/ubuntu.iso /mnt/iso
-
-# O especificando el tipo:
-mount -t iso9660 -o loop,ro /home/user/ubuntu.iso /mnt/iso
-```
-
-La opcion `loop` crea un dispositivo de bucle (`/dev/loopN`) que permite tratar el archivo ISO como si fuera un dispositivo de bloque. La opcion `ro` asegura que se monte como solo lectura.
+La opcion `loop` crea un dispositivo de bucle (`/dev/loopN`) que permite tratar un archivo como si fuera un dispositivo de bloque, lo cual es necesario para montar imagenes ISO. La opcion `ro` asegura que se monte como solo lectura. Opcionalmente se puede especificar el tipo con `-t iso9660`. La opcion `a` no incluye `loop` ni `ro`. La opcion `c` usa una sintaxis incorrecta (`--readonly` no es una opcion valida de mount; se usa `ro` como opcion de montaje). La opcion `d` simplemente copiaria el archivo, no lo montaria.
 
 </details>
 
 ---
 
-## Ejercicio 4
-**Tienes un sistema de archivos montado en `/datos` y necesitas cambiarlo a solo lectura sin desmontarlo. ¿Como lo harias?**
+### Pregunta 4
+
+Un sistema de archivos esta montado en `/datos` y necesitas cambiarlo a solo lectura sin desmontarlo. Cual es el comando correcto?
+
+a) `mount -o ro /datos`
+b) `umount /datos && mount -o ro /datos`
+c) `mount -o remount,ro /datos`
+d) `chmod -w /datos`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-```bash
-mount -o remount,ro /datos
-```
+**c) `mount -o remount,ro /datos`**
 
-La opcion `remount` permite cambiar las opciones de un sistema de archivos ya montado sin necesidad de desmontarlo primero. Esto es especialmente util para la particion raiz (`/`), que no se puede desmontar facilmente.
-
-Para verificar que el cambio se aplico:
-```bash
-mount | grep /datos
-# O mejor:
-findmnt /datos
-```
+La opcion `remount` permite cambiar las opciones de un sistema de archivos ya montado sin necesidad de desmontarlo primero. Esto es especialmente util para la particion raiz (`/`), que no se puede desmontar facilmente mientras el sistema esta en ejecucion. La opcion `a` intentaria montar de nuevo sin remontar y fallaria porque ya esta montado. La opcion `b` desmonta y vuelve a montar, lo cual no cumple el requisito de no desmontar. La opcion `d` solo cambia permisos del directorio, no las opciones de montaje del sistema de archivos.
 
 </details>
 
 ---
 
-## Ejercicio 5
-**Explica la diferencia entre los valores 0, 1 y 2 en el sexto campo (pass) de `/etc/fstab`. ¿Que pasaria si pones `1` en todas las particiones?**
+### Pregunta 5
+
+Cual es el significado del valor `2` en el sexto campo (pass) de `/etc/fstab`?
+
+a) El sistema de archivos se verifica con fsck en segundo lugar, antes de la particion raiz
+b) El sistema de archivos no se verifica nunca con fsck al arrancar
+c) El sistema de archivos se verifica con fsck despues de las particiones con pass=1
+d) El sistema de archivos se verifica dos veces con fsck al arrancar
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-| Valor pass | Comportamiento |
-|-----------|---------------|
-| `0` | No se verifica con fsck al arrancar |
-| `1` | Se verifica primero. **Solo debe usarse para `/` (particion raiz)** |
-| `2` | Se verifica despues de las particiones con pass=1 |
+**c) El sistema de archivos se verifica con fsck despues de las particiones con pass=1**
 
-Si pones `1` en todas las particiones, todas se intentarian verificar "en primer lugar" y de forma secuencial. En la practica:
-- Seria mas lento que usar `2` (las particiones con pass=2 pueden verificarse en paralelo)
-- Solo la particion raiz deberia tener `1`
-- No es tecnicamente un error, pero es ineficiente y no sigue las buenas practicas
-
-El valor recomendado:
-- `/` (raiz): `1`
-- Otras particiones que quieras verificar: `2`
-- Swap y FS virtuales: `0`
+El campo pass de `/etc/fstab` controla el orden de verificacion con fsck al arrancar: `0` significa no verificar, `1` significa verificar primero (reservado exclusivamente para la particion raiz `/`), y `2` significa verificar despues de las particiones con pass=1. Las particiones con pass=2 pueden verificarse en paralelo para mayor eficiencia. El swap y los sistemas de archivos virtuales deben tener pass=0. Solo la particion raiz debe tener pass=1.
 
 </details>
 
 ---
 
-## Ejercicio 6
-**¿Como averiguarias el UUID de `/dev/sdb1`? Da al menos dos formas diferentes.**
+### Pregunta 6
+
+Cual de los siguientes comandos muestra el UUID de `/dev/sdb1`?
+
+a) `fdisk -l /dev/sdb1`
+b) `blkid /dev/sdb1`
+c) `mount /dev/sdb1`
+d) `df -h /dev/sdb1`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-```bash
-# Forma 1: blkid
-blkid /dev/sdb1
-# Salida: /dev/sdb1: UUID="xxxx" TYPE="ext4" ...
+**b) `blkid /dev/sdb1`**
 
-# Forma 2: lsblk
-lsblk -f /dev/sdb
-# Muestra arbol con UUID y tipo de FS
-
-# Forma 3: directamente del enlace simbolico
-ls -la /dev/disk/by-uuid/ | grep sdb1
-
-# Forma 4: tune2fs (solo para ext)
-tune2fs -l /dev/sdb1 | grep UUID
-
-# Forma 5: findmnt (si esta montado)
-findmnt -o UUID /dev/sdb1
-```
-
-Las formas mas comunes y recomendadas para el examen son `blkid` y `lsblk -f`.
+El comando `blkid` muestra el UUID, tipo de sistema de archivos y etiqueta de los dispositivos de bloque. Su salida tipica es: `/dev/sdb1: UUID="xxxx" TYPE="ext4" LABEL="datos"`. Otras formas de obtener el UUID incluyen `lsblk -f`, `ls -la /dev/disk/by-uuid/` y `tune2fs -l /dev/sdb1 | grep UUID` (solo para ext). `fdisk -l` muestra informacion de particiones pero no el UUID del sistema de archivos. `mount` muestra o realiza montajes. `df -h` muestra espacio en disco, no UUID.
 
 </details>
 
 ---
 
-## Ejercicio 7
-**Intentas desmontar `/mnt/datos` pero recibes el error "target is busy". ¿Que pasos seguirias para resolver el problema?**
+### Pregunta 7
+
+Un administrador intenta desmontar `/mnt/datos` pero recibe el error "target is busy". Cual de los siguientes comandos muestra que procesos estan usando ese punto de montaje?
+
+a) `ps aux | grep /mnt/datos`
+b) `lsof /mnt/datos`
+c) `top -p /mnt/datos`
+d) `df -h /mnt/datos`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-El error "target is busy" significa que algun proceso esta usando archivos en ese punto de montaje.
+**b) `lsof /mnt/datos`**
 
-```bash
-# Paso 1: Ver que procesos usan el punto de montaje
-lsof /mnt/datos
-# O:
-fuser -mv /mnt/datos
-
-# Paso 2: Cerrar esos procesos de forma normal
-# (por ejemplo, salir de un shell que esta en ese directorio,
-# cerrar aplicaciones que tienen archivos abiertos ahi)
-
-# Paso 3: Si no se pueden cerrar normalmente, matar los procesos
-fuser -km /mnt/datos
-
-# Paso 4: Intentar desmontar de nuevo
-umount /mnt/datos
-
-# Alternativa: Lazy unmount (desconecta y limpia cuando ya no se use)
-umount -l /mnt/datos
-
-# Ultima opcion: Forzar
-umount -f /mnt/datos
-```
-
-La causa mas comun es tener una terminal con `cd` dentro del punto de montaje.
+El comando `lsof` (list open files) muestra todos los archivos abiertos en un punto de montaje especifico, incluyendo los procesos responsables. Otra alternativa es `fuser -mv /mnt/datos`. Una vez identificados los procesos, se pueden cerrar normalmente o matar con `fuser -km /mnt/datos`. Si no se pueden terminar los procesos, se puede usar `umount -l` (lazy unmount) que desconecta inmediatamente y limpia cuando ya no se use. La opcion `a` podria no encontrar procesos que tienen archivos abiertos sin que aparezca la ruta en sus argumentos. `top` y `df` no sirven para este proposito.
 
 </details>
 
 ---
 
-## Ejercicio 8
-**Si una unidad systemd .mount se llama `mnt-backup-diario.mount`, ¿cual es el punto de montaje correspondiente? ¿Como se nombraria la unidad para el punto de montaje `/srv/web/static`?**
+### Pregunta 8
+
+Si una unidad systemd `.mount` se llama `mnt-backup-diario.mount`, cual es el punto de montaje correspondiente?
+
+a) `/mnt-backup-diario`
+b) `/mnt/backup-diario`
+c) `/mnt/backup/diario`
+d) `/mount/backup/diario`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-**Regla:** El nombre de la unidad `.mount` se construye reemplazando las barras `/` de la ruta por guiones `-` (omitiendo la barra inicial).
+**c) `/mnt/backup/diario`**
 
-- `mnt-backup-diario.mount` corresponde al punto de montaje: **`/mnt/backup/diario`**
+En systemd, el nombre de una unidad `.mount` se construye reemplazando las barras `/` de la ruta del punto de montaje por guiones `-`, y omitiendo la barra inicial. Por lo tanto, `mnt-backup-diario.mount` corresponde al punto de montaje `/mnt/backup/diario`. Inversamente, para el punto de montaje `/srv/web/static`, la unidad se llamaria `srv-web-static.mount`. Las unidades `.mount` de systemd permiten gestionar montajes con `systemctl start`, `systemctl stop` y `systemctl enable`.
 
-- Para el punto de montaje `/srv/web/static`, la unidad seria: **`srv-web-static.mount`**
+</details>
 
-Para gestionar la unidad:
-```bash
-# Montar
-systemctl start srv-web-static.mount
+---
 
-# Desmontar
-systemctl stop srv-web-static.mount
+### Pregunta 9
 
-# Activar al arranque
-systemctl enable srv-web-static.mount
+Cual es la fuente mas fiable de informacion sobre los sistemas de archivos actualmente montados en un sistema Linux?
 
-# Ver estado
-systemctl status srv-web-static.mount
-```
+a) `/etc/fstab`
+b) `/etc/mtab`
+c) `/proc/mounts`
+d) La salida del comando `blkid`
+
+<details>
+<summary>Respuesta</summary>
+
+**c) `/proc/mounts`**
+
+`/proc/mounts` es un archivo virtual del kernel que muestra los sistemas de archivos actualmente montados en tiempo real, lo que lo convierte en la fuente mas fiable. `/etc/fstab` es la configuracion de montaje deseada pero no refleja necesariamente el estado actual (un administrador podria haber montado o desmontado algo manualmente). `/etc/mtab` en distribuciones modernas suele ser un enlace simbolico a `/proc/self/mounts`, asi que en la practica contiene la misma informacion. `blkid` muestra informacion sobre dispositivos de bloque y sus UUIDs, no sobre montajes actuales.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que opcion de `/etc/fstab` permite que un usuario normal monte un sistema de archivos, pero automaticamente restringe la ejecucion de binarios, SUID y dispositivos especiales?
+
+a) `defaults`
+b) `noauto`
+c) `user`
+d) `users`
+
+<details>
+<summary>Respuesta</summary>
+
+**c) `user`**
+
+La opcion `user` en `/etc/fstab` permite que usuarios normales (no root) monten el sistema de archivos. Por seguridad, automaticamente implica `noexec` (no permitir ejecucion de binarios), `nosuid` (ignorar bits SUID/SGID) y `nodev` (no interpretar dispositivos especiales). Esto evita que un usuario pueda escalar privilegios montando medios con ejecutables SUID. La opcion `defaults` no permite a usuarios normales montar (incluye `nouser`). `noauto` solo evita que se monte con `mount -a`. La opcion `users` es similar a `user`, pero permite que cualquier usuario pueda desmontar el FS, no solo el que lo monto.
 
 </details>

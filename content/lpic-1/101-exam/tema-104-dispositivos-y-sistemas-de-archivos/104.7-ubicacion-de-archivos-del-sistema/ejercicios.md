@@ -14,225 +14,200 @@ subtema: "104.7"
 
 # 104.7 Encontrar archivos del sistema y su ubicacion correcta - Ejercicios
 
-## Ejercicio 1
-**Segun el FHS, ¿en que directorio deberian ubicarse los siguientes elementos?**
-- a) Archivos de configuracion del servidor Apache
-- b) Logs del sistema
-- c) Un programa comercial como Google Chrome instalado como paquete de terceros
-- d) Software compilado e instalado manualmente por el administrador
-- e) El kernel de Linux
-- f) El directorio personal del usuario root
+### Pregunta 1
+
+Segun el FHS, en que directorio deberia ubicarse el software compilado e instalado manualmente por el administrador del sistema?
+
+a) `/opt`
+b) `/usr/bin`
+c) `/usr/local`
+d) `/var/lib`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-| Elemento | Ubicacion FHS |
-|----------|--------------|
-| a) Config de Apache | `/etc/apache2/` o `/etc/httpd/` (siempre en `/etc`) |
-| b) Logs del sistema | `/var/log/` |
-| c) Google Chrome (terceros) | `/opt/google/chrome/` (software de terceros en `/opt`) |
-| d) Software compilado manualmente | `/usr/local/` (binarios en `/usr/local/bin`, libs en `/usr/local/lib`) |
-| e) Kernel de Linux | `/boot/` (archivo `vmlinuz-*`) |
-| f) Home de root | `/root` (NO en `/home/root`) |
+**c) `/usr/local`**
+
+Segun el Filesystem Hierarchy Standard (FHS), `/usr/local` es la jerarquia terciaria destinada al software instalado localmente por el administrador, tipicamente compilado desde el codigo fuente. Tiene su propia estructura con `bin/`, `sbin/`, `lib/`, etc. El software instalado aqui no es gestionado por el gestor de paquetes de la distribucion. `/opt` es para software de terceros que se instala como paquetes autocontenidos (por ejemplo, Google Chrome). `/usr/bin` contiene binarios instalados por el gestor de paquetes. `/var/lib` almacena datos de estado de aplicaciones.
 
 </details>
 
 ---
 
-## Ejercicio 2
-**¿Cual es la diferencia entre `/tmp` y `/var/tmp`? ¿Y entre `/mnt` y `/media`?**
+### Pregunta 2
+
+Cual es la diferencia entre `/tmp` y `/var/tmp` segun el FHS?
+
+a) `/tmp` persiste entre reinicios y `/var/tmp` se borra al reiniciar
+b) `/tmp` se borra al reiniciar y `/var/tmp` persiste entre reinicios
+c) Ambos se borran al reiniciar el sistema
+d) Ambos persisten entre reinicios del sistema
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-**`/tmp` vs `/var/tmp`:**
+**b) `/tmp` se borra al reiniciar y `/var/tmp` persiste entre reinicios**
 
-| Directorio | Persistencia | Uso |
-|-----------|-------------|-----|
-| `/tmp` | Se **borra al reiniciar** el sistema | Archivos temporales de corta vida |
-| `/var/tmp` | **Persiste entre reinicios** | Archivos temporales que deben sobrevivir reinicios |
-
-**`/mnt` vs `/media`:**
-
-| Directorio | Uso |
-|-----------|-----|
-| `/mnt` | Punto de montaje para montajes **manuales temporales** del administrador |
-| `/media` | Punto de montaje **automatico** para medios extraibles (USB, CD/DVD, etc.) |
-
-En la practica: cuando insertas un USB, el entorno de escritorio lo monta automaticamente en `/media/usuario/nombre_usb`. Si el administrador quiere montar algo manualmente, usa `/mnt`.
+`/tmp` es para archivos temporales de corta vida que se limpian al reiniciar el sistema (o periodicamente por systemd-tmpfiles o tmpwatch). `/var/tmp` es para archivos temporales que deben sobrevivir a reinicios del sistema, siendo mas adecuado para datos temporales de larga duracion. Esta distincion es importante para el examen LPIC-1 y para decidir donde almacenar archivos temporales segun si necesitan persistencia entre reinicios o no.
 
 </details>
 
 ---
 
-## Ejercicio 3
-**¿Que comando usarias para cada una de estas tareas?**
-- a) Encontrar TODOS los archivos `.conf` dentro de `/etc`
-- b) Saber si `cd` es un builtin del shell o un programa externo
-- c) Encontrar rapidamente donde esta el archivo `updatedb.conf` (sin recorrer el disco)
-- d) Saber la ruta completa del comando `fdisk`
-- e) Encontrar todos los archivos con SUID activo en el sistema
+### Pregunta 3
+
+Un administrador necesita encontrar rapidamente la ubicacion del archivo `updatedb.conf` sin recorrer el disco en tiempo real. Cual es el comando mas adecuado?
+
+a) `find / -name "updatedb.conf"`
+b) `locate updatedb.conf`
+c) `which updatedb.conf`
+d) `whereis updatedb.conf`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-```bash
-# a) Encontrar archivos .conf en /etc
-find /etc -name "*.conf"
-# O tambien: find /etc -type f -name "*.conf"
+**b) `locate updatedb.conf`**
 
-# b) Saber si cd es builtin
-type cd
-# cd is a shell builtin
-
-# c) Encontrar rapidamente updatedb.conf
-locate updatedb.conf
-# /etc/updatedb.conf
-
-# d) Ruta completa de fdisk
-which fdisk
-# /usr/sbin/fdisk
-# O tambien: whereis fdisk
-
-# e) Archivos con SUID en todo el sistema
-find / -perm -4000 -type f
-# O: find / -perm -u=s -type f
-```
+`locate` busca en una base de datos indexada previamente construida por `updatedb`, lo que lo hace extremadamente rapido en comparacion con `find`, que recorre el arbol de directorios en tiempo real. `which` solo busca ejecutables en las rutas del `$PATH`, no archivos de configuracion. `whereis` busca binarios, paginas de manual y codigo fuente en ubicaciones estandar, pero no archivos de configuracion genericos. La unica desventaja de `locate` es que la base de datos puede estar desactualizada si el archivo fue creado recientemente (se actualiza normalmente una vez al dia via cron).
 
 </details>
 
 ---
 
-## Ejercicio 4
-**Explica las diferencias entre `which`, `whereis` y `type`. ¿Cuando usarias cada uno?**
+### Pregunta 4
+
+Cual de los siguientes comandos identifica correctamente si `cd` es un comando interno (builtin) del shell o un programa externo?
+
+a) `which cd`
+b) `whereis cd`
+c) `type cd`
+d) `find / -name cd`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-| Comando | Que busca | Donde busca | Encuentra builtins | Ejemplo |
-|---------|-----------|-------------|-------------------|---------|
-| `which` | Solo el ejecutable | Solo en `$PATH` | No | `which ls` -> `/usr/bin/ls` |
-| `whereis` | Binario + fuente + man page | Ubicaciones estandar del sistema | No | `whereis ls` -> `/usr/bin/ls /usr/share/man/man1/ls.1.gz` |
-| `type` | Tipo del comando | Shell (alias, builtins, funciones) + `$PATH` | **Si** | `type cd` -> `cd is a shell builtin` |
+**c) `type cd`**
 
-**Cuando usar cada uno:**
-- **`which`**: Cuando solo necesitas la ruta del ejecutable (ej: para un script)
-- **`whereis`**: Cuando necesitas encontrar tambien la pagina de manual o el codigo fuente
-- **`type`**: Cuando quieres saber QUE es un comando (si es alias, builtin, funcion o archivo), especialmente si sospechas que un comando esta siendo reemplazado por un alias
+`type` es un builtin del shell que identifica que tipo de comando es: builtin, alias, funcion del shell, palabra reservada o archivo externo. Para `cd`, mostraria "cd is a shell builtin". `which` solo busca ejecutables en las rutas del `$PATH` y no reconoce builtins (no devolveria resultado para `cd`). `whereis` busca binarios, fuentes y paginas de manual pero tampoco identifica builtins. `find` busca archivos en el sistema de archivos y desconoce los builtins del shell. `type -a` muestra todas las formas en que un comando esta disponible.
 
 </details>
 
 ---
 
-## Ejercicio 5
-**`locate` no encuentra un archivo que sabes que existe y fue creado hace 5 minutos. ¿Por que? ¿Como lo solucionarias?**
+### Pregunta 5
+
+`locate` no encuentra un archivo que fue creado hace 5 minutos. Cual es la causa y como se soluciona?
+
+a) El archivo no tiene permisos de lectura; ejecutar `chmod +r` en el archivo
+b) La base de datos de `locate` esta desactualizada; ejecutar `sudo updatedb`
+c) `locate` solo busca en `/usr`; usar `find` para buscar en toda la ruta
+d) El archivo esta en un directorio excluido; mover el archivo a `/home`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-**Causa:** `locate` busca en una base de datos indexada que se actualiza periodicamente (normalmente una vez al dia mediante un cron job). Si el archivo fue creado hace 5 minutos, la base de datos no lo incluye todavia.
+**b) La base de datos de `locate` esta desactualizada; ejecutar `sudo updatedb`**
 
-**Solucion:**
-
-```bash
-# Opcion 1: Actualizar la base de datos manualmente
-sudo updatedb
-
-# Ahora locate lo encontrara
-locate nombre_archivo
-
-# Opcion 2: Usar find (busca en tiempo real, siempre actualizado)
-find / -name "nombre_archivo"
-```
-
-La base de datos se configura en `/etc/updatedb.conf`, donde se definen las rutas y sistemas de archivos a excluir de la indexacion (`PRUNEPATHS`, `PRUNEFS`).
+`locate` busca en una base de datos indexada que se actualiza periodicamente, normalmente una vez al dia mediante una tarea cron o un timer de systemd. Si el archivo fue creado despues de la ultima ejecucion de `updatedb`, no aparecera en los resultados. La solucion es ejecutar `sudo updatedb` para actualizar la base de datos manualmente, tras lo cual `locate` encontrara el archivo. Como alternativa inmediata, se puede usar `find` que busca en tiempo real. La configuracion de `updatedb` se encuentra en `/etc/updatedb.conf`, donde se definen rutas y sistemas de archivos a excluir con `PRUNEPATHS` y `PRUNEFS`.
 
 </details>
 
 ---
 
-## Ejercicio 6
-**Escribe comandos `find` para:**
-- a) Buscar archivos mayores de 500 MB en todo el sistema
-- b) Buscar archivos modificados en las ultimas 24 horas en `/var/log`
-- c) Buscar archivos `.tmp` en `/tmp` y borrarlos
-- d) Buscar directorios vacios en `/home`
+### Pregunta 6
+
+Cual de los siguientes comandos `find` busca todos los archivos con el bit SUID activo en todo el sistema?
+
+a) `find / -type f -perm 777`
+b) `find / -type f -perm -4000`
+c) `find / -type f -size +4000k`
+d) `find / -type f -user root`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-```bash
-# a) Archivos mayores de 500 MB
-find / -type f -size +500M
+**b) `find / -type f -perm -4000`**
 
-# b) Archivos modificados en ultimas 24 horas en /var/log
-find /var/log -type f -mtime -1
-# O en minutos: find /var/log -type f -mmin -1440
-
-# c) Buscar y borrar archivos .tmp en /tmp
-find /tmp -name "*.tmp" -exec rm {} \;
-# O mas eficiente:
-find /tmp -name "*.tmp" -delete
-
-# d) Directorios vacios en /home
-find /home -type d -empty
-```
-
-**Notas sobre `-mtime`:**
-- `-mtime -1` = modificados en las ultimas 24 horas (menos de 1 dia)
-- `-mtime +7` = modificados hace mas de 7 dias
-- `-mtime 7` = modificados exactamente hace 7 dias
+El comando `find` con `-perm -4000` busca archivos que tengan al menos el bit SUID (valor 4000) activo, independientemente de los demas permisos. El guion `-` antes del valor significa "al menos estos bits deben estar activos". `-type f` restringe la busqueda a archivos regulares. Equivalentemente se puede usar `find / -perm -u=s`. La opcion `a` busca archivos con permisos exactos 777, no SUID. La opcion `c` busca archivos por tamano, no por permisos. La opcion `d` busca archivos propiedad de root, lo cual no implica que tengan SUID.
 
 </details>
 
 ---
 
-## Ejercicio 7
-**¿Que es el UsrMerge? Explica que directorios se ven afectados y por que se implemento.**
+### Pregunta 7
+
+Que es el UsrMerge y cual de los siguientes es un resultado de su implementacion?
+
+a) `/usr` se convierte en un enlace simbolico a `/bin`
+b) `/bin`, `/sbin` y `/lib` se convierten en enlaces simbolicos a sus equivalentes dentro de `/usr`
+c) `/usr/local` reemplaza completamente a `/usr`
+d) `/opt` se fusiona con `/usr/bin`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-**UsrMerge** es un cambio en la estructura del sistema de archivos donde los directorios raiz `/bin`, `/sbin`, `/lib` y `/lib64` se convierten en **enlaces simbolicos** a sus equivalentes dentro de `/usr/`:
+**b) `/bin`, `/sbin` y `/lib` se convierten en enlaces simbolicos a sus equivalentes dentro de `/usr`**
 
-| Enlace | Destino |
-|--------|---------|
-| `/bin` -> | `/usr/bin` |
-| `/sbin` -> | `/usr/sbin` |
-| `/lib` -> | `/usr/lib` |
-| `/lib64` -> | `/usr/lib64` |
-
-**¿Por que se implemento?**
-1. **Simplificacion:** Elimina la distincion historica entre "binarios necesarios antes de montar /usr" y "binarios en /usr". En sistemas modernos, `/usr` siempre esta disponible en el arranque.
-2. **Facilidad de gestion:** Todo el software del sistema esta en un solo lugar (`/usr`).
-3. **Snapshots y backups:** Es mas facil hacer snapshots de un solo directorio.
-4. **Compatibilidad:** Los enlaces simbolicos mantienen compatibilidad con scripts y programas que usan las rutas antiguas.
-
-**Distribuciones con UsrMerge:** Fedora, Arch Linux, Debian 12+, Ubuntu 22.04+, openSUSE Tumbleweed, entre otras.
+UsrMerge es un cambio en la estructura del sistema de archivos donde los directorios raiz `/bin`, `/sbin`, `/lib` y `/lib64` se convierten en enlaces simbolicos a `/usr/bin`, `/usr/sbin`, `/usr/lib` y `/usr/lib64` respectivamente. Esto simplifica la estructura eliminando la distincion historica entre binarios "esenciales para el arranque" y binarios en `/usr`. En sistemas modernos, `/usr` siempre esta disponible durante el arranque. Los enlaces simbolicos mantienen compatibilidad con scripts que usan las rutas antiguas. Distribuciones como Fedora, Debian 12+, Ubuntu 22.04+ y Arch Linux ya implementan UsrMerge.
 
 </details>
 
 ---
 
-## Ejercicio 8
-**Para cada directorio del FHS, indica si su contenido es estatico o variable, y si es compartible en red o no:**
-- a) `/usr`
-- b) `/etc`
-- c) `/var`
-- d) `/home`
-- e) `/boot`
+### Pregunta 8
+
+Segun el FHS, cual de los siguientes directorios es "variable" (cambia durante la operacion normal) y parcialmente "compartible" en red?
+
+a) `/usr`
+b) `/etc`
+c) `/var`
+d) `/boot`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-| Directorio | Estatico/Variable | Compartible/No compartible |
-|-----------|-------------------|---------------------------|
-| a) `/usr` | **Estatico** (no cambia en operacion normal) | **Compartible** (puede compartirse via NFS entre multiples maquinas) |
-| b) `/etc` | **Estatico** (cambia solo por configuracion) | **No compartible** (especifico de cada maquina) |
-| c) `/var` | **Variable** (logs, colas, cache cambian constantemente) | **Parcial** (algunos subdirectorios como `/var/mail` son compartibles, otros como `/var/run` no) |
-| d) `/home` | **Variable** (los usuarios modifican sus archivos) | **Compartible** (se puede compartir via NFS para login centralizado) |
-| e) `/boot` | **Estatico** (solo cambia al actualizar kernel) | **No compartible** (especifico del hardware de cada maquina) |
+**c) `/var`**
 
-Esta clasificacion es util para planificar particiones, backups y montajes NFS.
+`/var` contiene datos variables que cambian constantemente durante la operacion normal: logs (`/var/log`), colas de trabajos (`/var/spool`), cache (`/var/cache`), etc. Es parcialmente compartible porque algunos subdirectorios como `/var/mail` o `/var/spool` pueden compartirse via NFS, mientras que otros como `/var/run` o `/var/lock` son especificos de cada maquina. `/usr` es estatico y compartible. `/etc` es estatico y no compartible (especifico de cada maquina). `/boot` es estatico y no compartible (especifico del hardware). Esta clasificacion es importante para planificar particiones, backups y montajes NFS.
+
+</details>
+
+---
+
+### Pregunta 9
+
+Cual es la diferencia principal entre `which` y `type`?
+
+a) `which` encuentra builtins del shell, `type` solo encuentra ejecutables en disco
+b) `which` solo busca ejecutables en `$PATH`, mientras que `type` identifica builtins, alias, funciones y archivos
+c) `which` busca en todo el sistema, mientras que `type` solo busca en `$PATH`
+d) No hay diferencia, ambos producen el mismo resultado para cualquier comando
+
+<details>
+<summary>Respuesta</summary>
+
+**b) `which` solo busca ejecutables en `$PATH`, mientras que `type` identifica builtins, alias, funciones y archivos**
+
+`which` busca exclusivamente archivos ejecutables en los directorios listados en la variable `$PATH`. No reconoce builtins del shell, alias ni funciones. `type` es un builtin del shell que identifica la naturaleza completa de un comando: si es un alias, un builtin, una funcion del shell, una palabra reservada o un archivo ejecutable en disco. Por ejemplo, `which cd` no devuelve resultado (cd es un builtin), pero `type cd` muestra "cd is a shell builtin". `type -t` devuelve una palabra clave (alias, builtin, file, function, keyword) y `type -a` muestra todas las formas disponibles de un comando.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Segun el FHS, en que directorio se almacena el kernel de Linux (`vmlinuz-*`)?
+
+a) `/usr/lib/kernel`
+b) `/etc/kernel`
+c) `/boot`
+d) `/var/boot`
+
+<details>
+<summary>Respuesta</summary>
+
+**c) `/boot`**
+
+El directorio `/boot` contiene los archivos necesarios para el proceso de arranque del sistema, incluyendo el kernel comprimido de Linux (`vmlinuz-*`), la imagen initramfs (`initrd.img-*` o `initramfs-*`) y la configuracion del bootloader GRUB (`/boot/grub/`). Es un directorio estatico (solo cambia al actualizar el kernel) y no compartible (especifico del hardware de cada maquina). En algunos sistemas, `/boot` es una particion separada, especialmente cuando se usa un bootloader que tiene limitaciones para acceder a ciertos sistemas de archivos. Historicamente, `/boot` usaba ext2 por su simplicidad y amplio soporte por bootloaders.
 
 </details>

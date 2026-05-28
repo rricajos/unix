@@ -14,203 +14,190 @@ subtema: "102.3"
 
 # 102.3 - Gestion de bibliotecas compartidas: Ejercicios
 
-## Ejercicio 1
-**Que comando usarias para ver las bibliotecas compartidas que necesita el programa `/usr/bin/ssh`? Que significa si en la salida aparece "not found" junto a una biblioteca?**
+### Pregunta 1
 
-<details>
-<summary>Ver respuesta</summary>
+Que comando se utiliza para ver las bibliotecas compartidas que necesita un programa ejecutable?
 
-Se usa el comando `ldd`:
+a) `objdump /usr/bin/ssh`
+b) `ldd /usr/bin/ssh`
+c) `ldconfig -p /usr/bin/ssh`
+d) `readelf /usr/bin/ssh`
 
-```bash
-ldd /usr/bin/ssh
-```
+<details><summary>Respuesta</summary>
 
-Si aparece **"not found"** junto a una biblioteca, significa que el sistema no puede encontrar esa biblioteca compartida en ninguno de los directorios de busqueda. El programa no podra ejecutarse hasta que se instale la biblioteca faltante o se configure correctamente la ruta donde se encuentra.
+**b) `ldd /usr/bin/ssh`**
 
-Para resolver el problema, se puede:
-1. Instalar el paquete que proporciona la biblioteca.
-2. Si la biblioteca existe en un directorio no estandar, agregar ese directorio a `/etc/ld.so.conf.d/` y ejecutar `ldconfig`.
-3. Temporalmente, usar `LD_LIBRARY_PATH` para indicar la ruta.
+El comando `ldd` muestra las bibliotecas compartidas que necesita un programa ejecutable, indicando el soname de cada biblioteca, la ruta donde se encontro y la direccion de memoria donde se cargara. Si aparece "not found" junto a una biblioteca, el programa no podra ejecutarse hasta que se instale o se configure correctamente su ruta. Nota de seguridad: no se debe ejecutar `ldd` sobre ejecutables no confiables; en ese caso es mejor usar `objdump -p` o `readelf -d` con filtro `NEEDED`.
+
 </details>
 
 ---
 
-## Ejercicio 2
-**Explica la diferencia entre `/etc/ld.so.conf` y `/etc/ld.so.cache`. Que comando conecta ambos archivos?**
+### Pregunta 2
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la relacion entre `/etc/ld.so.conf` y `/etc/ld.so.cache`?
 
-- **`/etc/ld.so.conf`**: Archivo de texto que lista los directorios adicionales donde el sistema debe buscar bibliotecas compartidas. Normalmente contiene la linea `include /etc/ld.so.conf.d/*.conf` para incluir archivos de configuracion individuales.
+a) Son el mismo archivo con diferente nombre segun la distribucion
+b) `/etc/ld.so.cache` es una copia de seguridad de `/etc/ld.so.conf`
+c) `ldconfig` lee los directorios de `/etc/ld.so.conf` y genera la cache binaria `/etc/ld.so.cache`
+d) `/etc/ld.so.conf` se genera automaticamente a partir de `/etc/ld.so.cache`
 
-- **`/etc/ld.so.cache`**: Archivo **binario** que contiene una lista indexada (cache) de todas las bibliotecas compartidas disponibles y sus rutas completas. El cargador dinamico consulta este archivo para localizar rapidamente las bibliotecas.
+<details><summary>Respuesta</summary>
 
-El comando que conecta ambos es **`ldconfig`**. Al ejecutar `ldconfig`, este lee los directorios listados en `/etc/ld.so.conf` (y `/etc/ld.so.conf.d/`), escanea las bibliotecas en esos directorios, y genera (actualiza) el archivo binario `/etc/ld.so.cache`.
+**c) `ldconfig` lee los directorios de `/etc/ld.so.conf` y genera la cache binaria `/etc/ld.so.cache`**
+
+`/etc/ld.so.conf` es un archivo de texto que lista los directorios adicionales donde buscar bibliotecas compartidas (normalmente incluye archivos de `/etc/ld.so.conf.d/`). `/etc/ld.so.cache` es un archivo binario indexado que contiene la lista de todas las bibliotecas disponibles y sus rutas. Al ejecutar `ldconfig`, este escanea los directorios de `/etc/ld.so.conf` y los directorios por defecto, y genera (actualiza) la cache binaria. El cargador dinamico consulta esta cache para localizar rapidamente las bibliotecas.
+
 </details>
 
 ---
 
-## Ejercicio 3
-**Has compilado una aplicacion que instala sus bibliotecas en `/opt/miapp/lib`. Como harias para que el sistema las encuentre de forma permanente?**
+### Pregunta 3
 
-<details>
-<summary>Ver respuesta</summary>
+Has compilado una aplicacion que instala sus bibliotecas en `/opt/miapp/lib`. Cual es la forma correcta de hacer que el sistema las encuentre de forma permanente?
 
-Para que el sistema encuentre las bibliotecas de forma permanente:
+a) Ejecutar `export LD_LIBRARY_PATH=/opt/miapp/lib` en `/etc/profile`
+b) Copiar las bibliotecas a `/usr/lib` manualmente
+c) Crear un archivo en `/etc/ld.so.conf.d/` con la ruta y ejecutar `ldconfig`
+d) Anadir la ruta directamente en `/etc/ld.so.cache`
 
-```bash
-# 1. Crear un archivo de configuracion en /etc/ld.so.conf.d/
-echo "/opt/miapp/lib" | sudo tee /etc/ld.so.conf.d/miapp.conf
+<details><summary>Respuesta</summary>
 
-# 2. Actualizar la cache de bibliotecas
-sudo ldconfig
+**c) Crear un archivo en `/etc/ld.so.conf.d/` con la ruta y ejecutar `ldconfig`**
 
-# 3. Verificar que las bibliotecas se encuentran
-ldconfig -p | grep miapp
-```
+La forma correcta y permanente es crear un archivo de configuracion (por ejemplo, `/etc/ld.so.conf.d/miapp.conf`) que contenga la ruta `/opt/miapp/lib`, y luego ejecutar `sudo ldconfig` para actualizar la cache. No se recomienda usar `LD_LIBRARY_PATH` para configuraciones permanentes porque es temporal, es ignorada por programas SUID/SGID y puede causar conflictos de versiones. No se debe editar `/etc/ld.so.cache` directamente porque es un archivo binario generado por `ldconfig`.
 
-**No se debe** usar `LD_LIBRARY_PATH` para esto porque:
-- Es una solucion temporal (solo dura mientras la variable este definida)
-- No es segura para programas con SUID/SGID
-- Puede causar conflictos de versiones
 </details>
 
 ---
 
-## Ejercicio 4
-**Que es la variable LD_LIBRARY_PATH? En que situaciones es util y cuales son sus limitaciones?**
+### Pregunta 4
 
-<details>
-<summary>Ver respuesta</summary>
+Cual de las siguientes afirmaciones sobre `LD_LIBRARY_PATH` es correcta?
 
-**LD_LIBRARY_PATH** es una variable de entorno que especifica directorios adicionales donde el cargador dinamico buscara bibliotecas compartidas, antes de consultar la cache y los directorios por defecto.
+a) Es la forma recomendada para configurar rutas de bibliotecas en produccion
+b) Los programas con bit SUID/SGID la ignoran por razones de seguridad
+c) Sus rutas tienen menor prioridad que la cache `/etc/ld.so.cache`
+d) Requiere permisos de root para ser definida
 
-**Situaciones utiles:**
-- Desarrollo y pruebas: probar una version nueva de una biblioteca sin instalarla en el sistema
-- Ejecucion de programas sin permisos de root
-- Uso temporal para aplicaciones que instalan bibliotecas en ubicaciones no estandar
+<details><summary>Respuesta</summary>
 
-**Limitaciones:**
-1. Es **temporal**: solo afecta a la sesion actual o al comando en el que se define
-2. Es **ignorada por programas SUID/SGID** (por seguridad)
-3. Puede causar **conflictos** si hay versiones diferentes de la misma biblioteca
-4. **No se recomienda** para configuraciones permanentes de produccion
-5. Afecta a todos los programas ejecutados en esa sesion, no solo al que nos interesa
+**b) Los programas con bit SUID/SGID la ignoran por razones de seguridad**
 
-**Ejemplo de uso:**
-```bash
-export LD_LIBRARY_PATH=/opt/miapp/lib:$LD_LIBRARY_PATH
-./mi_programa
-```
+`LD_LIBRARY_PATH` es una variable de entorno que especifica directorios adicionales para buscar bibliotecas. Por seguridad, es ignorada por programas con bits SUID/SGID para evitar que un usuario normal pueda inyectar bibliotecas maliciosas en programas privilegiados. No requiere permisos de root y tiene mayor prioridad que la cache (no menor). No se recomienda para produccion porque es temporal y puede causar conflictos.
+
 </details>
 
 ---
 
-## Ejercicio 5
-**Describe el orden completo en que el cargador dinamico busca las bibliotecas compartidas.**
+### Pregunta 5
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es el orden correcto en que el cargador dinamico busca las bibliotecas compartidas?
 
-El cargador dinamico (`ld-linux.so`) busca las bibliotecas en este orden:
+a) Cache -> LD_LIBRARY_PATH -> RPATH -> directorios por defecto
+b) LD_LIBRARY_PATH -> Cache -> directorios por defecto -> RPATH
+c) RPATH -> LD_LIBRARY_PATH -> Cache -> directorios por defecto
+d) Directorios por defecto -> Cache -> LD_LIBRARY_PATH -> RPATH
 
-1. **RPATH/RUNPATH**: Rutas incrustadas dentro del propio ejecutable durante la compilacion (definidas con `-rpath`). Se almacenan en la cabecera ELF del binario.
+<details><summary>Respuesta</summary>
 
-2. **LD_LIBRARY_PATH**: Directorios especificados en esta variable de entorno. Tiene prioridad sobre la cache pero no sobre RPATH.
+**c) RPATH -> LD_LIBRARY_PATH -> Cache -> directorios por defecto**
 
-3. **`/etc/ld.so.cache`**: Cache binaria generada por `ldconfig`. Contiene una lista indexada de bibliotecas encontradas en los directorios configurados en `/etc/ld.so.conf` y `/etc/ld.so.conf.d/`.
+El cargador dinamico (`ld-linux.so`) busca las bibliotecas en este orden: 1) RPATH/RUNPATH (rutas incrustadas en el ejecutable durante la compilacion), 2) LD_LIBRARY_PATH (variable de entorno), 3) Cache `/etc/ld.so.cache` (generada por `ldconfig`), y 4) directorios por defecto (`/lib`, `/usr/lib` y sus equivalentes de 64 bits). Si la biblioteca no se encuentra en ninguno de estos pasos, el programa fallara con el error "cannot open shared object file".
 
-4. **Directorios por defecto**: `/lib` (o `/lib64`) y `/usr/lib` (o `/usr/lib64`). Son los directorios de ultimo recurso.
-
-Si la biblioteca no se encuentra en ninguno de estos pasos, el programa fallara al ejecutarse con un error como: "error while loading shared libraries: libXXX.so: cannot open shared object file".
 </details>
 
 ---
 
-## Ejercicio 6
-**Dado el archivo de biblioteca `libcrypto.so.1.1.0`, explica cada parte del nombre segun la convencion de nombrado de bibliotecas compartidas en Linux. Que enlaces simbolicos esperarias encontrar?**
+### Pregunta 6
 
-<details>
-<summary>Ver respuesta</summary>
+Dado el archivo `libcrypto.so.1.1.0`, que representa el numero `1` inmediatamente despues de `.so`?
 
-Desglose del nombre `libcrypto.so.1.1.0`:
+a) La revision de correccion de errores
+b) La version menor con nuevas funcionalidades
+c) La version mayor que indica cambios incompatibles
+d) El numero de compilacion de la biblioteca
 
-| Parte | Valor | Significado |
-|-------|-------|-------------|
-| `lib` | `lib` | Prefijo estandar de todas las bibliotecas |
-| `crypto` | `crypto` | Nombre de la biblioteca |
-| `.so` | `.so` | Indica que es un Shared Object (biblioteca compartida) |
-| `.1` | `1` | Version **mayor** - cambios incompatibles con versiones anteriores |
-| `.1` | `1` | Version **menor** - nuevas funcionalidades compatibles |
-| `.0` | `0` | **Revision** - correcciones de errores |
+<details><summary>Respuesta</summary>
 
-**Enlaces simbolicos esperados:**
+**c) La version mayor que indica cambios incompatibles**
 
-```
-libcrypto.so -> libcrypto.so.1.1.0      (enlace de desarrollo, usado por el compilador)
-libcrypto.so.1 -> libcrypto.so.1.1.0    (soname, usado por los programas en ejecucion)
-libcrypto.so.1.1.0                       (archivo real con el codigo)
-```
+La convencion de nombres es `libNOMBRE.so.MAYOR.MENOR.REVISION`. En `libcrypto.so.1.1.0`: `lib` es el prefijo estandar, `crypto` es el nombre, `.so` indica Shared Object, `1` (primera posicion) es la version mayor (cambios incompatibles), `1` (segunda posicion) es la version menor (nuevas funcionalidades compatibles), y `0` es la revision (correcciones de errores). El soname (`libcrypto.so.1`) solo incluye la version mayor, permitiendo actualizar versiones menores sin romper compatibilidad.
 
-El enlace `libcrypto.so.1` (soname) es el que buscan los programas compilados contra esta biblioteca. `ldconfig` se encarga de crear y mantener estos enlaces automaticamente.
 </details>
 
 ---
 
-## Ejercicio 7
-**Despues de instalar manualmente una biblioteca en `/usr/local/lib`, un programa sigue dando error "cannot open shared object file". Que pasos debes seguir para solucionarlo? Escribe los comandos.**
+### Pregunta 7
 
-<details>
-<summary>Ver respuesta</summary>
+Despues de instalar manualmente una biblioteca en `/usr/local/lib`, un programa sigue mostrando "cannot open shared object file". Cual es el paso mas probable que falta?
 
-El problema es que la cache de bibliotecas no esta actualizada. Pasos:
+a) Reiniciar el sistema para que detecte la nueva biblioteca
+b) Ejecutar `ldconfig` para actualizar la cache de bibliotecas
+c) Establecer la variable `LD_PRELOAD` con la ruta de la biblioteca
+d) Copiar la biblioteca tambien en `/lib64`
 
-```bash
-# 1. Verificar que la biblioteca existe en el directorio
-ls -la /usr/local/lib/libNOMBRE.so*
+<details><summary>Respuesta</summary>
 
-# 2. Verificar si /usr/local/lib esta en la configuracion
-cat /etc/ld.so.conf
-ls /etc/ld.so.conf.d/
+**b) Ejecutar `ldconfig` para actualizar la cache de bibliotecas**
 
-# 3. Si /usr/local/lib no esta configurado, aniadirlo
-echo "/usr/local/lib" | sudo tee /etc/ld.so.conf.d/local.conf
+Cuando se instalan bibliotecas manualmente, la cache `/etc/ld.so.cache` no se actualiza automaticamente. Se debe ejecutar `sudo ldconfig` para que escanee los directorios configurados, encuentre la nueva biblioteca, cree los enlaces simbolicos (soname) necesarios y actualice la cache. Ademas, hay que verificar que `/usr/local/lib` este listado en `/etc/ld.so.conf` o en algun archivo de `/etc/ld.so.conf.d/`. Los gestores de paquetes (apt, yum) ejecutan `ldconfig` automaticamente, pero al instalar manualmente se debe hacer de forma explicita.
 
-# 4. Actualizar la cache de bibliotecas
-sudo ldconfig
-
-# 5. Verificar que la biblioteca ahora aparece en la cache
-ldconfig -p | grep libNOMBRE
-
-# 6. Verificar las dependencias del programa
-ldd /ruta/del/programa
-```
-
-Si el paso 3 no fuera necesario (porque `/usr/local/lib` ya estaba configurado), basta con ejecutar `sudo ldconfig` para regenerar la cache.
 </details>
 
 ---
 
-## Ejercicio 8
-**Cual es la diferencia entre una biblioteca estatica (.a) y una biblioteca compartida (.so)? Da una ventaja y una desventaja de cada una.**
+### Pregunta 8
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la principal ventaja de las bibliotecas compartidas (.so) frente a las estaticas (.a)?
 
-| Aspecto | Estatica (.a) | Compartida (.so) |
-|---------|--------------|-------------------|
-| **Enlace** | En tiempo de compilacion | En tiempo de ejecucion |
-| **Codigo** | Se copia dentro del ejecutable | Se carga desde el archivo .so |
-| **Tamano del ejecutable** | Mayor | Menor |
-| **Dependencia externa** | Ninguna (independiente) | Requiere que la .so exista en el sistema |
-| **Uso de memoria** | Cada proceso tiene su copia | Compartida entre procesos |
+a) El ejecutable resultante no tiene ninguna dependencia externa
+b) El ejecutable se puede copiar a cualquier sistema sin problemas de compatibilidad
+c) Multiples programas comparten una sola copia en memoria, ahorrando espacio
+d) La compilacion es mas rapida porque no se necesita el codigo fuente de la biblioteca
 
-**Ventaja de la estatica**: El ejecutable es **autonomo** y no depende de bibliotecas externas. Se puede copiar a otro sistema sin preocuparse por las dependencias.
+<details><summary>Respuesta</summary>
 
-**Desventaja de la estatica**: Ejecutables **mas grandes** y si se corrige un bug en la biblioteca, hay que **recompilar** todos los programas que la usan.
+**c) Multiples programas comparten una sola copia en memoria, ahorrando espacio**
 
-**Ventaja de la compartida**: **Ahorro de espacio** en disco y memoria. Actualizar la biblioteca actualiza automaticamente todos los programas que la usan.
+Las bibliotecas compartidas (.so) se cargan una sola vez en memoria y se comparten entre todos los procesos que las necesitan, ahorrando espacio en disco y RAM. Ademas, actualizar la biblioteca actualiza automaticamente todos los programas que la usan. Las opciones a) y b) son ventajas de las bibliotecas estaticas (.a), donde el codigo se copia dentro del ejecutable haciendolo autonomo pero mas grande.
 
-**Desventaja de la compartida**: Si la biblioteca se elimina, se corrompe o cambia de version incompatiblemente, los programas que dependen de ella **dejaran de funcionar**.
+</details>
+
+---
+
+### Pregunta 9
+
+Que comando muestra el contenido de la cache de bibliotecas compartidas del sistema?
+
+a) `ldd -p`
+b) `ldconfig -p`
+c) `ld --cache`
+d) `cat /etc/ld.so.cache`
+
+<details><summary>Respuesta</summary>
+
+**b) `ldconfig -p`**
+
+El comando `ldconfig -p` (print cache) muestra todas las bibliotecas registradas en la cache `/etc/ld.so.cache`, incluyendo el soname, tipo (libc6, x86-64) y ruta completa de cada biblioteca. Se puede combinar con `grep` para buscar una biblioteca especifica: `ldconfig -p | grep libssl`. No se puede usar `cat` para leer la cache porque es un archivo binario. Para ver el proceso de escaneo con detalle se usa `ldconfig -v` (verbose).
+
+</details>
+
+---
+
+### Pregunta 10
+
+En la convencion de nombrado de bibliotecas compartidas, que enlace simbolico es el "soname" y quien lo utiliza?
+
+a) `libfuse.so` - usado por el compilador durante la compilacion
+b) `libfuse.so.2` - usado por el cargador dinamico cuando los programas se ejecutan
+c) `libfuse.so.2.9.7` - usado por el sistema de archivos para localizar el archivo real
+d) `libfuse.a` - usado por el enlazador estatico
+
+<details><summary>Respuesta</summary>
+
+**b) `libfuse.so.2` - usado por el cargador dinamico cuando los programas se ejecutan**
+
+En la cadena de enlaces simbolicos, el soname (`libfuse.so.2`) incluye solo la version mayor y es el nombre que los programas compilados contra esta biblioteca buscan en tiempo de ejecucion. El enlace de desarrollo (`libfuse.so`, sin version) es usado por el compilador (`gcc -lfuse`). El archivo real (`libfuse.so.2.9.7`) contiene el codigo compilado. El comando `ldconfig` se encarga de crear y mantener automaticamente los enlaces soname, permitiendo actualizar la version menor y revision sin romper la compatibilidad.
+
 </details>

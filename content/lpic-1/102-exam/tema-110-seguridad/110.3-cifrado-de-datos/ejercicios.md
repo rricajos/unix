@@ -14,229 +14,190 @@ subtema: "110.3"
 
 # 110.3 Proteger datos con cifrado - Ejercicios
 
-## Ejercicio 1
-Describe el proceso completo para configurar autenticacion SSH por clave publica entre un cliente y un servidor.
+### Pregunta 1
+
+Cual es el proceso correcto para configurar autenticacion SSH por clave publica?
+
+a) Generar claves en el servidor, copiar la clave privada al cliente, conectar
+b) Generar claves en el cliente, copiar la clave publica al servidor con `ssh-copy-id`, conectar
+c) Generar claves en el servidor, copiar la clave publica al cliente, conectar
+d) Generar las mismas claves en el cliente y el servidor, luego conectar
 
 <details><summary>Respuesta</summary>
 
-1. **Generar el par de claves** en el cliente:
-```bash
-ssh-keygen -t ed25519 -C "mi@email.com"
-```
-Esto crea `~/.ssh/id_ed25519` (privada) y `~/.ssh/id_ed25519.pub` (publica).
+**b) Generar claves en el cliente, copiar la clave publica al servidor con `ssh-copy-id`, conectar**
 
-2. **Copiar la clave publica al servidor**:
-```bash
-ssh-copy-id usuario@servidor
-```
-Esto agrega la clave publica al archivo `~/.ssh/authorized_keys` del servidor.
-
-3. **Conectar sin contrasena**:
-```bash
-ssh usuario@servidor
-```
-
-4. **(Opcional) Deshabilitar autenticacion por contrasena** en el servidor editando `/etc/ssh/sshd_config`:
-```
-PasswordAuthentication no
-```
-Y reiniciar: `systemctl restart sshd`
-
-Permisos requeridos: `~/.ssh/` = 700, clave privada = 600, authorized_keys = 600.
+El proceso correcto es: 1) Generar el par de claves en el cliente con `ssh-keygen` (por ejemplo, `ssh-keygen -t ed25519`). 2) Copiar la clave publica al servidor con `ssh-copy-id usuario@servidor`, que agrega la clave al archivo `~/.ssh/authorized_keys` del servidor. 3) Conectar con `ssh usuario@servidor`. La clave privada nunca sale del cliente. Permisos requeridos: `~/.ssh/` = 700, clave privada = 600, authorized_keys = 600.
 
 </details>
 
-## Ejercicio 2
-¿Que es `~/.ssh/known_hosts` y que sucede si la clave de host de un servidor cambia?
+---
+
+### Pregunta 2
+
+Que archivo almacena las claves de host de los servidores a los que un cliente SSH se ha conectado previamente?
+
+a) `~/.ssh/authorized_keys`
+b) `~/.ssh/config`
+c) `~/.ssh/known_hosts`
+d) `/etc/ssh/ssh_host_keys`
 
 <details><summary>Respuesta</summary>
 
-**`~/.ssh/known_hosts`** almacena las **claves de host** (fingerprints) de los servidores a los que te has conectado previamente. Sirve para verificar la identidad del servidor y proteger contra ataques **man-in-the-middle**.
+**c) `~/.ssh/known_hosts`**
 
-Si la clave de host cambia, SSH muestra un **error de advertencia** y **rechaza la conexion**:
-```
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-@ WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! @
-@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-```
-
-Esto puede significar:
-- El servidor fue reinstalado (cambio legitimo)
-- Un ataque man-in-the-middle (riesgo de seguridad)
-
-Si el cambio es legitimo, eliminar la entrada antigua:
-```bash
-ssh-keygen -R host
-```
+El archivo `~/.ssh/known_hosts` almacena las huellas digitales (fingerprints) de las claves de host de los servidores a los que el usuario se ha conectado previamente. Sirve para verificar la identidad del servidor y proteger contra ataques man-in-the-middle. Si la clave de host de un servidor cambia, SSH muestra un error y rechaza la conexion. Para eliminar una entrada antigua: `ssh-keygen -R host`. `~/.ssh/authorized_keys` almacena las claves publicas autorizadas en el servidor.
 
 </details>
 
-## Ejercicio 3
-Explica la diferencia entre tuneles SSH locales (`-L`), remotos (`-R`) y SOCKS (`-D`). Da un ejemplo de cada uno.
+---
+
+### Pregunta 3
+
+Que tipo de tunel SSH se crea con el comando `ssh -L 8080:localhost:80 usuario@servidor`?
+
+a) Tunel remoto que expone el puerto 8080 del servidor
+b) Tunel local que reenviar el puerto local 8080 al puerto 80 del servidor
+c) Proxy SOCKS en el puerto 8080
+d) Tunel inverso que redirige el trafico del puerto 80 al 8080
 
 <details><summary>Respuesta</summary>
 
-**Tunel local (`-L`)**: Reenviar un puerto **local** a un servicio **remoto** a traves del tunel.
-```bash
-ssh -L 8080:localhost:80 usuario@servidor
-# localhost:8080 -> tunel SSH -> servidor:80
-```
-Uso: Acceder a un servicio remoto como si fuera local.
+**b) Tunel local que reenviar el puerto local 8080 al puerto 80 del servidor**
 
-**Tunel remoto (`-R`)**: Reenviar un puerto en el **servidor remoto** a un servicio **local**.
-```bash
-ssh -R 9090:localhost:3000 usuario@servidor
-# servidor:9090 -> tunel SSH -> localhost:3000
-```
-Uso: Exponer un servicio local a traves del servidor remoto.
-
-**SOCKS dinamico (`-D`)**: Crear un proxy SOCKS que enruta todo el trafico por el tunel.
-```bash
-ssh -D 1080 usuario@servidor
-# Configurar navegador con proxy SOCKS localhost:1080
-```
-Uso: Navegar por Internet a traves del servidor (anonimato, eludir restricciones).
+La opcion `-L` crea un tunel local: el puerto 8080 en la maquina local se reenviar a traves del tunel SSH al puerto 80 del servidor. Despues de ejecutar el comando, acceder a `http://localhost:8080` equivale a acceder al puerto 80 del servidor remoto. `-R` crea un tunel remoto (puerto en el servidor reenviar al cliente). `-D` crea un proxy SOCKS dinamico. Las opciones `-N` (sin ejecutar comandos) y `-f` (segundo plano) son utiles con tuneles.
 
 </details>
 
-## Ejercicio 4
-¿Como cifrarias un archivo llamado `secreto.txt` con GPG para que solo lo pueda leer el usuario `maria@empresa.com`? ¿Como lo descifraria Maria?
+---
+
+### Pregunta 4
+
+Que comando cifra un archivo con GPG para que solo el destinatario `maria@empresa.com` pueda descifrarlo?
+
+a) `gpg --symmetric --recipient maria@empresa.com archivo.txt`
+b) `gpg --encrypt --recipient maria@empresa.com archivo.txt`
+c) `gpg --sign --recipient maria@empresa.com archivo.txt`
+d) `gpg --cipher maria@empresa.com archivo.txt`
 
 <details><summary>Respuesta</summary>
 
-**Cifrar** (necesitas tener la clave publica de Maria importada):
-```bash
-gpg --encrypt --recipient maria@empresa.com secreto.txt
-```
-Esto genera `secreto.txt.gpg` que solo Maria puede descifrar con su clave privada.
+**b) `gpg --encrypt --recipient maria@empresa.com archivo.txt`**
 
-Para generar en formato texto (ASCII armor):
-```bash
-gpg --encrypt --armor --recipient maria@empresa.com secreto.txt
-```
-Esto genera `secreto.txt.asc`.
-
-**Maria descifra** (usando su clave privada):
-```bash
-gpg --decrypt secreto.txt.gpg > secreto.txt
-# o simplemente:
-gpg -d secreto.txt.gpg
-```
-
-GPG le pedira la passphrase de su clave privada para descifrar.
+`gpg --encrypt --recipient` cifra el archivo usando la clave publica del destinatario (que debe estar importada previamente). Solo Maria podra descifrarlo con su clave privada. Se genera `archivo.txt.gpg`. Para formato ASCII: `gpg --encrypt --armor --recipient maria@empresa.com archivo.txt` (genera `archivo.txt.asc`). La opcion `--symmetric` cifra con contrasena (no con clave publica). `--sign` firma pero no cifra.
 
 </details>
 
-## Ejercicio 5
-¿Como firmarias digitalmente un archivo y como verificaria el destinatario la firma?
+---
+
+### Pregunta 5
+
+Que opciones de `/etc/ssh/sshd_config` deberian configurarse para endurecer un servidor SSH?
+
+a) `PermitRootLogin yes` y `PasswordAuthentication yes`
+b) `PermitRootLogin no` y `PasswordAuthentication no`
+c) `AllowAllUsers yes` y `DisableEncryption no`
+d) `RootAccess deny` y `PasswordPolicy strong`
 
 <details><summary>Respuesta</summary>
 
-**Firmar** (3 opciones):
-```bash
-# Firma incluida en el archivo (binario)
-gpg --sign documento.pdf
+**b) `PermitRootLogin no` y `PasswordAuthentication no`**
 
-# Firma separada (genera documento.pdf.sig)
-gpg --detach-sign documento.pdf
-
-# Firma en texto claro (para archivos de texto)
-gpg --clearsign documento.txt
-```
-
-**Verificar** (el destinatario necesita tu clave publica):
-```bash
-# Verificar firma incluida
-gpg --verify documento.pdf.gpg
-
-# Verificar firma separada
-gpg --verify documento.pdf.sig documento.pdf
-
-# Verificar firma en texto claro
-gpg --verify documento.txt.asc
-```
-
-La salida indicara si la firma es valida y quien firmo el documento.
+Para endurecer un servidor SSH se recomienda: `PermitRootLogin no` (deshabilitar login directo como root), `PasswordAuthentication no` (deshabilitar autenticacion por contrasena, solo claves), `PubkeyAuthentication yes` (habilitar autenticacion por clave publica), `MaxAuthTries 3` (limitar intentos), `PermitEmptyPasswords no` y opcionalmente `AllowUsers` para limitar usuarios. Despues de cambios: `systemctl restart sshd`.
 
 </details>
 
-## Ejercicio 6
-¿Que opciones de `/etc/ssh/sshd_config` modificarias para endurecer la seguridad de un servidor SSH?
+---
+
+### Pregunta 6
+
+Cual es la diferencia entre `scp` y `sftp`?
+
+a) `scp` cifra la transferencia y `sftp` no
+b) `scp` es no interactivo (un solo comando) y `sftp` es interactivo (sesion con comandos)
+c) `sftp` es mas rapido que `scp`
+d) `scp` usa el puerto 22 y `sftp` usa el puerto 21
 
 <details><summary>Respuesta</summary>
 
-```
-# Deshabilitar login de root
-PermitRootLogin no
+**b) `scp` es no interactivo (un solo comando) y `sftp` es interactivo (sesion con comandos)**
 
-# Deshabilitar autenticacion por contrasena (solo claves)
-PasswordAuthentication no
-
-# Habilitar autenticacion por clave publica
-PubkeyAuthentication yes
-
-# Cambiar puerto por defecto (seguridad por oscuridad)
-Port 2222
-
-# Limitar usuarios que pueden conectarse
-AllowUsers admin juan
-
-# Deshabilitar autenticacion basada en host
-HostbasedAuthentication no
-
-# Deshabilitar login con contrasena vacia
-PermitEmptyPasswords no
-
-# Limitar intentos de autenticacion
-MaxAuthTries 3
-
-# Timeout de sesion inactiva
-ClientAliveInterval 300
-ClientAliveCountMax 2
-```
-
-Despues de cambios: `systemctl restart sshd`
+`scp` (Secure Copy) es no interactivo, ideal para copias simples y scripts, con sintaxis similar a `cp`. `sftp` (SSH File Transfer Protocol) es interactivo, permite navegar el sistema remoto con comandos como `ls`, `cd`, `get`, `put`. Ambos usan SSH (puerto 22) y cifran la transferencia. Para copiar un directorio con scp: `scp -r directorio usuario@servidor:/ruta/`. Para puerto no estandar: `scp -P 2222`.
 
 </details>
 
-## Ejercicio 7
-¿Cual es la diferencia entre `scp` y `sftp`? ¿Como copiarias un directorio completo a un servidor remoto con scp?
+---
+
+### Pregunta 7
+
+Que tipo de clave SSH se recomienda generar actualmente por ser la mas moderna y segura?
+
+a) DSA
+b) RSA de 1024 bits
+c) Ed25519
+d) ECDSA de 256 bits
 
 <details><summary>Respuesta</summary>
 
-**`scp`** (Secure Copy):
-- No interactivo (un solo comando)
-- Ideal para copias simples y scripts
-- Sintaxis similar a `cp`
+**c) Ed25519**
 
-**`sftp`** (SSH File Transfer Protocol):
-- **Interactivo** (sesion con comandos como ls, cd, get, put)
-- Permite navegar el sistema remoto
-- Mas funcionalidades (renombrar, crear directorios, etc.)
-
-Copiar directorio completo con scp:
-```bash
-scp -r /ruta/directorio usuario@servidor:/ruta/destino/
-```
-
-- `-r`: Recursivo (incluye subdirectorios)
-- `-P 2222`: Si el servidor usa un puerto no estandar
+Ed25519 es el tipo de clave SSH mas moderno y recomendado. Ofrece alta seguridad con claves mas cortas (256 bits fijos), es rapido y no depende de parametros de curva que podrian ser debiles. DSA esta deprecado (solo 1024 bits). RSA es clasico y compatible pero requiere al menos 4096 bits para buena seguridad. ECDSA es bueno pero Ed25519 es preferido. Se genera con: `ssh-keygen -t ed25519`.
 
 </details>
 
-## Ejercicio 8
-¿Cual es la diferencia entre cifrado simetrico y asimetrico? ¿Como se combinan en una sesion SSH?
+---
+
+### Pregunta 8
+
+Que comando genera un certificado de revocacion para una clave GPG?
+
+a) `gpg --delete-key ID_CLAVE`
+b) `gpg --gen-revoke ID_CLAVE`
+c) `gpg --revoke ID_CLAVE`
+d) `gpg --invalidate ID_CLAVE`
 
 <details><summary>Respuesta</summary>
 
-**Cifrado simetrico**: Una **sola clave** para cifrar y descifrar. Es rapido pero tiene el problema de como compartir la clave de forma segura. Ejemplos: AES, 3DES.
+**b) `gpg --gen-revoke ID_CLAVE`**
 
-**Cifrado asimetrico**: **Dos claves** (publica y privada). Lo que cifra una, lo descifra la otra. Es lento pero resuelve el problema del intercambio de claves. Ejemplos: RSA, Ed25519.
+El comando `gpg --gen-revoke ID_CLAVE` genera un certificado de revocacion que se debe crear inmediatamente despues de generar la clave y almacenarse en un lugar seguro. Si la clave privada se compromete, se importa el certificado con `gpg --import revocacion.asc` y se envia al servidor de claves con `gpg --keyserver hkps://keys.openpgp.org --send-keys ID_CLAVE`. GPG tambien genera automaticamente un certificado en `~/.gnupg/openpgp-revocs.d/`.
 
-**En SSH se combinan ambos**:
-1. **Negociacion inicial**: Se usa cifrado asimetrico para autenticar al servidor y al cliente, y para intercambiar de forma segura una **clave de sesion** simetrica.
-2. **Comunicacion**: Una vez establecida la clave de sesion, toda la comunicacion se cifra con **cifrado simetrico** (mas rapido) usando esa clave.
+</details>
 
-Esto combina la seguridad del cifrado asimetrico (intercambio de clave seguro) con la velocidad del cifrado simetrico (transmision de datos).
+---
+
+### Pregunta 9
+
+Que comando muestra la huella digital (fingerprint) de una clave SSH?
+
+a) `ssh-keygen -f ~/.ssh/id_ed25519.pub`
+b) `ssh-keygen -l -f ~/.ssh/id_ed25519.pub`
+c) `ssh-agent -l ~/.ssh/id_ed25519.pub`
+d) `ssh-fingerprint ~/.ssh/id_ed25519.pub`
+
+<details><summary>Respuesta</summary>
+
+**b) `ssh-keygen -l -f ~/.ssh/id_ed25519.pub`**
+
+La opcion `-l` de `ssh-keygen` muestra la huella digital (fingerprint) de una clave, y `-f` especifica el archivo. Esto es util para verificar la identidad de un servidor comparando la huella con un valor conocido, o para comprobar el tipo y tamano de una clave. Funciona tanto con claves publicas como privadas. Para ver la huella de una clave de host del servidor: `ssh-keygen -l -f /etc/ssh/ssh_host_ed25519_key.pub`.
+
+</details>
+
+---
+
+### Pregunta 10
+
+En GPG, que hace el comando `gpg --detach-sign archivo.txt`?
+
+a) Cifra el archivo y genera una firma incluida
+b) Genera una firma digital separada del archivo original
+c) Firma y cifra el archivo simultaneamente
+d) Verifica la firma del archivo
+
+<details><summary>Respuesta</summary>
+
+**b) Genera una firma digital separada del archivo original**
+
+`gpg --detach-sign` genera una firma digital en un archivo separado (`archivo.txt.sig`) sin incluirla en el archivo original. Esto es util cuando no se quiere modificar el archivo original. Otras opciones de firma: `gpg --sign` incluye la firma dentro del archivo (genera `archivo.txt.gpg`), `gpg --clearsign` envuelve el texto con la firma en texto claro (genera `archivo.txt.asc`). Para verificar: `gpg --verify archivo.txt.sig archivo.txt`.
 
 </details>

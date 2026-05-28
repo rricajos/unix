@@ -14,160 +14,190 @@ subtema: "102.1"
 
 # 102.1 - Diseno de disco duro: Ejercicios
 
-## Ejercicio 1
-**Un disco con tabla de particiones MBR tiene actualmente 3 particiones primarias. Necesitas crear 4 particiones mas. Cual es la solucion correcta?**
+### Pregunta 1
 
-<details>
-<summary>Ver respuesta</summary>
+Un disco con tabla de particiones MBR tiene actualmente 3 particiones primarias y necesitas crear 4 particiones mas. Cual es la solucion correcta?
 
-Debes crear una particion extendida como 4a particion primaria, y dentro de ella crear las 4 particiones logicas necesarias. MBR permite maximo 4 particiones primarias. Al convertir la 4a en extendida, puedes crear multiples logicas dentro de ella. Las particiones logicas se numeran a partir del 5 (sda5, sda6, etc.).
+a) Crear las 4 particiones adicionales como primarias, ya que MBR permite hasta 8
+b) Convertir una de las particiones primarias existentes a logica y crear las 4 nuevas como logicas
+c) Crear la 4a particion como extendida y dentro de ella crear las 4 particiones logicas necesarias
+d) Eliminar las 3 particiones primarias existentes y recrear todo con particiones logicas
+
+<details><summary>Respuesta</summary>
+
+**c) Crear la 4a particion como extendida y dentro de ella crear las 4 particiones logicas necesarias**
+
+MBR permite un maximo de 4 particiones primarias. La solucion es usar la 4a entrada como particion extendida, que actua como contenedor para multiples particiones logicas. Las particiones logicas se numeran a partir de 5 (sda5, sda6, etc.). No es posible convertir una particion primaria existente a logica sin eliminarla, y MBR no soporta mas de 4 entradas primarias.
+
 </details>
 
 ---
 
-## Ejercicio 2
-**Cual es la principal diferencia entre MBR y GPT en cuanto a tamano maximo de disco soportado? Que esquema usarias en un disco de 4 TB?**
+### Pregunta 2
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es el tamano maximo de disco soportado por una tabla de particiones MBR?
 
-- **MBR** soporta un maximo de **2 TB** (2^32 sectores x 512 bytes).
-- **GPT** soporta discos de hasta **8 ZB** (zettabytes) teoricos.
+a) 1 TB
+b) 2 TB
+c) 4 TB
+d) 8 ZB
 
-Para un disco de 4 TB se **debe** usar GPT, ya que MBR no puede direccionar mas alla de 2 TB. Ademas, GPT ofrece ventajas como redundancia de la tabla de particiones y verificacion CRC32.
+<details><summary>Respuesta</summary>
+
+**b) 2 TB**
+
+MBR utiliza direcciones de 32 bits para los sectores del disco, lo que resulta en un maximo de 2^32 sectores x 512 bytes = 2 TB. Para discos mayores de 2 TB se debe usar GPT (GUID Partition Table), que soporta hasta 8 ZB teoricos. GPT ademas ofrece ventajas como redundancia de la tabla de particiones y verificacion CRC32.
+
 </details>
 
 ---
 
-## Ejercicio 3
-**En un servidor web con alto trafico que genera muchos logs, que directorios recomendarias separar en particiones independientes y por que?**
+### Pregunta 3
 
-<details>
-<summary>Ver respuesta</summary>
+En un servidor web con alto trafico que genera muchos logs, cual de los siguientes directorios es MAS importante separar en una particion independiente para proteger la estabilidad del sistema?
 
-Se recomienda separar al menos:
+a) `/home`
+b) `/usr`
+c) `/var`
+d) `/opt`
 
-1. **`/var`** - Contiene los logs del servidor web (Apache/Nginx), cache y datos variables. Si los logs crecen sin control, no afectaran al resto del sistema.
-2. **`/tmp`** - Los archivos temporales de las conexiones no llenaran la raiz. Se puede montar con `noexec` para mayor seguridad.
-3. **`/home`** - Separar datos de usuarios protege ante reinstalaciones.
-4. **`/boot`** - Particion pequena para garantizar el arranque.
+<details><summary>Respuesta</summary>
 
-La razon principal de separar `/var` es que si se llena (por logs excesivos), el sistema raiz `/` sigue teniendo espacio disponible y el sistema no se bloquea.
+**c) `/var`**
+
+El directorio `/var` contiene los logs del servidor web (Apache/Nginx), cache y datos variables que crecen de forma impredecible. Si los logs crecen sin control y `/var` comparte particion con `/`, la particion raiz podria llenarse completamente, provocando la caida del sistema. Separar `/var` en su propia particion evita que los logs excesivos afecten al resto del sistema operativo.
+
 </details>
 
 ---
 
-## Ejercicio 4
-**Que es la EFI System Partition (ESP)? Que sistema de archivos debe tener y donde se monta tipicamente en Linux?**
+### Pregunta 4
 
-<details>
-<summary>Ver respuesta</summary>
+Que sistema de archivos debe tener obligatoriamente la EFI System Partition (ESP)?
 
-La **EFI System Partition (ESP)** es una particion obligatoria en sistemas con firmware UEFI. Contiene los cargadores de arranque (.efi) de los sistemas operativos instalados.
+a) ext4
+b) NTFS
+c) FAT32
+d) XFS
 
-- **Sistema de archivos**: debe ser **FAT32** (obligatorio segun la especificacion UEFI).
-- **Punto de montaje tipico**: `/boot/efi`.
-- **Tamano recomendado**: 100 - 550 MB.
-- **Tipo de particion GPT**: `EF00`.
-- Cada sistema operativo instala su cargador en un subdirectorio propio, por ejemplo `/boot/efi/EFI/ubuntu/`.
+<details><summary>Respuesta</summary>
+
+**c) FAT32**
+
+La especificacion UEFI requiere que la ESP (EFI System Partition) este formateada en FAT32. Esta particion se monta tipicamente en `/boot/efi`, tiene un tamano recomendado de 100-550 MB, y se identifica por el tipo de particion `EF00` en GPT. Contiene los cargadores de arranque (.efi) de los sistemas operativos instalados, cada uno en un subdirectorio propio como `/boot/efi/EFI/ubuntu/`.
+
 </details>
 
 ---
 
-## Ejercicio 5
-**Explica los tres componentes principales de LVM (PV, VG, LV) y describe el proceso para crear un volumen logico desde cero usando dos discos.**
+### Pregunta 5
 
-<details>
-<summary>Ver respuesta</summary>
+En LVM, cual es el orden correcto de los componentes desde el nivel fisico hasta el nivel logico?
 
-Los tres componentes de LVM son:
+a) LV -> VG -> PV
+b) VG -> PV -> LV
+c) PV -> VG -> LV
+d) PV -> LV -> VG
 
-1. **PV (Physical Volume)**: particion o disco fisico inicializado para LVM con `pvcreate`.
-2. **VG (Volume Group)**: agrupacion de uno o mas PVs que forman un pool de almacenamiento.
-3. **LV (Logical Volume)**: "particion virtual" creada dentro de un VG, sobre la cual se crea el sistema de archivos.
+<details><summary>Respuesta</summary>
 
-Proceso con dos discos (`/dev/sdb1` y `/dev/sdc1`):
+**c) PV -> VG -> LV**
 
-```bash
-# 1. Crear volumenes fisicos
-pvcreate /dev/sdb1 /dev/sdc1
+El flujo de LVM es: primero se crean los Physical Volumes (PV) con `pvcreate` sobre las particiones o discos fisicos. Luego se agrupan en un Volume Group (VG) con `vgcreate`, formando un pool de almacenamiento. Finalmente, se crean Logical Volumes (LV) con `lvcreate` dentro del VG, que actuan como particiones virtuales sobre las cuales se crean los sistemas de archivos.
 
-# 2. Crear grupo de volumenes
-vgcreate mi_vg /dev/sdb1 /dev/sdc1
-
-# 3. Crear volumen logico de 100 GB
-lvcreate -n mi_lv -L 100G mi_vg
-
-# 4. Crear sistema de archivos
-mkfs.ext4 /dev/mi_vg/mi_lv
-
-# 5. Montar
-mount /dev/mi_vg/mi_lv /datos
-```
 </details>
 
 ---
 
-## Ejercicio 6
-**Tienes un sistema con 4 GB de RAM que necesita soporte para hibernacion. Cuanto espacio de swap recomiendas? Escribe los comandos para crear y activar una particion swap en `/dev/sda3`.**
+### Pregunta 6
 
-<details>
-<summary>Ver respuesta</summary>
+Un sistema con 4 GB de RAM necesita soporte para hibernacion. Cual es el tamano minimo recomendado para la particion de swap?
 
-Para hibernacion, el espacio de swap debe ser **al menos igual al tamano de la RAM**, ya que la hibernacion vuelca todo el contenido de la RAM al swap. Con 4 GB de RAM, se recomienda un swap de **al menos 4 GB** (idealmente un poco mas, como 5-6 GB).
+a) 2 GB (mitad de la RAM)
+b) 4 GB (igual a la RAM)
+c) 8 GB (doble de la RAM)
+d) No se necesita swap para hibernacion
 
-Comandos:
+<details><summary>Respuesta</summary>
 
-```bash
-# Formatear la particion como swap
-mkswap /dev/sda3
+**b) 4 GB (igual a la RAM)**
 
-# Activar el swap
-swapon /dev/sda3
+La hibernacion vuelca todo el contenido de la memoria RAM al espacio de swap, por lo que el swap debe ser al menos igual al tamano de la RAM. Con 4 GB de RAM, se necesitan al menos 4 GB de swap (idealmente un poco mas, como 5-6 GB). Sin espacio de swap suficiente, la hibernacion fallaria porque no hay donde almacenar el estado completo de la memoria.
 
-# Verificar que esta activo
-swapon --show
-free -h
-
-# Para que sea permanente, anadir a /etc/fstab:
-# UUID=<uuid-de-sda3>  none  swap  sw  0  0
-```
 </details>
 
 ---
 
-## Ejercicio 7
-**Que herramienta usarias para particionar un disco GPT: `fdisk`, `gdisk` o `parted`? Cual es la diferencia principal entre `parted` y las otras dos?**
+### Pregunta 7
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la diferencia principal entre `parted` y `fdisk`/`gdisk` al realizar cambios en las particiones?
 
-Para discos GPT se puede usar tanto **`gdisk`** como **`parted`**:
+a) `parted` solo soporta MBR mientras que `fdisk` y `gdisk` soportan GPT
+b) `parted` aplica los cambios inmediatamente, mientras que `fdisk` y `gdisk` esperan hasta que se ejecute el comando `w`
+c) `fdisk` y `gdisk` aplican los cambios inmediatamente, mientras que `parted` los almacena en buffer
+d) `parted` solo funciona en modo no interactivo
 
-- **`gdisk`**: diseñado especificamente para GPT. Interfaz similar a fdisk.
-- **`parted`**: soporta tanto MBR como GPT.
-- **`fdisk`**: tradicionalmente solo MBR, aunque versiones modernas soportan GPT.
+<details><summary>Respuesta</summary>
 
-La **diferencia principal** de `parted` respecto a `fdisk`/`gdisk` es que `parted` **aplica los cambios inmediatamente** al ejecutar cada comando, mientras que `fdisk` y `gdisk` no escriben los cambios hasta que se pulsa `w` (write). Esto hace que `parted` sea mas peligroso si se comete un error, ya que no se pueden deshacer los cambios.
+**b) `parted` aplica los cambios inmediatamente, mientras que `fdisk` y `gdisk` esperan hasta que se ejecute el comando `w`**
+
+Esta es una diferencia critica entre las herramientas de particionado. En `fdisk` y `gdisk`, los cambios no se escriben en el disco hasta que el usuario pulsa `w` (write), lo que permite deshacer errores con `q` (quit). En `parted`, cada comando se ejecuta inmediatamente sobre el disco, lo que lo hace mas peligroso si se comete un error, ya que no se pueden deshacer los cambios.
+
 </details>
 
 ---
 
-## Ejercicio 8
-**Escribe una linea de `/etc/fstab` para montar la particion `/dev/sda2` (UUID: a1b2-c3d4) en `/home` con sistema de archivos ext4, opciones por defecto con `nosuid`, que se verifique con fsck despues de la raiz.**
+### Pregunta 8
 
-<details>
-<summary>Ver respuesta</summary>
+Cual es la linea correcta en `/etc/fstab` para montar la particion con UUID `a1b2-c3d4` en `/home` con sistema de archivos ext4, opciones por defecto con `nosuid`, y verificacion con fsck despues de la raiz?
 
-```
-UUID=a1b2-c3d4   /home   ext4   defaults,nosuid   0   2
-```
+a) `UUID=a1b2-c3d4  /home  ext4  defaults,nosuid  0  1`
+b) `UUID=a1b2-c3d4  /home  ext4  defaults,nosuid  0  2`
+c) `/dev/sda2  /home  ext4  defaults,nosuid  1  1`
+d) `UUID=a1b2-c3d4  /home  ext4  nosuid  0  0`
 
-Explicacion de cada campo:
-- `UUID=a1b2-c3d4` - Identificacion por UUID (mas fiable que /dev/sdX)
-- `/home` - Punto de montaje
-- `ext4` - Sistema de archivos
-- `defaults,nosuid` - Opciones por defecto mas la restriccion de no permitir bits SUID
-- `0` - No incluir en copias con dump
-- `2` - Verificar con fsck despues de la raiz (que tiene pass=1)
+<details><summary>Respuesta</summary>
+
+**b) `UUID=a1b2-c3d4  /home  ext4  defaults,nosuid  0  2`**
+
+El sexto campo (pass) controla el orden de verificacion con `fsck`: 0 significa no verificar, 1 es para la particion raiz `/` (se verifica primero), y 2 es para el resto de particiones (se verifican despues de la raiz). Usar UUID es mas fiable que nombres de dispositivo como `/dev/sdX` porque los nombres pueden cambiar al anadir o quitar discos. La opcion `nosuid` impide la ejecucion de programas con bits SUID en esa particion.
+
+</details>
+
+---
+
+### Pregunta 9
+
+Cuantas particiones permite GPT por defecto?
+
+a) 4 particiones primarias
+b) 16 particiones
+c) 64 particiones
+d) 128 particiones
+
+<details><summary>Respuesta</summary>
+
+**d) 128 particiones**
+
+GPT (GUID Partition Table) permite 128 particiones por defecto, un numero ampliable. A diferencia de MBR, GPT no necesita el concepto de particiones extendidas o logicas: todas las particiones son iguales. Ademas, GPT ofrece redundancia almacenando una copia de la tabla de particiones al final del disco, utiliza CRC32 para detectar errores y asigna un GUID unico a cada particion.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que comandos se utilizan para crear y activar una particion de swap en `/dev/sda3`?
+
+a) `format swap /dev/sda3` y luego `mount /dev/sda3 swap`
+b) `mkswap /dev/sda3` y luego `swapon /dev/sda3`
+c) `fdisk -swap /dev/sda3` y luego `swapon /dev/sda3`
+d) `mkfs.swap /dev/sda3` y luego `mount -t swap /dev/sda3`
+
+<details><summary>Respuesta</summary>
+
+**b) `mkswap /dev/sda3` y luego `swapon /dev/sda3`**
+
+El comando `mkswap` formatea la particion como espacio de intercambio (swap) y `swapon` la activa para que el sistema comience a usarla. Para verificar que esta activa se pueden usar `swapon --show` o `free -h`. Para desactivarla se usa `swapoff /dev/sda3`. Para que sea permanente, se debe anadir una entrada en `/etc/fstab` con el formato: `UUID=<uuid>  none  swap  sw  0  0`.
+
 </details>

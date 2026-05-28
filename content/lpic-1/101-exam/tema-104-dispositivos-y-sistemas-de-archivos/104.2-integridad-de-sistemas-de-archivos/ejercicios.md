@@ -14,200 +14,200 @@ subtema: "104.2"
 
 # 104.2 Mantener la integridad de los sistemas de archivos - Ejercicios
 
-## Ejercicio 1
-**Un usuario reporta que no puede crear archivos nuevos en `/home`, pero `df -h` muestra que aun hay 20 GB libres. ¿Cual podria ser el problema y como lo diagnosticarias?**
+### Pregunta 1
+
+Un usuario reporta que no puede crear archivos nuevos en `/home`, pero `df -h` muestra que aun hay 20 GB libres. Cual es la causa mas probable y que comando la diagnosticaria?
+
+a) El sistema de archivos esta corrupto; usar `fsck /home`
+b) Se han agotado los inodos; usar `df -i /home`
+c) La particion esta montada como solo lectura; usar `mount | grep /home`
+d) El usuario ha superado su cuota de disco; usar `quota -u usuario`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-El problema probablemente es que se han **agotado los inodos**. Cada archivo necesita un inodo, y si se agotan, no se pueden crear archivos nuevos aunque haya espacio en bloques.
+**b) Se han agotado los inodos; usar `df -i /home`**
 
-Para diagnosticar:
-```bash
-df -i /home
-```
-
-Si la columna `IUse%` muestra 100%, los inodos estan agotados. La solucion seria eliminar archivos innecesarios (especialmente muchos archivos pequenos) o redimensionar el sistema de archivos.
+Cada archivo necesita un inodo, y es posible quedarse sin inodos aunque quede espacio libre en bloques. Esto ocurre tipicamente cuando hay una enorme cantidad de archivos pequenos. `df -i` muestra el uso de inodos, y si la columna `IUse%` muestra 100%, los inodos estan agotados. Esta es una situacion clasica del examen LPIC-1 donde el disco tiene espacio pero no puede crear archivos nuevos. La solucion seria eliminar archivos innecesarios, especialmente los muy pequenos y numerosos.
 
 </details>
 
 ---
 
-## Ejercicio 2
-**¿Cual es la diferencia entre `df -h` y `du -sh /`? ¿Pueden dar resultados diferentes?**
+### Pregunta 2
+
+Cual es la diferencia principal entre `df -h` y `du -sh /`?
+
+a) `df -h` recorre todos los archivos sumando tamanos, mientras que `du -sh /` consulta el sistema de archivos directamente
+b) `df -h` consulta al sistema de archivos sobre espacio de bloques, mientras que `du -sh /` recorre archivos sumando sus tamanos
+c) Ambos comandos producen siempre el mismo resultado ya que consultan la misma fuente
+d) `df -h` muestra solo el espacio libre, mientras que `du -sh /` muestra solo el espacio usado
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-- **`df -h`**: Consulta al sistema de archivos directamente sobre el espacio de bloques usado/libre. Es instantaneo y muestra el espacio real del FS.
-- **`du -sh /`**: Recorre todos los archivos y suma sus tamanos. Es mas lento.
+**b) `df -h` consulta al sistema de archivos sobre espacio de bloques, mientras que `du -sh /` recorre archivos sumando sus tamanos**
 
-**Si, pueden dar resultados diferentes** por varias razones:
-1. **Archivos eliminados pero abiertos:** Si un proceso tiene abierto un archivo que fue eliminado, `df` sigue contando ese espacio como usado, pero `du` no lo ve porque el archivo ya no esta en el directorio.
-2. **Bloques reservados para root:** `df` conoce los bloques reservados, `du` no.
-3. **Otros montajes:** `du` podria cruzar puntos de montaje si no se usa `-x`.
+`df` obtiene informacion directamente de las estructuras del sistema de archivos, es instantaneo y muestra el espacio real utilizado en bloques. `du` recorre fisicamente todos los archivos sumando sus tamanos, lo cual es mas lento. Pueden dar resultados diferentes por varias razones: archivos eliminados pero aun abiertos por procesos (que `df` cuenta pero `du` no ve), bloques reservados para root, o puntos de montaje que `du` podria cruzar sin la opcion `-x`.
 
 </details>
 
 ---
 
-## Ejercicio 3
-**¿Por que NUNCA se debe ejecutar `fsck` en un sistema de archivos montado en modo lectura-escritura?**
+### Pregunta 3
+
+Por que NUNCA se debe ejecutar `fsck` en un sistema de archivos montado en modo lectura-escritura?
+
+a) Porque `fsck` no tiene permisos suficientes para acceder al dispositivo mientras esta montado
+b) Porque `fsck` necesita un sistema de archivos montado como solo lectura para funcionar correctamente
+c) Porque las escrituras simultaneas del kernel y fsck pueden causar corrupcion severa de datos
+d) Porque `fsck` desactiva automaticamente el sistema de archivos antes de verificarlo
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-Porque `fsck` lee y modifica directamente las estructuras del sistema de archivos (superbloque, tabla de inodos, bloques de datos). Si el FS esta montado en modo lectura-escritura, el kernel tambien esta modificando esas mismas estructuras simultaneamente.
+**c) Porque las escrituras simultaneas del kernel y fsck pueden causar corrupcion severa de datos**
 
-Esto puede causar:
-- **Corrupcion severa de datos** al haber escrituras simultaneas incompatibles
-- **Perdida de archivos** si fsck "repara" algo que el kernel estaba modificando
-- **Dano irreversible** al sistema de archivos
-
-La solucion correcta es desmontar el FS primero o montarlo como solo lectura:
-```bash
-umount /dev/sda1
-fsck /dev/sda1
-
-# O para la particion raiz:
-mount -o remount,ro /
-fsck /dev/sda1
-```
+`fsck` lee y modifica directamente las estructuras del sistema de archivos (superbloque, tabla de inodos, bloques de datos). Si el sistema de archivos esta montado en modo lectura-escritura, el kernel tambien esta modificando esas estructuras. Esto genera escrituras simultaneas incompatibles que pueden provocar corrupcion severa, perdida de archivos y dano irreversible. La solucion es desmontar el FS primero con `umount`, o remontarlo como solo lectura con `mount -o remount,ro` si se trata de la particion raiz.
 
 </details>
 
 ---
 
-## Ejercicio 4
-**Tienes un sistema ext2 en `/dev/sdb1`. ¿Como lo convertirias a ext3 sin formatear? ¿Que comando usarias?**
+### Pregunta 4
+
+Que comando convierte un sistema de archivos ext2 a ext3 sin destruir los datos existentes?
+
+a) `mkfs.ext3 /dev/sdb1`
+b) `fsck -t ext3 /dev/sdb1`
+c) `tune2fs -j /dev/sdb1`
+d) `e2fsck -E journal /dev/sdb1`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-Se usa `tune2fs -j` para anadir un journal al sistema ext2, convirtiendolo efectivamente en ext3:
+**c) `tune2fs -j /dev/sdb1`**
 
-```bash
-# Desmontar primero
-umount /dev/sdb1
-
-# Anadir journal
-tune2fs -j /dev/sdb1
-
-# Montar como ext3
-mount -t ext3 /dev/sdb1 /mnt/datos
-```
-
-La opcion `-j` (journal) anade la estructura de journaling sin destruir los datos existentes. La conversion es no destructiva.
+La opcion `-j` de `tune2fs` anade un journal (diario de transacciones) al sistema de archivos ext2, convirtiendolo efectivamente en ext3. Esta conversion es no destructiva: no se pierden los datos existentes. Solo se necesita desmontar el sistema de archivos primero y luego montarlo como ext3. La opcion `a` (mkfs.ext3) destruiria todos los datos al crear un FS nuevo. `fsck` es para verificar y reparar, no para convertir. La opcion `d` no es una sintaxis valida de `e2fsck`.
 
 </details>
 
 ---
 
-## Ejercicio 5
-**Escribe los comandos para:**
-- a) Ver cuanto espacio ocupa `/var/log` de forma legible
-- b) Ver los 5 subdirectorios mas grandes dentro de `/home`
-- c) Desactivar la verificacion automatica por conteo de montajes en `/dev/sda1`
+### Pregunta 5
+
+Cual es la herramienta correcta para reparar un sistema de archivos XFS?
+
+a) `fsck.xfs /dev/sda1`
+b) `e2fsck /dev/sda1`
+c) `xfs_repair /dev/sda1`
+d) `xfs_check /dev/sda1`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-```bash
-# a) Espacio de /var/log legible
-du -sh /var/log
+**c) `xfs_repair /dev/sda1`**
 
-# b) 5 subdirectorios mas grandes en /home
-du -sh /home/* | sort -rh | head -5
-# O con profundidad limitada:
-du --max-depth=1 -h /home | sort -rh | head -5
-
-# c) Desactivar verificacion por conteo de montajes
-tune2fs -c 0 /dev/sda1
-# O equivalente:
-tune2fs -c -1 /dev/sda1
-```
+`xfs_repair` es la herramienta real para reparar sistemas de archivos XFS. Aunque `fsck.xfs` existe en el sistema, es un placeholder que no realiza ninguna reparacion real; solo existe para que scripts genericos que llaman a `fsck` no fallen al encontrar XFS. `e2fsck` es especifico para sistemas ext2/ext3/ext4 y no funciona con XFS. Para solo verificar sin reparar se usa `xfs_repair -n`. Ademas, `xfs_repair` requiere que el sistema de archivos este desmontado.
 
 </details>
 
 ---
 
-## Ejercicio 6
-**¿Que herramienta se usa para reparar un sistema XFS? ¿Es lo mismo que `fsck.xfs`?**
+### Pregunta 6
+
+Cual de las siguientes combinaciones de comandos muestra los 5 subdirectorios mas grandes dentro de `/home`?
+
+a) `df -h /home | sort -rh | head -5`
+b) `du -sh /home/* | sort -rh | head -5`
+c) `ls -lS /home | head -5`
+d) `find /home -maxdepth 1 -size +1G`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-La herramienta para reparar XFS es **`xfs_repair`**.
+**b) `du -sh /home/* | sort -rh | head -5`**
 
-**No, `fsck.xfs` NO es lo mismo.** `fsck.xfs` existe en el sistema pero es un **placeholder** que no realiza ninguna reparacion real. Solo existe para que scripts genericos que llaman a `fsck` no fallen cuando encuentran XFS.
-
-```bash
-# Correcto: reparar XFS
-xfs_repair /dev/sda1
-
-# Solo verificar sin reparar
-xfs_repair -n /dev/sda1
-
-# Incorrecto: esto no hace nada util
-fsck.xfs /dev/sda1
-```
-
-Ademas, `xfs_repair` requiere que el FS este **desmontado**, y `xfs_info` requiere que este **montado**.
+`du -sh /home/*` calcula el tamano total de cada subdirectorio dentro de `/home` en formato legible (`-h`) mostrando solo el resumen (`-s`). El resultado se pasa a `sort -rh` que ordena en orden inverso (`-r`) interpretando los tamanos legibles (`-h`), y `head -5` muestra solo los primeros 5 resultados. `df` muestra informacion de sistemas de archivos montados, no de directorios individuales. `ls -lS` solo muestra el tamano de las entradas del directorio, no el contenido recursivo. `find` busca archivos individuales por tamano, no suma el contenido de directorios.
 
 </details>
 
 ---
 
-## Ejercicio 7
-**Explica que informacion proporcionan los siguientes comandos y cuando usarias cada uno:**
-- `tune2fs -l /dev/sda1`
-- `dumpe2fs /dev/sda1`
-- `dumpe2fs -h /dev/sda1`
+### Pregunta 7
+
+Que opcion de `tune2fs` desactiva la verificacion automatica de un sistema ext4 basada en el conteo de montajes?
+
+a) `tune2fs -i 0 /dev/sda1`
+b) `tune2fs -c 0 /dev/sda1`
+c) `tune2fs -l /dev/sda1`
+d) `tune2fs -m 0 /dev/sda1`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-| Comando | Informacion | Cuando usarlo |
-|---------|------------|---------------|
-| `tune2fs -l /dev/sda1` | Informacion del superbloque: etiqueta, UUID, conteo de montajes, maximo de montajes, ultimo montaje, estado, features | Consulta rapida de parametros del FS |
-| `dumpe2fs /dev/sda1` | Todo lo de `tune2fs -l` MAS informacion detallada de todos los grupos de bloques, ubicaciones de superbloques de respaldo | Cuando necesitas info completa, incluyendo superbloques de respaldo |
-| `dumpe2fs -h /dev/sda1` | Solo la informacion del superbloque (header), sin los grupos de bloques | Cuando quieres info como dumpe2fs pero sin el volcado extenso de grupos |
+**b) `tune2fs -c 0 /dev/sda1`**
 
-En la practica:
-- `tune2fs -l` es para consulta rapida
-- `dumpe2fs -h` es similar pero con formato ligeramente diferente
-- `dumpe2fs` (sin -h) es para cuando necesitas buscar superbloques de respaldo
+La opcion `-c` de `tune2fs` establece el numero maximo de montajes antes de que `fsck` se ejecute automaticamente. Establecer `-c 0` o `-c -1` desactiva esta verificacion. La opcion `-i` controla el intervalo de tiempo entre verificaciones (no el conteo de montajes). La opcion `-l` lista la informacion del superbloque sin modificar nada. La opcion `-m` establece el porcentaje de bloques reservados para root, no tiene relacion con la verificacion automatica.
 
 </details>
 
 ---
 
-## Ejercicio 8
-**Un sistema de archivos ext4 en `/dev/sda3` se ha corrompido y `e2fsck` falla al intentar leer el superbloque principal. ¿Como intentarias recuperarlo?**
+### Pregunta 8
+
+Un sistema ext4 tiene el superbloque principal corrupto. Cual de los siguientes comandos intentaria repararlo usando un superbloque de respaldo?
+
+a) `fsck -f /dev/sda3`
+b) `e2fsck -b 32768 /dev/sda3`
+c) `tune2fs -l /dev/sda3`
+d) `dumpe2fs -h /dev/sda3`
 
 <details>
-<summary>Ver respuesta</summary>
+<summary>Respuesta</summary>
 
-Se puede intentar usar un **superbloque de respaldo**. Los sistemas ext guardan copias en ubicaciones predecibles:
+**b) `e2fsck -b 32768 /dev/sda3`**
 
-```bash
-# Paso 1: Encontrar ubicaciones de superbloques de respaldo
-# (si dumpe2fs funciona)
-dumpe2fs /dev/sda3 | grep -i "superblock"
+La opcion `-b` de `e2fsck` permite especificar la ubicacion de un superbloque de respaldo alternativo. Los sistemas ext mantienen copias del superbloque en ubicaciones predecibles, siendo `32768` una de las mas comunes. Si esa ubicacion no funciona, se pueden probar otras como `98304` o `163840`. Para encontrar las ubicaciones exactas de los superbloques de respaldo se puede usar `dumpe2fs /dev/sda3 | grep superblock` o `mke2fs -n /dev/sda3` (dry-run). Las opciones `c` y `d` son de consulta y no reparan.
 
-# Si dumpe2fs no funciona, las ubicaciones comunes son:
-# 32768, 98304, 163840, 229376, 294912...
+</details>
 
-# Paso 2: Usar un superbloque de respaldo
-e2fsck -b 32768 /dev/sda3
+---
 
-# Si 32768 no funciona, probar con el siguiente:
-e2fsck -b 98304 /dev/sda3
-```
+### Pregunta 9
 
-Tambien se puede usar `mke2fs -n` para que muestre donde ESTARIAN los superbloques sin escribir nada:
-```bash
-mke2fs -n /dev/sda3
-```
+Que diferencia hay entre `dumpe2fs /dev/sda1` y `dumpe2fs -h /dev/sda1`?
+
+a) Sin `-h` muestra tamaño en bytes; con `-h` muestra formato legible (human readable)
+b) Sin `-h` muestra informacion del superbloque y todos los grupos de bloques; con `-h` muestra solo la informacion del superbloque
+c) Sin `-h` muestra solo el header; con `-h` muestra informacion completa
+d) No hay diferencia, ambos comandos producen la misma salida
+
+<details>
+<summary>Respuesta</summary>
+
+**b) Sin `-h` muestra informacion del superbloque y todos los grupos de bloques; con `-h` muestra solo la informacion del superbloque**
+
+`dumpe2fs` sin opciones muestra informacion completa: datos del superbloque mas informacion detallada de todos los grupos de bloques, incluyendo ubicaciones de superbloques de respaldo. Con la opcion `-h` (header), solo muestra la informacion del superbloque sin el volcado extenso de los grupos de bloques. En este contexto, `-h` significa "header", no "human readable". `dumpe2fs -h` es util cuando solo se necesitan los datos generales del sistema de archivos sin la informacion detallada de cada grupo.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Que herramienta permite examinar la estructura interna de un sistema de archivos ext4 a bajo nivel e intentar recuperar archivos borrados?
+
+a) `tune2fs`
+b) `xfs_db`
+c) `debugfs`
+d) `e2fsck`
+
+<details>
+<summary>Respuesta</summary>
+
+**c) `debugfs`**
+
+`debugfs` es un depurador interactivo para sistemas de archivos ext2/ext3/ext4 que permite examinar y modificar estructuras internas a bajo nivel. Con el comando `lsdel` se pueden listar inodos de archivos borrados, y con `undel` se puede intentar recuperarlos. Se abre en modo solo lectura por defecto (`debugfs /dev/sda1`) y en modo escritura con `-w`. `tune2fs` es para ajustar parametros del FS, no para depuracion. `xfs_db` es el depurador equivalente pero para XFS, no para ext. `e2fsck` verifica y repara pero no permite la exploracion interactiva de estructuras.
 
 </details>

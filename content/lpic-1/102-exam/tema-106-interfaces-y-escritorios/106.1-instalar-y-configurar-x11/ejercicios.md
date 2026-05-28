@@ -14,160 +14,190 @@ subtema: "106.1"
 
 # 106.1 - Ejercicios: Instalar y configurar X11
 
-## Ejercicio 1
-En la arquitectura de X11, donde se ejecuta el servidor X y donde se ejecutan los clientes X? Que papel juega cada uno?
+### Pregunta 1
 
-<details>
-<summary>Respuesta</summary>
+En la arquitectura de X11, donde se ejecuta el servidor X y donde se ejecutan los clientes X?
 
-En X11, la terminologia es contraintuitiva:
+a) El servidor X se ejecuta en la maquina remota y los clientes en la maquina local
+b) El servidor X se ejecuta en la maquina local (donde esta la pantalla) y los clientes son las aplicaciones graficas
+c) El servidor y los clientes siempre se ejecutan en la misma maquina
+d) El servidor X es el kernel de Linux y los clientes son los drivers graficos
 
-- **Servidor X:** Se ejecuta en la maquina **local**, donde estan la pantalla, el teclado y el raton. Su funcion es gestionar el hardware grafico, dibujar en pantalla y recibir la entrada del usuario.
+<details><summary>Respuesta</summary>
 
-- **Clientes X:** Son las **aplicaciones graficas** (firefox, xterm, gimp, etc.). Pueden ejecutarse en la misma maquina local o en una maquina remota. Envian solicitudes de dibujo al servidor X y reciben eventos de entrada.
+**b) El servidor X se ejecuta en la maquina local (donde esta la pantalla) y los clientes son las aplicaciones graficas**
 
-La comunicacion entre cliente y servidor se realiza mediante el protocolo X11, que puede funcionar a traves de la red. Esto permite ejecutar una aplicacion en un servidor remoto y ver su ventana en la pantalla local.
+En X11, la terminologia es contraintuitiva: el **servidor X** se ejecuta en la maquina donde estan la pantalla, el teclado y el raton, gestionando el hardware grafico. Los **clientes X** son las aplicaciones graficas (firefox, xterm, gimp, etc.) que pueden ejecutarse en la misma maquina o en una remota. La comunicacion se realiza mediante el protocolo X11, que puede funcionar a traves de la red, permitiendo ejecutar una aplicacion en un servidor remoto y ver su ventana en la pantalla local.
+
 </details>
 
 ---
 
-## Ejercicio 2
-Explica que significa cada uno de estos valores de la variable DISPLAY:
-- `DISPLAY=:0`
-- `DISPLAY=:0.0`
-- `DISPLAY=192.168.1.50:0`
-- `DISPLAY=localhost:10.0`
+### Pregunta 2
 
-<details>
-<summary>Respuesta</summary>
+Que significa el valor `DISPLAY=localhost:10.0` en una sesion SSH?
 
-El formato de DISPLAY es `[host]:display[.screen]`:
+a) El display local numero 10 de la maquina localhost, pantalla 0 (tipico de SSH X forwarding)
+b) El display principal del sistema, pantalla 10
+c) Una conexion directa al display 10 del servidor remoto
+d) Un display virtual sin conexion a hardware real
 
-- **`:0`** - Display local numero 0. El host vacio indica la maquina local. Es el valor mas comun en estaciones de trabajo con un solo servidor X.
+<details><summary>Respuesta</summary>
 
-- **`:0.0`** - Display local 0, pantalla 0. Equivalente a `:0` cuando solo hay una pantalla. El `.0` especifica la pantalla dentro del display.
+**a) El display local numero 10 de la maquina localhost, pantalla 0 (tipico de SSH X forwarding)**
 
-- **`192.168.1.50:0`** - Display 0 en el host remoto `192.168.1.50`. La aplicacion cliente enviara su salida grafica al servidor X que se ejecuta en esa IP.
+El formato de DISPLAY es `[host]:display[.screen]`. En `localhost:10.0`, `localhost` es el host, `10` es el numero de display y `0` es la pantalla. El offset 10 viene de la directiva `X11DisplayOffset 10` en la configuracion de SSH. Cuando se usa SSH X forwarding (`ssh -X`), SSH configura automaticamente esta variable y tuneliza la conexion X11 a traves del canal seguro SSH, gestionando las cookies de `xauth` automaticamente.
 
-- **`localhost:10.0`** - Display 10 en localhost, pantalla 0. Este es el valor tipico cuando se usa **SSH X forwarding**. El offset 10 viene de la directiva `X11DisplayOffset 10` en la configuracion de SSH. SSH tuneliza la conexion X11 a traves del canal seguro SSH.
 </details>
 
 ---
 
-## Ejercicio 3
-Que diferencia hay entre `xhost` y `xauth` como metodos de control de acceso al servidor X? Cual es mas seguro y por que?
+### Pregunta 3
 
-<details>
-<summary>Respuesta</summary>
+Cual de los siguientes metodos de control de acceso al servidor X es mas seguro y por que?
 
-**xhost (control basado en host):**
-- Permite o deniega acceso basandose en el **nombre de host o IP**
-- Si se permite un host, CUALQUIER usuario de ese host puede acceder al servidor X
-- `xhost +` desactiva toda verificacion (cualquiera puede conectarse)
-- Es simple pero **inseguro**: no diferencia entre usuarios del mismo host
+a) `xhost +` porque permite el acceso desde cualquier host
+b) `xhost` porque controla el acceso basandose en la direccion IP del host
+c) `xauth` porque usa cookies MIT-MAGIC-COOKIE almacenadas en `~/.Xauthority` para autenticar por sesion
+d) XDMCP porque cifra toda la comunicacion entre cliente y servidor
 
-**xauth (control basado en cookies MIT-MAGIC-COOKIE):**
-- Usa un token de autenticacion (cookie) almacenado en `~/.Xauthority`
-- Solo quien posea la cookie correcta puede conectarse al servidor X
-- Cada sesion genera una cookie unica
-- Es el metodo usado por defecto en la mayoria de sistemas modernos
-- Es **mas seguro** porque la autenticacion es por sesion y usuario, no por host
+<details><summary>Respuesta</summary>
 
-**xauth es mas seguro** porque requiere que el cliente presente un token secreto, mientras que xhost solo verifica la direccion del host, lo cual puede ser falsificado y no distingue entre usuarios.
+**c) `xauth` porque usa cookies MIT-MAGIC-COOKIE almacenadas en `~/.Xauthority` para autenticar por sesion**
+
+`xauth` es mas seguro porque requiere que el cliente presente un token secreto (cookie) para conectarse al servidor X. Cada sesion genera una cookie unica almacenada en `~/.Xauthority`. `xhost` es inseguro porque controla el acceso basandose unicamente en el host: si se permite un host, CUALQUIER usuario de ese host puede acceder. `xhost +` desactiva toda verificacion, siendo extremadamente inseguro. XDMCP no cifra el trafico y esta practicamente en desuso.
+
 </details>
 
 ---
 
-## Ejercicio 4
-Nombra las secciones principales del archivo `/etc/X11/xorg.conf` y describe brevemente que configura cada una. Que seccion vincula un monitor con una tarjeta grafica?
+### Pregunta 4
 
-<details>
-<summary>Respuesta</summary>
+Que seccion del archivo `xorg.conf` vincula un monitor con una tarjeta grafica?
 
-Las secciones principales de `xorg.conf` son:
+a) `ServerLayout`
+b) `Device`
+c) `Screen`
+d) `Monitor`
 
-| Seccion | Configura |
-|---------|-----------|
-| **ServerLayout** | Configuracion global: vincula las pantallas (Screen) con los dispositivos de entrada (InputDevice) |
-| **InputDevice** | Dispositivos de entrada: teclado (driver kbd, layout) y raton (driver mouse, protocolo) |
-| **Monitor** | Caracteristicas del monitor: frecuencias horizontal/vertical, modelo |
-| **Device** | Tarjeta grafica (GPU): driver (intel, nvidia, amdgpu), BusID PCI |
-| **Screen** | **Vincula un Monitor con un Device** (tarjeta grafica). Define profundidad de color y resoluciones disponibles |
+<details><summary>Respuesta</summary>
 
-La seccion **Screen** es la que vincula un monitor con una tarjeta grafica, referenciando ambos por su `Identifier`.
+**c) `Screen`**
 
-En sistemas modernos, Xorg puede funcionar sin `xorg.conf` (autodeteccion) y se prefiere usar archivos parciales en `/etc/X11/xorg.conf.d/`.
+La seccion **Screen** es la que vincula un monitor con una tarjeta grafica (Device), referenciando ambos por su `Identifier`. Tambien define la profundidad de color y las resoluciones disponibles. La seccion **Device** configura la tarjeta grafica (driver, BusID). La seccion **Monitor** define las caracteristicas del monitor (frecuencias). La seccion **ServerLayout** es la configuracion global que vincula las pantallas (Screen) con los dispositivos de entrada (InputDevice).
+
 </details>
 
 ---
 
-## Ejercicio 5
-Que es un Display Manager? Nombra los cuatro principales mencionados en el examen LPIC-1 y asocia cada uno con su entorno de escritorio correspondiente.
+### Pregunta 5
 
-<details>
-<summary>Respuesta</summary>
+Que comando se utiliza para generar un archivo `xorg.conf` basado en el hardware detectado automaticamente?
 
-Un **Display Manager** (DM) es el programa que proporciona la pantalla de inicio de sesion grafico (login screen). Inicia el servidor X (o Wayland), autentica al usuario y lanza la sesion de escritorio seleccionada.
+a) `xorg --generate`
+b) `X -configure` (o `Xorg -configure`)
+c) `xdpyinfo --config`
+d) `dpkg-reconfigure xorg`
 
-| Display Manager | Entorno asociado | Descripcion |
-|----------------|-------------------|-------------|
-| **GDM** (GNOME Display Manager) | GNOME | Completo, soporta Wayland, es el DM por defecto de GNOME |
-| **SDDM** (Simple Desktop Display Manager) | KDE Plasma | Moderno, basado en QML, DM por defecto de KDE |
-| **LightDM** | Independiente | Ligero y flexible, soporta diferentes interfaces (greeters), muy usado en Xfce, MATE |
-| **XDM** (X Display Manager) | Ninguno (basico) | El original, muy simple, sin dependencias de escritorio |
+<details><summary>Respuesta</summary>
 
-Para cambiar el DM en sistemas systemd: `systemctl enable --now lightdm` (despues de deshabilitar el anterior). En Debian/Ubuntu: `dpkg-reconfigure lightdm`.
+**b) `X -configure` (o `Xorg -configure`)**
+
+El comando `Xorg -configure` (o `X -configure`) genera un archivo `xorg.conf` basado en el hardware detectado. El archivo generado se guarda como `/root/xorg.conf.new` y se puede copiar a `/etc/X11/xorg.conf`. Es importante que el servidor X NO este en ejecucion al ejecutar este comando. En sistemas modernos, Xorg suele funcionar sin `xorg.conf` gracias a la autodeteccion, y se prefieren archivos parciales en `/etc/X11/xorg.conf.d/`.
+
 </details>
 
 ---
 
-## Ejercicio 6
-Como se configura el reenvio de X11 (X forwarding) a traves de SSH? Que diferencia hay entre `ssh -X` y `ssh -Y`? Que configuracion se necesita en el servidor?
+### Pregunta 6
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia entre `ssh -X` y `ssh -Y` para X forwarding?
 
-**Configuracion en el servidor SSH** (`/etc/ssh/sshd_config`):
-```
-X11Forwarding yes
-X11DisplayOffset 10
-```
+a) `-X` habilita X forwarding confiable y `-Y` lo habilita con restricciones
+b) `-X` habilita X forwarding con restricciones de seguridad (untrusted) y `-Y` lo habilita sin restricciones (trusted)
+c) `-X` solo funciona con Wayland y `-Y` solo funciona con X11
+d) `-X` requiere configuracion en el cliente y `-Y` requiere configuracion en el servidor
 
-**Uso desde el cliente:**
-```bash
-ssh -X usuario@servidor    # X forwarding con restricciones
-ssh -Y usuario@servidor    # X forwarding confiable
-```
+<details><summary>Respuesta</summary>
 
-**Diferencia entre -X y -Y:**
-- **`-X` (Untrusted):** Habilita X forwarding con la extension X11 SECURITY, que restringe lo que la aplicacion remota puede hacer (por ejemplo, no puede capturar el teclado de otras ventanas). Es mas seguro pero algunas aplicaciones complejas pueden no funcionar.
-- **`-Y` (Trusted):** Habilita X forwarding sin restricciones de seguridad. La aplicacion remota tiene acceso completo al servidor X local. Necesario para aplicaciones que requieren funciones avanzadas de X11.
+**b) `-X` habilita X forwarding con restricciones de seguridad (untrusted) y `-Y` lo habilita sin restricciones (trusted)**
 
-Una vez conectado, SSH configura automaticamente la variable `DISPLAY` (generalmente a `localhost:10.0`) y gestiona las cookies de `xauth` automaticamente.
+`ssh -X` habilita X forwarding con la extension X11 SECURITY, que restringe lo que la aplicacion remota puede hacer (por ejemplo, no puede capturar el teclado de otras ventanas). Es mas seguro pero algunas aplicaciones complejas pueden no funcionar. `ssh -Y` habilita X forwarding confiable (trusted), sin restricciones de seguridad, dando a la aplicacion remota acceso completo al servidor X local. Ambos requieren `X11Forwarding yes` en `/etc/ssh/sshd_config` del servidor.
+
 </details>
 
 ---
 
-## Ejercicio 7
-Que es Wayland y en que se diferencia de X11? Que es XWayland? Como puedes verificar si tu sesion actual usa Wayland o X11?
+### Pregunta 7
 
-<details>
-<summary>Respuesta</summary>
+En el log de Xorg (`/var/log/Xorg.0.log`), que significan los marcadores `(EE)` y `(WW)`?
 
-**Wayland** es un protocolo de display moderno que busca reemplazar a X11. Sus principales diferencias:
+a) `(EE)` indica entradas informativas y `(WW)` indica valores por defecto
+b) `(EE)` indica errores y `(WW)` indica advertencias
+c) `(EE)` indica valores de entorno y `(WW)` indica configuraciones de ventanas
+d) `(EE)` indica extensiones habilitadas y `(WW)` indica extensiones deshabilitadas
 
-| Aspecto | X11 | Wayland |
-|---------|-----|---------|
-| Arquitectura | Servidor y compositor separados | Compositor integrado (servidor + gestor de ventanas) |
-| Seguridad | Los clientes pueden acceder a otras ventanas | Aislamiento entre clientes |
-| Rendimiento | Overhead por protocolo de red | Comunicacion directa, menos latencia |
-| Transparencia de red | Nativa | No nativa (requiere pipewire, VNC u otras soluciones) |
+<details><summary>Respuesta</summary>
 
-**XWayland** es una capa de compatibilidad que ejecuta un servidor X11 dentro de Wayland, permitiendo que aplicaciones X11 antiguas funcionen en sesiones Wayland.
+**b) `(EE)` indica errores y `(WW)` indica advertencias**
 
-**Como verificar la sesion:**
-```bash
-echo $XDG_SESSION_TYPE     # Muestra "wayland" o "x11"
-echo $WAYLAND_DISPLAY      # Si tiene valor (ej: wayland-0), se usa Wayland
-```
+En el log de Xorg, los marcadores tienen estos significados: `(EE)` = Error, `(WW)` = Warning (advertencia), `(II)` = Information (informativo), `(**)` = valor de configuracion encontrado, y `(==)` = valor por defecto usado. Cuando X11 no arranca o presenta problemas, `/var/log/Xorg.0.log` es el primer lugar donde buscar informacion de diagnostico, filtrando con `grep "(EE)" /var/log/Xorg.0.log` para encontrar errores.
+
+</details>
+
+---
+
+### Pregunta 8
+
+Que Display Manager esta asociado por defecto con KDE Plasma?
+
+a) GDM
+b) LightDM
+c) SDDM
+d) XDM
+
+<details><summary>Respuesta</summary>
+
+**c) SDDM**
+
+**SDDM** (Simple Desktop Display Manager) es el Display Manager por defecto de KDE Plasma. Es moderno y esta basado en QML. **GDM** (GNOME Display Manager) es el DM por defecto de GNOME. **LightDM** es un DM independiente y ligero, muy usado en Xfce y MATE. **XDM** (X Display Manager) es el original de X11, muy basico y sin dependencias de escritorio. Para cambiar el DM en sistemas systemd se usa `systemctl enable --now nombre_dm`.
+
+</details>
+
+---
+
+### Pregunta 9
+
+Cual de los siguientes directorios contiene archivos de configuracion de Xorg proporcionados por la distribucion que NO deben editarse directamente?
+
+a) `/etc/X11/xorg.conf.d/`
+b) `/usr/share/X11/xorg.conf.d/`
+c) `/etc/X11/`
+d) `/var/log/`
+
+<details><summary>Respuesta</summary>
+
+**b) `/usr/share/X11/xorg.conf.d/`**
+
+`/usr/share/X11/xorg.conf.d/` contiene archivos de configuracion proporcionados por la distribucion y los paquetes del sistema. No deben editarse directamente porque se sobrescriben en actualizaciones. La jerarquia de prioridad es: `/etc/X11/xorg.conf` (maxima prioridad, configuracion manual del administrador), `/etc/X11/xorg.conf.d/*.conf` (configuraciones parciales del administrador), y `/usr/share/X11/xorg.conf.d/*.conf` (configuraciones de la distribucion, menor prioridad).
+
+</details>
+
+---
+
+### Pregunta 10
+
+Como se puede verificar si la sesion actual usa Wayland o X11?
+
+a) Ejecutando `xdpyinfo | grep wayland`
+b) Verificando el valor de `$XDG_SESSION_TYPE` que muestra `wayland` o `x11`
+c) Comprobando si existe el archivo `/etc/wayland.conf`
+d) Ejecutando `systemctl status wayland`
+
+<details><summary>Respuesta</summary>
+
+**b) Verificando el valor de `$XDG_SESSION_TYPE` que muestra `wayland` o `x11`**
+
+La forma mas directa de verificar el tipo de sesion es con `echo $XDG_SESSION_TYPE`, que devuelve `wayland` o `x11`. Otra forma es comprobar si la variable `$WAYLAND_DISPLAY` tiene valor (por ejemplo, `wayland-0`), lo que indica que se usa Wayland. Wayland es un protocolo de display moderno que busca reemplazar a X11, con un compositor integrado y mayor seguridad (aislamiento entre clientes). XWayland permite ejecutar aplicaciones X11 antiguas dentro de sesiones Wayland.
+
 </details>

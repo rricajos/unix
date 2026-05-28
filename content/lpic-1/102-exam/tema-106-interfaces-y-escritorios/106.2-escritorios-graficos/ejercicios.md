@@ -14,161 +14,190 @@ subtema: "106.2"
 
 # 106.2 - Ejercicios: Escritorios graficos
 
-## Ejercicio 1
-Cual es la diferencia entre un entorno de escritorio y un gestor de ventanas? Da un ejemplo de cada uno.
+### Pregunta 1
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia entre un entorno de escritorio y un gestor de ventanas?
 
-**Entorno de escritorio:** Es un conjunto completo de software que proporciona una experiencia de usuario grafica integrada. Incluye gestor de ventanas, panel/barra de tareas, gestor de archivos, aplicaciones integradas, sistema de notificaciones y temas unificados. Ejemplo: **GNOME**, KDE Plasma, Xfce.
+a) Son equivalentes; ambos terminos se refieren al mismo tipo de software
+b) Un entorno de escritorio incluye gestor de ventanas, panel, gestor de archivos y aplicaciones integradas; un gestor de ventanas solo gestiona las ventanas
+c) Un gestor de ventanas es mas completo que un entorno de escritorio
+d) Un entorno de escritorio funciona solo en Wayland y un gestor de ventanas solo en X11
 
-**Gestor de ventanas:** Es un componente mas simple que solo gestiona las ventanas: dibuja bordes, permite mover/redimensionar, gestiona el enfoque. No incluye panel, gestor de archivos ni aplicaciones propias. Ejemplo: **Openbox**, i3, Fluxbox.
+<details><summary>Respuesta</summary>
 
-Un entorno de escritorio siempre incluye un gestor de ventanas como componente, pero un gestor de ventanas puede usarse de forma independiente para un sistema mas ligero y personalizable.
+**b) Un entorno de escritorio incluye gestor de ventanas, panel, gestor de archivos y aplicaciones integradas; un gestor de ventanas solo gestiona las ventanas**
+
+Un entorno de escritorio es un conjunto completo de software que proporciona una experiencia de usuario grafica integrada: gestor de ventanas, panel/barra de tareas, gestor de archivos, aplicaciones, sistema de notificaciones y temas unificados (por ejemplo, GNOME, KDE Plasma). Un gestor de ventanas es un componente mas simple que solo gestiona las ventanas: dibujar bordes, mover, redimensionar y gestionar el enfoque (por ejemplo, Openbox, i3). Un entorno de escritorio siempre incluye un gestor de ventanas, pero un gestor de ventanas puede usarse de forma independiente.
+
 </details>
 
 ---
 
-## Ejercicio 2
-Clasifica los siguientes entornos de escritorio segun el toolkit que utilizan (GTK+ o Qt): GNOME, KDE Plasma, Xfce, LXQt, MATE, Cinnamon, LXDE.
+### Pregunta 2
 
-<details>
-<summary>Respuesta</summary>
+Cuales de los siguientes entornos de escritorio utilizan el toolkit Qt?
 
-**GTK+ (escrito en C):**
-- GNOME
-- Xfce
-- MATE (fork de GNOME 2)
-- Cinnamon (fork de GNOME Shell)
-- LXDE
+a) GNOME y Xfce
+b) KDE Plasma y LXQt
+c) MATE y Cinnamon
+d) LXDE y Xfce
 
-**Qt (escrito en C++):**
-- KDE Plasma
-- LXQt (sucesor de LXDE portado a Qt)
+<details><summary>Respuesta</summary>
 
-**Regla mnemotecnica:** La mayoria de entornos usan GTK+. Solo los que tienen "K" o "Q" en su nombre usan Qt (KDE y LXQt).
+**b) KDE Plasma y LXQt**
+
+Solo KDE Plasma y LXQt utilizan el toolkit Qt (escrito en C++). Todos los demas entornos principales usan GTK+ (escrito en C): GNOME, Xfce, MATE (fork de GNOME 2), Cinnamon (fork de GNOME Shell) y LXDE. Una regla mnemotecnica util: los entornos con "K" o "Q" en su nombre usan Qt (KDE, LXQt). LXQt es el sucesor de LXDE, portado de GTK+ 2 a Qt.
+
 </details>
 
 ---
 
-## Ejercicio 3
-Un usuario necesita un entorno de escritorio muy ligero para un ordenador antiguo con poca RAM. Que dos opciones le recomendarias y que toolkit usa cada una? Cual es el sucesor de cual?
+### Pregunta 3
 
-<details>
-<summary>Respuesta</summary>
+Cual es el gestor de ventanas y el gestor de archivos que utiliza GNOME?
 
-Las dos opciones mas ligeras son:
+a) KWin y Dolphin
+b) Mutter y Nautilus
+c) Marco y Caja
+d) Xfwm4 y Thunar
 
-1. **LXDE** (Lightweight X11 Desktop Environment)
-   - Toolkit: GTK+ 2
-   - Gestor de ventanas: Openbox
-   - Muy bajo consumo de recursos
+<details><summary>Respuesta</summary>
 
-2. **LXQt**
-   - Toolkit: Qt
-   - Gestor de ventanas: Openbox (por defecto)
-   - Tambien muy bajo consumo de recursos
+**b) Mutter y Nautilus**
 
-**LXQt es el sucesor de LXDE.** El proyecto LXDE fue portado de GTK+ 2 a Qt, resultando en LXQt. LXDE usaba GTK+ 2 y nunca migro a GTK+ 3, por lo que se considero obsoleto. LXQt combina el enfoque ligero de LXDE con el toolkit Qt moderno.
+GNOME utiliza **Mutter** como gestor de ventanas (y compositor Wayland) y **Nautilus** (tambien llamado Files) como gestor de archivos. KWin y Dolphin corresponden a KDE Plasma. Marco y Caja corresponden a MATE (que son forks de Metacity y Nautilus de GNOME 2, respectivamente). Xfwm4 y Thunar corresponden a Xfce.
 
-**Xfce** tambien seria una opcion razonable si se quiere un poco mas de funcionalidad con un consumo de recursos moderado (usa GTK+).
 </details>
 
 ---
 
-## Ejercicio 4
-Que son MATE y Cinnamon? De que proyectos derivan y por que se crearon?
+### Pregunta 4
 
-<details>
-<summary>Respuesta</summary>
+Que son MATE y Cinnamon y de que proyectos derivan?
 
-**MATE:**
-- Es un **fork de GNOME 2**
-- Se creo cuando GNOME paso de la version 2 a la version 3 (GNOME Shell), cambiando radicalmente la interfaz
-- Muchos usuarios preferían la interfaz clasica de GNOME 2, asi que MATE continuo su desarrollo
-- Usa GTK+ y su gestor de ventanas es Marco (fork de Metacity)
-- Gestor de archivos: Caja (fork de Nautilus de GNOME 2)
+a) MATE es un fork de KDE 4 y Cinnamon es un fork de Xfce
+b) MATE es un fork de GNOME 2 y Cinnamon es un fork de GNOME Shell (GNOME 3)
+c) Ambos son forks de KDE Plasma con diferentes interfaces de usuario
+d) MATE es el sucesor de LXDE y Cinnamon es el sucesor de LXQt
 
-**Cinnamon:**
-- Es un **fork de GNOME Shell** (GNOME 3)
-- Creado por el equipo de Linux Mint como alternativa a GNOME Shell
-- Proporciona un escritorio mas tradicional (panel inferior, menu de inicio, bandeja del sistema) sobre la base tecnologica de GNOME 3
-- Usa GTK+ y su gestor de ventanas es Muffin (fork de Mutter)
-- Gestor de archivos: Nemo (fork de Nautilus)
+<details><summary>Respuesta</summary>
 
-Ambos surgen de la insatisfaccion con los cambios de interfaz introducidos por GNOME 3.
+**b) MATE es un fork de GNOME 2 y Cinnamon es un fork de GNOME Shell (GNOME 3)**
+
+Ambos surgieron de la insatisfaccion con los cambios de interfaz introducidos por GNOME 3. **MATE** continuo el desarrollo de la interfaz clasica de GNOME 2, con su gestor de ventanas Marco (fork de Metacity) y gestor de archivos Caja (fork de Nautilus). **Cinnamon** fue creado por el equipo de Linux Mint como alternativa a GNOME Shell, proporcionando un escritorio mas tradicional (panel inferior, menu de inicio) sobre la base tecnologica de GNOME 3, con Muffin (fork de Mutter) y Nemo (fork de Nautilus).
+
 </details>
 
 ---
 
-## Ejercicio 5
-Un administrador necesita configurar acceso remoto al escritorio de un servidor Linux. Describe las tres opciones principales (VNC, RDP, XDMCP) indicando puerto, seguridad y caso de uso ideal.
+### Pregunta 5
 
-<details>
-<summary>Respuesta</summary>
+Cual es el puerto por defecto de VNC y cual es su principal limitacion de seguridad?
 
-**VNC (Virtual Network Computing):**
-- Puerto: 5900 + numero de display (5901 para :1, 5902 para :2)
-- Seguridad: No cifra por defecto. Se debe usar un tunel SSH (`ssh -L 5901:localhost:5901 servidor`)
-- Caso de uso: Acceso remoto multiplataforma. Ideal cuando se necesita acceder desde cualquier SO
-- Servidores: TigerVNC, TightVNC, x11vnc
+a) Puerto 3389, no soporta cifrado nativo
+b) Puerto 5900 + numero de display, no cifra el trafico por defecto
+c) Puerto 22, requiere configuracion adicional para autenticacion
+d) Puerto 177/UDP, transmite datos en texto plano
 
-**RDP (xrdp):**
-- Puerto: 3389
-- Seguridad: Cifrado nativo integrado
-- Caso de uso: Ideal cuando los clientes usan Windows, ya que el cliente RDP (mstsc.exe) viene preinstalado. xrdp permite a Windows conectarse a Linux
+<details><summary>Respuesta</summary>
 
-**XDMCP (X Display Manager Control Protocol):**
-- Puerto: 177 UDP
-- Seguridad: Sin cifrado (INSEGURO). Envía datos en texto plano
-- Caso de uso: Thin clients en red local. En la practica esta obsoleto por su falta de seguridad
-- Proporciona una pantalla de login completa del Display Manager
+**b) Puerto 5900 + numero de display, no cifra el trafico por defecto**
 
-**Recomendacion:** VNC con tunel SSH o xrdp son las opciones mas utilizadas hoy en dia. XDMCP esta practicamente en desuso.
+VNC usa el puerto 5900 mas el numero de display (5901 para :1, 5902 para :2, etc.). Su principal limitacion es que **no cifra el trafico por defecto**, lo que significa que las pulsaciones de teclado y las imagenes de pantalla se transmiten sin proteccion. Se recomienda usar un tunel SSH para cifrar la conexion: `ssh -L 5901:localhost:5901 servidor`. El puerto 3389 corresponde a RDP (xrdp). El puerto 177/UDP corresponde a XDMCP.
+
 </details>
 
 ---
 
-## Ejercicio 6
-Indica el gestor de ventanas y el gestor de archivos asociado a cada uno de los siguientes entornos de escritorio: GNOME, KDE Plasma, Xfce, MATE.
+### Pregunta 6
 
-<details>
-<summary>Respuesta</summary>
+Un administrador necesita que usuarios con Windows puedan conectarse al escritorio de un servidor Linux. Que protocolo y software deberia instalar en el servidor Linux para aprovechar el cliente RDP nativo de Windows?
 
-| Entorno | Gestor de ventanas | Gestor de archivos |
-|---------|--------------------|--------------------|
-| **GNOME** | Mutter | Nautilus (tambien llamado Files) |
-| **KDE Plasma** | KWin | Dolphin |
-| **Xfce** | Xfwm4 | Thunar |
-| **MATE** | Marco (fork de Metacity) | Caja (fork de Nautilus) |
+a) VNC con TigerVNC
+b) RDP con xrdp
+c) XDMCP con XDM
+d) SPICE con virt-viewer
 
-Adicionalmente:
-| Entorno | Gestor de ventanas | Gestor de archivos |
-|---------|--------------------|--------------------|
-| **Cinnamon** | Muffin (fork de Mutter) | Nemo (fork de Nautilus) |
-| **LXDE** | Openbox | PCManFM |
-| **LXQt** | Openbox (por defecto) | PCManFM-Qt |
+<details><summary>Respuesta</summary>
+
+**b) RDP con xrdp**
+
+**xrdp** es la implementacion de servidor RDP para Linux que permite a clientes Windows conectarse usando el cliente RDP nativo (`mstsc.exe`), que viene preinstalado en Windows. RDP usa el puerto 3389 y soporta cifrado nativo. VNC funcionaria pero requiere instalar un cliente VNC en las maquinas Windows. XDMCP esta obsoleto y es inseguro. SPICE esta optimizado para entornos de virtualizacion (QEMU/KVM), no para acceso remoto general.
+
 </details>
 
 ---
 
-## Ejercicio 7
-Que tipo de gestores de ventanas son Openbox e i3? Explica la diferencia entre ambos tipos. En que entornos de escritorio se usa Openbox como gestor de ventanas por defecto?
+### Pregunta 7
 
-<details>
-<summary>Respuesta</summary>
+Que tipo de gestor de ventanas es i3 y como se diferencia de Openbox?
 
-**Openbox** es un gestor de ventanas de tipo **stacking** (apilamiento):
-- Las ventanas se comportan como papeles en un escritorio: se pueden superponer unas sobre otras
-- El usuario mueve y redimensiona las ventanas libremente con el raton
-- Es el modelo clasico y familiar para la mayoria de usuarios
-- Se usa como WM por defecto en **LXDE** y **LXQt**
+a) i3 es un WM stacking y Openbox es un WM tiling
+b) i3 es un WM tiling donde las ventanas se organizan sin solaparse; Openbox es un WM stacking donde las ventanas se pueden superponer
+c) Ambos son WM tiling que organizan las ventanas automaticamente
+d) Ambos son WM stacking que funcionan de manera identica
 
-**i3** es un gestor de ventanas de tipo **tiling** (mosaico):
-- Las ventanas se organizan automaticamente ocupando todo el espacio disponible sin solaparse
-- Cuando se abre una nueva ventana, las existentes se redimensionan para hacer sitio
-- Se controla principalmente con el teclado (atajos)
-- Popular entre desarrolladores y usuarios avanzados que buscan eficiencia
+<details><summary>Respuesta</summary>
 
-**Diferencia fundamental:** En un WM stacking las ventanas se solapan (como en Windows/macOS). En un WM tiling las ventanas se organizan automaticamente en un mosaico sin solaparse, maximizando el uso del espacio.
+**b) i3 es un WM tiling donde las ventanas se organizan sin solaparse; Openbox es un WM stacking donde las ventanas se pueden superponer**
+
+En un WM **tiling** como i3, las ventanas se organizan automaticamente ocupando todo el espacio disponible sin solaparse; se controla principalmente con atajos de teclado. En un WM **stacking** como Openbox, las ventanas se comportan como papeles en un escritorio: se pueden superponer, mover y redimensionar libremente con el raton. Openbox se usa como WM por defecto en LXDE y LXQt. i3 es popular entre desarrolladores y usuarios avanzados que buscan eficiencia.
+
+</details>
+
+---
+
+### Pregunta 8
+
+Que comando de xdg-utils se utiliza para abrir un archivo con la aplicacion predeterminada del sistema, independientemente del entorno de escritorio?
+
+a) `xdg-mime`
+b) `xdg-settings`
+c) `xdg-open`
+d) `xdg-desktop-menu`
+
+<details><summary>Respuesta</summary>
+
+**c) `xdg-open`**
+
+`xdg-open` abre un archivo o URL con la aplicacion predeterminada del sistema, funcionando de forma independiente del entorno de escritorio (GNOME, KDE, Xfce, etc.). Ejemplos: `xdg-open documento.pdf` abre con el visor de PDF, `xdg-open https://ejemplo.com` abre en el navegador. `xdg-mime` consulta y configura las asociaciones de tipos MIME. `xdg-settings` configura parametros del escritorio como el navegador predeterminado. `xdg-desktop-menu` gestiona entradas del menu.
+
+</details>
+
+---
+
+### Pregunta 9
+
+Que protocolo de acceso remoto esta optimizado especificamente para entornos de virtualizacion como QEMU/KVM?
+
+a) VNC
+b) RDP
+c) XDMCP
+d) SPICE
+
+<details><summary>Respuesta</summary>
+
+**d) SPICE**
+
+**SPICE** (Simple Protocol for Independent Computing Environments) es un protocolo de acceso remoto optimizado para entornos de virtualizacion. Desarrollado originalmente por Qumranet (adquirida por Red Hat), ofrece mejor rendimiento que VNC para maquinas virtuales y soporta audio bidireccional, video acelerado, USB compartido y portapapeles compartido. Esta integrado en soluciones como QEMU/KVM, oVirt y RHEV. Soporta cifrado TLS nativo. Los clientes incluyen `virt-viewer` y `remote-viewer`.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Un usuario necesita un entorno de escritorio muy ligero para un ordenador antiguo con poca RAM. Cuales son las dos opciones mas ligeras y que relacion tienen entre si?
+
+a) GNOME y KDE Plasma, que ofrecen modos de bajo consumo
+b) Xfce y MATE, que son forks de GNOME optimizados
+c) LXDE (GTK+) y LXQt (Qt), donde LXQt es el sucesor de LXDE portado a Qt
+d) Cinnamon y Xfce, ambos basados en GTK+ y muy ligeros
+
+<details><summary>Respuesta</summary>
+
+**c) LXDE (GTK+) y LXQt (Qt), donde LXQt es el sucesor de LXDE portado a Qt**
+
+LXDE y LXQt son los entornos de escritorio mas ligeros. LXDE (Lightweight X11 Desktop Environment) usa GTK+ 2 y Openbox como gestor de ventanas. LXQt es su sucesor, portado de GTK+ 2 a Qt, tambien usando Openbox por defecto. LXDE usaba GTK+ 2 y nunca migro a GTK+ 3, por lo que se considero obsoleto. Ambos tienen un consumo de RAM muy bajo. Xfce tambien es ligero pero consume algo mas de recursos. GNOME y KDE Plasma son los entornos mas pesados.
+
 </details>

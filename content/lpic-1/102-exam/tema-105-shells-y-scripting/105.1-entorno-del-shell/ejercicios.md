@@ -14,182 +14,196 @@ subtema: "105.1"
 
 # 105.1 - Ejercicios: Personalizar y usar el entorno del shell
 
-## Ejercicio 1
+### Pregunta 1
+
 Un usuario inicia sesion en el sistema mediante SSH. Tiene los archivos `~/.bash_profile`, `~/.bash_login` y `~/.profile` en su directorio home. Cual de estos archivos sera ejecutado por bash?
 
-<details>
-<summary>Respuesta</summary>
+a) Solo `~/.profile`, que es el archivo estandar POSIX
+b) Los tres archivos se ejecutan en orden: `~/.bash_profile`, `~/.bash_login`, `~/.profile`
+c) Solo `~/.bash_profile`, ya que bash ejecuta unicamente el primero que encuentra en el orden de busqueda
+d) Solo `~/.bash_login`, porque tiene prioridad sobre los demas
 
-Solo se ejecutara `~/.bash_profile`. Bash busca estos tres archivos en orden (`~/.bash_profile` --> `~/.bash_login` --> `~/.profile`) y ejecuta **unicamente el primero** que encuentre. Como `~/.bash_profile` existe, los otros dos son ignorados.
+<details><summary>Respuesta</summary>
 
-Ademas, previamente se habra ejecutado `/etc/profile` (y los scripts en `/etc/profile.d/`) por ser un login shell.
+**c) Solo `~/.bash_profile`, ya que bash ejecuta unicamente el primero que encuentra en el orden de busqueda**
+
+Bash busca los archivos de inicio del usuario en un orden especifico: `~/.bash_profile` --> `~/.bash_login` --> `~/.profile`, y ejecuta **unicamente el primero** que encuentre. Como `~/.bash_profile` existe, los otros dos son completamente ignorados. Ademas, previamente se habra ejecutado `/etc/profile` (y los scripts en `/etc/profile.d/`) por ser un login shell (conexion SSH).
+
 </details>
 
 ---
 
-## Ejercicio 2
-Cual es la diferencia entre ejecutar `source ~/.bashrc` y ejecutar `bash ~/.bashrc`? En que situaciones usarias cada uno?
+### Pregunta 2
 
-<details>
-<summary>Respuesta</summary>
+Cual es la diferencia principal entre ejecutar `source ~/.bashrc` y ejecutar `bash ~/.bashrc`?
 
-- `source ~/.bashrc` (o `. ~/.bashrc`): Ejecuta el archivo en el **shell actual**. Todas las variables, alias y funciones definidas en el archivo quedan disponibles en la sesion actual. Es la forma correcta de recargar la configuracion.
+a) `source` ejecuta el archivo en un subshell, mientras que `bash` lo ejecuta en el shell actual
+b) `source` ejecuta el archivo en el shell actual, mientras que `bash` lo ejecuta en un subshell
+c) Ambos comandos son equivalentes y ejecutan el archivo en el shell actual
+d) `source` solo funciona con archivos `.sh`, mientras que `bash` funciona con cualquier archivo
 
-- `bash ~/.bashrc`: Ejecuta el archivo en un **subshell** (proceso hijo). Las variables, alias y funciones se crean en el subshell y se pierden al terminar. Los cambios **no afectan** al shell actual.
+<details><summary>Respuesta</summary>
 
-Se usa `source` para recargar configuraciones. Se usa `bash script.sh` para ejecutar scripts independientes.
+**b) `source` ejecuta el archivo en el shell actual, mientras que `bash` lo ejecuta en un subshell**
+
+`source ~/.bashrc` (equivalente a `. ~/.bashrc`) ejecuta el archivo en el **shell actual**, por lo que todas las variables, alias y funciones definidas quedan disponibles en la sesion. `bash ~/.bashrc` ejecuta el archivo en un **subshell** (proceso hijo), donde las variables y alias se crean pero se pierden al terminar el subshell. Por eso, para recargar la configuracion del shell se usa siempre `source`.
+
 </details>
 
 ---
 
-## Ejercicio 3
-Crea una variable local `MI_VAR="hola"` y luego verifica que NO aparece al ejecutar `env`. Despues, exportala y verifica que SI aparece con `env`. Que comandos usarias?
+### Pregunta 3
 
-<details>
-<summary>Respuesta</summary>
+Un administrador quiere que todos los nuevos usuarios creados en el sistema tengan un alias `ll='ls -la'` disponible automaticamente. Que archivo debe modificar?
 
-```bash
-# Crear variable local
-MI_VAR="hola"
+a) `/etc/bash.bashrc`
+b) `/etc/profile`
+c) `/etc/skel/.bashrc`
+d) `/etc/environment`
 
-# Verificar que NO aparece en env (variables de entorno)
-env | grep MI_VAR          # No produce salida
+<details><summary>Respuesta</summary>
 
-# Verificar que SI aparece con set (todas las variables)
-set | grep MI_VAR          # Muestra: MI_VAR=hola
+**c) `/etc/skel/.bashrc`**
 
-# Exportarla como variable de entorno
-export MI_VAR
+El directorio `/etc/skel/` contiene los archivos plantilla que se copian al directorio home de cada nuevo usuario cuando se crea con `useradd -m`. Al agregar `alias ll='ls -la'` en `/etc/skel/.bashrc`, todos los usuarios creados a partir de ese momento tendran el alias. `/etc/bash.bashrc` afectaria a todos los usuarios existentes de forma inmediata (no solo a los nuevos). `/etc/profile` se ejecuta solo en login shells. `/etc/environment` no es un script y no soporta alias.
 
-# Verificar que ahora SI aparece en env
-env | grep MI_VAR          # Muestra: MI_VAR=hola
-```
-
-La diferencia clave es que `set` muestra todas las variables (locales y de entorno), mientras que `env` solo muestra las variables de entorno (exportadas).
 </details>
 
 ---
 
-## Ejercicio 4
-Un administrador quiere que todos los nuevos usuarios creados en el sistema tengan un alias `ll='ls -la'` disponible automaticamente. Que archivo debe modificar y en que directorio?
+### Pregunta 4
 
-<details>
-<summary>Respuesta</summary>
+Que hace el comando `set -o noclobber` en un shell bash?
 
-Debe agregar la linea `alias ll='ls -la'` al archivo `/etc/skel/.bashrc`.
+a) Impide que se eliminen archivos con el comando `rm`
+b) Impide que se sobrescriban archivos existentes con la redireccion `>`, requiriendo usar `>|` para forzar
+c) Impide la ejecucion de scripts que no tengan permiso de ejecucion
+d) Impide que las variables no definidas se expandan como cadenas vacias
 
-```bash
-echo "alias ll='ls -la'" >> /etc/skel/.bashrc
-```
+<details><summary>Respuesta</summary>
 
-El directorio `/etc/skel/` contiene los archivos plantilla que se copian al directorio home de cada nuevo usuario cuando se crea con `useradd -m`. Al modificar `/etc/skel/.bashrc`, todos los usuarios creados a partir de ese momento tendran el alias.
+**b) Impide que se sobrescriban archivos existentes con la redireccion `>`, requiriendo usar `>|` para forzar**
 
-**Nota:** Esto NO afecta a los usuarios ya existentes. Para ellos, habria que modificar sus `~/.bashrc` individuales o usar `/etc/bash.bashrc` para una configuracion global inmediata.
+La opcion `noclobber` protege archivos existentes de ser sobrescritos accidentalmente con el operador de redireccion `>`. Si el archivo ya existe, el shell mostrara un error. Para forzar la sobrescritura cuando `noclobber` esta activo, se usa `>|`. Se desactiva con `set +o noclobber`. La opcion que trata variables no definidas como error es `nounset` (`set -u`).
+
 </details>
 
 ---
 
-## Ejercicio 5
-Escribe una funcion de bash llamada `mkcd` que cree un directorio y entre en el. Donde la colocarias para que este disponible en cada sesion?
+### Pregunta 5
 
-<details>
-<summary>Respuesta</summary>
+Un usuario abre una terminal grafica en su escritorio GNOME. Que tipo de shell se inicia y que archivos de configuracion se ejecutan?
 
-La funcion:
-```bash
-mkcd() {
-    mkdir -p "$1" && cd "$1"
-}
-```
+a) Login shell: `/etc/profile` y `~/.bash_profile`
+b) Non-login shell interactivo: `/etc/bash.bashrc` y `~/.bashrc`
+c) Non-login shell no interactivo: solo se lee `BASH_ENV`
+d) Login shell: `/etc/environment` y `~/.profile`
 
-O con la sintaxis alternativa:
-```bash
-function mkcd {
-    mkdir -p "$1" && cd "$1"
-}
-```
+<details><summary>Respuesta</summary>
 
-Se debe colocar en `~/.bashrc` para que este disponible en cada nueva sesion de shell interactivo. Si se quiere que este disponible tambien en login shells, hay que asegurarse de que `~/.bash_profile` invoque a `~/.bashrc` con:
+**b) Non-login shell interactivo: `/etc/bash.bashrc` y `~/.bashrc`**
+
+Al abrir una terminal grafica en un entorno de escritorio se inicia un **non-login shell** (shell interactivo no-login), ya que el usuario ya ha iniciado sesion previamente en el entorno grafico. Los archivos que se ejecutan son `/etc/bash.bashrc` (configuracion global para shells interactivos, en Debian/Ubuntu) y `~/.bashrc` (configuracion del usuario). Los archivos como `/etc/profile` y `~/.bash_profile` solo se ejecutan en login shells (SSH, consola de texto, `su -`).
+
+</details>
+
+---
+
+### Pregunta 6
+
+Cual de las siguientes afirmaciones sobre `/etc/environment` es correcta?
+
+a) Es un script de shell que se ejecuta en cada login shell
+b) Es un archivo simple de pares `VARIABLE=valor` leido por PAM, que no soporta expansiones de variables
+c) Es equivalente a `/etc/profile` pero para shells no interactivos
+d) Solo es leido por el comando `env` cuando se ejecuta sin argumentos
+
+<details><summary>Respuesta</summary>
+
+**b) Es un archivo simple de pares `VARIABLE=valor` leido por PAM, que no soporta expansiones de variables**
+
+`/etc/environment` NO es un script de shell. Es un archivo simple con formato `VARIABLE=valor` que es leido por el modulo PAM (`pam_env`), no por bash directamente. No soporta expansiones de variables (por ejemplo, `$HOME` no funcionaria), ni comandos, ni logica de programacion. Se aplica a todas las sesiones, incluyendo las no interactivas, y es especifico de sistemas con PAM (principalmente Debian/Ubuntu).
+
+</details>
+
+---
+
+### Pregunta 7
+
+Que comando ejecuta un programa con un entorno completamente vacio, sin ninguna variable de entorno heredada?
+
+a) `unset -a && programa`
+b) `env -i programa`
+c) `export -n && programa`
+d) `set -o nounset && programa`
+
+<details><summary>Respuesta</summary>
+
+**b) `env -i programa`**
+
+El comando `env -i` ejecuta el programa especificado con un entorno completamente vacio (sin ninguna variable de entorno heredada del shell actual). Es util para depuracion y pruebas, para verificar que un script funciona sin depender de variables del entorno del usuario. Se pueden especificar solo las variables necesarias: `env -i PATH=/usr/bin HOME=/tmp programa`. `unset -a` eliminaria las variables del shell actual, no crea un entorno limpio para un proceso hijo.
+
+</details>
+
+---
+
+### Pregunta 8
+
+Un usuario quiere crear una funcion llamada `mkcd` que cree un directorio y entre en el. Cual es la sintaxis correcta y donde debe colocarla para que este disponible en cada sesion?
+
+a) Definirla en `/etc/profile` con la sintaxis `mkcd() { mkdir $1; cd $1; }`
+b) Definirla en `~/.bashrc` con la sintaxis `mkcd() { mkdir -p "$1" && cd "$1"; }`
+c) Definirla en `~/.bash_logout` con la sintaxis `function mkcd { mkdir "$1" && cd "$1"; }`
+d) Definirla en `/etc/environment` con la sintaxis `mkcd=mkdir -p && cd`
+
+<details><summary>Respuesta</summary>
+
+**b) Definirla en `~/.bashrc` con la sintaxis `mkcd() { mkdir -p "$1" && cd "$1"; }`**
+
+La funcion debe colocarse en `~/.bashrc` para que este disponible en cada nueva sesion de shell interactivo. La sintaxis usa `"$1"` entre comillas para manejar nombres con espacios, `-p` para crear directorios padre si es necesario, y `&&` para que `cd` solo se ejecute si `mkdir` tiene exito. `/etc/environment` no soporta funciones. `~/.bash_logout` se ejecuta al cerrar sesion, no al iniciarla. `/etc/profile` funcionaria solo para login shells.
+
+</details>
+
+---
+
+### Pregunta 9
+
+Que muestra el comando `set` sin argumentos en comparacion con el comando `env` sin argumentos?
+
+a) `set` muestra solo las variables de entorno; `env` muestra todas las variables y funciones
+b) `set` muestra todas las variables (locales, de entorno y funciones); `env` muestra solo las variables de entorno
+c) Ambos muestran la misma informacion: todas las variables del shell
+d) `set` muestra las opciones del shell activas; `env` muestra las variables de entorno
+
+<details><summary>Respuesta</summary>
+
+**b) `set` muestra todas las variables (locales, de entorno y funciones); `env` muestra solo las variables de entorno**
+
+`set` sin argumentos lista todas las variables del shell, incluyendo las variables locales (no exportadas), las variables de entorno (exportadas) y las funciones definidas. `env` sin argumentos lista unicamente las variables de entorno, es decir, las que han sido exportadas y estan disponibles para procesos hijos. Esta distincion es fundamental para el examen LPIC-1. `printenv` es similar a `env` en este comportamiento.
+
+</details>
+
+---
+
+### Pregunta 10
+
+Un usuario tiene la siguiente configuracion en su `~/.bash_profile`:
 ```bash
 if [ -f ~/.bashrc ]; then
     . ~/.bashrc
 fi
 ```
-</details>
+Cual es el proposito de este bloque de codigo?
 
----
+a) Crear un backup de `~/.bashrc` cada vez que se inicia sesion
+b) Verificar que `~/.bashrc` no contenga errores de sintaxis
+c) Asegurar que las configuraciones de `~/.bashrc` se apliquen tambien en login shells
+d) Evitar que `~/.bashrc` se ejecute dos veces en shells no interactivos
 
-## Ejercicio 6
-Que sucede al ejecutar los siguientes comandos? Explica cada paso.
-```bash
-PS1="\u@\h:\w\$ "
-export PATH="$HOME/scripts:$PATH"
-alias cls='clear'
-```
+<details><summary>Respuesta</summary>
 
-<details>
-<summary>Respuesta</summary>
+**c) Asegurar que las configuraciones de `~/.bashrc` se apliquen tambien en login shells**
 
-1. `PS1="\u@\h:\w\$ "` - Cambia el prompt del shell para mostrar `usuario@hostname:/directorio/actual$ `. Las secuencias `\u`, `\h`, `\w` y `\$` son reemplazadas dinamicamente por bash.
+Los login shells (SSH, consola de texto) ejecutan `~/.bash_profile` pero NO ejecutan `~/.bashrc`. Los non-login shells (terminal grafica) ejecutan `~/.bashrc` pero NO `~/.bash_profile`. Este bloque hace que el login shell tambien cargue `~/.bashrc`, unificando la configuracion en ambos tipos de sesion. Asi, los alias, funciones y variables definidos en `~/.bashrc` estaran disponibles tanto al conectarse por SSH como al abrir una terminal grafica. El punto (`.`) es equivalente a `source`.
 
-2. `export PATH="$HOME/scripts:$PATH"` - Agrega el directorio `$HOME/scripts` al **inicio** del PATH (dandole prioridad sobre los demas directorios). Al exportar, los procesos hijos tambien heredan este PATH modificado.
-
-3. `alias cls='clear'` - Crea un alias para que al escribir `cls` se ejecute el comando `clear` (limpiar la pantalla).
-
-**Importante:** Estos tres cambios son temporales y se pierden al cerrar la sesion. Para hacerlos permanentes, deben agregarse a `~/.bashrc`.
-</details>
-
----
-
-## Ejercicio 7
-Cual es la diferencia entre `/etc/profile` y `/etc/environment`? En que tipo de sistemas se usa cada uno?
-
-<details>
-<summary>Respuesta</summary>
-
-**`/etc/profile`:**
-- Es un **script de shell** ejecutado por login shells
-- Soporta logica de programacion, expansiones de variables, condicionales
-- Puede ejecutar scripts de `/etc/profile.d/`
-- Es estandar en todas las distribuciones Linux
-
-**`/etc/environment`:**
-- **NO es un script**. Es un archivo simple con formato `VARIABLE=valor`
-- Es leido por el modulo PAM (`pam_env`), no por bash directamente
-- NO soporta expansiones de variables (no se puede usar `$HOME`)
-- Se aplica a todas las sesiones, incluyendo las no interactivas
-- Es especifico de sistemas con PAM (principalmente Debian/Ubuntu)
-
-Ejemplo de `/etc/environment`:
-```
-PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin"
-LANG="es_ES.UTF-8"
-```
-</details>
-
----
-
-## Ejercicio 8
-Un usuario abre una terminal grafica en su escritorio GNOME. Es un login shell o un non-login shell? Que archivos de inicio se ejecutan? Si el usuario quiere que un alias definido en `~/.bashrc` funcione tambien al conectarse por SSH, que debe hacer?
-
-<details>
-<summary>Respuesta</summary>
-
-**Terminal grafica:** Es un **non-login shell** (shell interactivo no-login). Los archivos ejecutados son:
-1. `/etc/bash.bashrc` (global)
-2. `~/.bashrc` (usuario)
-
-**Conexion SSH:** Es un **login shell**. Los archivos ejecutados son:
-1. `/etc/profile` (y `/etc/profile.d/*.sh`)
-2. `~/.bash_profile` (o `~/.bash_login` o `~/.profile`)
-
-Para que un alias definido en `~/.bashrc` funcione tambien en sesiones SSH (login shells), el usuario debe asegurarse de que su archivo `~/.bash_profile` (o el que tenga) incluya la siguiente linea:
-
-```bash
-if [ -f ~/.bashrc ]; then
-    source ~/.bashrc
-fi
-```
-
-Esto hace que el login shell tambien cargue `~/.bashrc`, unificando la configuracion en ambos tipos de sesion.
 </details>
